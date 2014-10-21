@@ -1,32 +1,31 @@
 package com.example.ginrummy;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.view.MotionEvent;
-import Animation.Animator;
 
-public class CardAnimator implements Animator {
+public class CardAnimator implements Animation.Animator {
 
+	private static final int FRAME_INTERVAL = 10;
+	private static final int BACKGROUND_COLOR = 0xff278734;
+	
 	@Override
 	public int interval() {
-		// TODO Auto-generated method stub
-		return 0;
+		return FRAME_INTERVAL;
 	}
 
 	@Override
 	public int backgroundColor() {
-		// TODO Auto-generated method stub
-		return 0;
+		return BACKGROUND_COLOR;
 	}
 
 	@Override
 	public boolean doPause() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean doQuit() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -39,7 +38,6 @@ public class CardAnimator implements Animator {
 	@Override
 	public void onTouch(MotionEvent event) {
 		// TODO Auto-generated method stub
-
 	}
 
 }
