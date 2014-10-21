@@ -171,47 +171,47 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public void tick(Canvas g) {
 		
-		// ignore if we have not yet received the game state
-		if (state == null) return;
-
-		// get the height and width of the animation surface
-		int height = surface.getHeight();
-		int width = surface.getWidth();
-
-		// draw the middle card-pile
-		Card c = state.getDeck(2).peekAtTopCard(); // top card in pile
-		if (c != null) {
-			// if middle card is not empty, draw a set of N card-backs
-			// behind the middle card, so that the user can see the size of
-			// the pile
-			RectF midTopLocation = middlePileTopCardLocation();
-			drawCardBacks(g, midTopLocation,
-					0.0025f*width, -0.01f*height, state.getDeck(2).size());
-			// draw the top card, face-up
-			drawCard(g, midTopLocation, c);
-		}
-		
-		// draw the opponent's cards, face down
-		RectF oppTopLocation = opponentTopCardLocation(); // drawing size/location
-		drawCardBacks(g, oppTopLocation,
-				0.0025f*width, -0.01f*height, state.getDeck(1-this.playerNum).size());
-
-		// draw my cards, face down
-		RectF thisTopLocation = thisPlayerTopCardLocation(); // drawing size/location
-		drawCardBacks(g, thisTopLocation,
-				0.0025f*width, -0.01f*height, state.getDeck(this.playerNum).size());
-		
-		// draw a red bar to denote which player is to play (flip) a card
-		RectF currentPlayerRect =
-				state.toPlay() == this.playerNum ? thisTopLocation : oppTopLocation;
-		RectF turnIndicator =
-				new RectF(currentPlayerRect.left,
-						currentPlayerRect.bottom,
-						currentPlayerRect.right,
-					height);
-		Paint paint = new Paint();
-		paint.setColor(Color.RED);
-		g.drawRect(turnIndicator, paint);
+//		// ignore if we have not yet received the game state
+//		if (state == null) return;
+//
+//		// get the height and width of the animation surface
+//		int height = surface.getHeight();
+//		int width = surface.getWidth();
+//
+//		// draw the middle card-pile
+//		Card c = state.getDeck(2).peekAtTopCard(); // top card in pile
+//		if (c != null) {
+//			// if middle card is not empty, draw a set of N card-backs
+//			// behind the middle card, so that the user can see the size of
+//			// the pile
+//			RectF midTopLocation = middlePileTopCardLocation();
+//			drawCardBacks(g, midTopLocation,
+//					0.0025f*width, -0.01f*height, state.getDeck(2).size());
+//			// draw the top card, face-up
+//			drawCard(g, midTopLocation, c);
+//		}
+//		
+//		// draw the opponent's cards, face down
+//		RectF oppTopLocation = opponentTopCardLocation(); // drawing size/location
+//		drawCardBacks(g, oppTopLocation,
+//				0.0025f*width, -0.01f*height, state.p2hand.size());
+//
+//		// draw my cards, face down
+//		RectF thisTopLocation = thisPlayerTopCardLocation(); // drawing size/location
+//		drawCardBacks(g, thisTopLocation,
+//				0.0025f*width, -0.01f*height, state.getDeck(this.playerNum).size());
+//		
+//		// draw a red bar to denote which player is to play (flip) a card
+//		RectF currentPlayerRect =
+//				state.toPlay() == this.playerNum ? thisTopLocation : oppTopLocation;
+//		RectF turnIndicator =
+//				new RectF(currentPlayerRect.left,
+//						currentPlayerRect.bottom,
+//						currentPlayerRect.right,
+//					height);
+//		Paint paint = new Paint();
+//		paint.setColor(Color.RED);
+//		g.drawRect(turnIndicator, paint);
 	}
 	
 	/**
