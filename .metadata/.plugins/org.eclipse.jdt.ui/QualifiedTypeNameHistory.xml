@@ -5,4 +5,8 @@
 <fullyQualifiedTypeName name="android.view.View"/>
 <fullyQualifiedTypeName name="android.widget.LinearLayout"/>
 <fullyQualifiedTypeName name="com.example.ginrummy.R.id"/>
+<fullyQualifiedTypeName name="android.graphics.PointF"/>
+<fullyQualifiedTypeName name="gameObjects.Suit"/>
+<fullyQualifiedTypeName name="gameObjects.Rank"/>
+<fullyQualifiedTypeName name="gameObjects.Card"/>
 </qualifiedTypeNameHistroy>
