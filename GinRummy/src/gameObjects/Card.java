@@ -1,6 +1,7 @@
 package gameObjects;
 
 import java.io.Serializable;
+
 import com.example.ginrummy.R;
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -26,16 +27,12 @@ import android.graphics.RectF;
  */
 public class Card implements Serializable {
 
-	private static final char SUIT_SPADE = 's';
-	private static final char SUIT_HEART = 'h';
-	private static final char SUIT_DIAMOND = 'd';
-	private static final char SUIT_CLUB = 'c';
 	// to satisfy the Serializable interface
 	private static final long serialVersionUID = 893542931190030342L;
 	
 	// instance variables: the card's rank and the suit
-    private char rank;
-    private char suit;
+    private Rank rank;
+    private Suit suit;
 
     /**
      * Constructor for class card
@@ -43,7 +40,7 @@ public class Card implements Serializable {
      * @param r the Rank of the card
      * @param s the Suit of the card
      */
-    public Card(char r, char s) {
+    public Card(Rank r, Suit s) {
         rank = r;
         suit = s;
     }
@@ -73,12 +70,12 @@ public class Card implements Serializable {
         
         // get the rank and suit corresponding to the two characters
         // in the string
-        char r = str.charAt(0);
-        char s = str.charAt(1);
+        Rank r = Rank.fromChar(str.charAt(0));
+        Suit s = Suit.fromChar(str.charAt(1));
         
         // if both rank and suit are non-null, create the corresponding
         // card; if either is null, return null
-        return new Card(r, s);
+        return r==null || s == null ? null : new Card(r, s);
     }
 
     /**
@@ -88,7 +85,7 @@ public class Card implements Serializable {
 	 *		A string such as "Jack of Spades", which describes the card.
      */
     public String toString() {
-        return rank+" of "+suit+"s";
+        return rank.longName()+" of "+suit.longName()+"s";
     }
 
     /**
@@ -112,7 +109,7 @@ public class Card implements Serializable {
      * @param where  a rectangle that tells where the card should be drawn
      */
     public void drawOn(Canvas g, RectF where) {
-    	/*// create the paint object
+    	// create the paint object
     	Paint p = new Paint();
     	p.setColor(Color.BLACK);
     	
@@ -124,7 +121,6 @@ public class Card implements Serializable {
     	
     	// draw the bitmap into the target rectangle
     	g.drawBitmap(bitmap, r, where, p);
-    	*/
     }
 
     
@@ -133,7 +129,7 @@ public class Card implements Serializable {
      * spades).
      */
     public String shortName() {
-        return "" + getRank() + getSuit();
+        return "" + getRank().shortName() + getSuit().shortName();
     }
 
     /**
@@ -143,7 +139,7 @@ public class Card implements Serializable {
 	 *		a Rank object (actually of a subclass) that tells the card's
      *		rank (e.g., Jack, three).
      */
-    public char getRank() {
+    public Rank getRank() {
     	return rank;
     }
 
@@ -154,7 +150,7 @@ public class Card implements Serializable {
 	 *		a Suit object (actually of a subclass) that tells the card's
      *		rank (e.g., heart, club).
      */
-    public char getSuit() {
+    public Suit getSuit() {
     	return suit;
     }
  

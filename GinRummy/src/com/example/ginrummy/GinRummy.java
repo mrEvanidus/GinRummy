@@ -1,5 +1,6 @@
 package com.example.ginrummy;
 
+import gameObjects.Card;
 import android.support.v7.app.ActionBarActivity;
 import android.animation.*;
 import android.os.Bundle;
@@ -23,6 +24,9 @@ public class GinRummy extends ActionBarActivity {
 		//link the side bar containing the buttons and such
 		LinearLayout sideBar = (LinearLayout)findViewById(R.id.sideBar);
 		sideBar.setBackgroundColor(animator.backgroundColor());
+		
+		//initiate the card images
+		Card.initImages(this);
 	}
 
 	@Override
