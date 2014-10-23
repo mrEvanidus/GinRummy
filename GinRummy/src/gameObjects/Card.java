@@ -2,7 +2,7 @@ package gameObjects;
 
 import java.io.Serializable;
 
-import com.example.ginrummy.R;
+import edu.up.cs301.game.R;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

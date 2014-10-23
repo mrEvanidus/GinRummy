@@ -2,8 +2,6 @@ package edu.up.cs301.game;
 
 import java.util.ArrayList;
 
-import com.example.ginrummy.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;

@@ -1,18 +1,13 @@
 package com.example.ginrummy;
 
-import edu.up.cs301.game.GameMainActivity;
-import edu.up.cs301.game.LocalGame;
 import edu.up.cs301.game.config.GameConfig;
+import edu.up.cs301.game.*;
 import gameObjects.Card;
-import android.support.v7.app.ActionBarActivity;
-import android.animation.*;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.View;
-import android.view.MenuItem;
 import android.widget.LinearLayout;
 
 public class GinRummy extends GameMainActivity {
+
+	private static final int PORT_NUMBER = 4752;
 
 	@Override
 	public GameConfig createDefaultConfig() {
@@ -28,7 +23,11 @@ public class GinRummy extends GameMainActivity {
 
 		//initiate the card images
 		Card.initImages(this);
-		return null;
+
+		// Create a game configuration class for SlapJack
+		GameConfig defaultConfig = new GameConfig(null, 2, 2, "Gin Rummy", PORT_NUMBER);
+
+		return defaultConfig;
 	}
 
 	@Override
