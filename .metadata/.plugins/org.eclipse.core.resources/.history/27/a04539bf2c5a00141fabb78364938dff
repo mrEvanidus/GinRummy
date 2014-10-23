@@ -1,0 +1,27 @@
+package Animation;
+
+import gameObjects.Card;
+import android.graphics.*;
+
+public class CardPath {
+	
+	//instance variables
+	private Card card;
+	private PointF origin;
+	
+	public CardPath(Card card, PointF origin) {
+		this.card = card;
+	}
+
+	public Card getCard() {
+		return card;
+	}
+
+	public void setCard(Card card) {
+		this.card = card;
+	}
+
+	public PointF getOrigin() {
+		return origin;
+	}
+}

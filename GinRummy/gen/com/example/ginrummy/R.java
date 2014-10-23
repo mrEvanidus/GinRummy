@@ -1597,25 +1597,26 @@ containing a value of this type.
         public static final int abc_config_showMenuShortcutsWhenKeyboardPresent=0x7f070003;
     }
     public static final class color {
-        public static final int abc_background_cache_hint_selector_material_dark=0x7f080031;
-        public static final int abc_background_cache_hint_selector_material_light=0x7f080032;
+        public static final int abc_background_cache_hint_selector_material_dark=0x7f080034;
+        public static final int abc_background_cache_hint_selector_material_light=0x7f080035;
         public static final int abc_input_method_navigation_guard=0x7f080003;
-        public static final int abc_primary_text_disable_only_material_dark=0x7f080033;
-        public static final int abc_primary_text_disable_only_material_light=0x7f080034;
-        public static final int abc_primary_text_material_dark=0x7f080035;
-        public static final int abc_primary_text_material_light=0x7f080036;
-        public static final int abc_search_url_text=0x7f080037;
+        public static final int abc_primary_text_disable_only_material_dark=0x7f080036;
+        public static final int abc_primary_text_disable_only_material_light=0x7f080037;
+        public static final int abc_primary_text_material_dark=0x7f080038;
+        public static final int abc_primary_text_material_light=0x7f080039;
+        public static final int abc_search_url_text=0x7f08003a;
         public static final int abc_search_url_text_normal=0x7f080000;
         public static final int abc_search_url_text_pressed=0x7f080002;
         public static final int abc_search_url_text_selected=0x7f080001;
-        public static final int abc_secondary_text_material_dark=0x7f080038;
-        public static final int abc_secondary_text_material_light=0x7f080039;
+        public static final int abc_secondary_text_material_dark=0x7f08003b;
+        public static final int abc_secondary_text_material_light=0x7f08003c;
         public static final int accent_material_dark=0x7f08000f;
         public static final int accent_material_light=0x7f08000e;
         public static final int background_floating_material_dark=0x7f080006;
         public static final int background_floating_material_light=0x7f080007;
         public static final int background_material_dark=0x7f080004;
         public static final int background_material_light=0x7f080005;
+        public static final int black=0x7f080031;
         /**  White 50% 
          */
         public static final int bright_foreground_disabled_material_dark=0x7f080016;
@@ -1632,6 +1633,7 @@ containing a value of this type.
         public static final int dim_foreground_disabled_material_light=0x7f08001d;
         public static final int dim_foreground_material_dark=0x7f08001a;
         public static final int dim_foreground_material_light=0x7f08001b;
+        public static final int green=0x7f080032;
         /**  TODO: This is 40% alpha on the default accent color. 
          */
         public static final int highlighted_text_material_dark=0x7f080020;
@@ -1659,6 +1661,7 @@ containing a value of this type.
         /**  26% of default values 
          */
         public static final int primary_text_disabled_material_light=0x7f080028;
+        public static final int red=0x7f080033;
         public static final int ripple_material_dark=0x7f08000c;
         public static final int ripple_material_light=0x7f08000d;
         public static final int secondary_text_default_material_dark=0x7f080027;
@@ -1764,11 +1767,13 @@ containing a value of this type.
          would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
     
          */
-        public static final int activity_horizontal_margin=0x7f06002c;
-        public static final int activity_vertical_margin=0x7f06002d;
+        public static final int activity_horizontal_margin=0x7f060032;
+        public static final int activity_vertical_margin=0x7f060033;
+        public static final int config_horiz_margin=0x7f060031;
         /**  The default gap between components in a layout. 
          */
         public static final int default_gap=0x7f060000;
+        public static final int del_player_button_size=0x7f06002c;
         /**  The platform's desired fixed height for a dialog along the major axis
          (the screen is in portrait). This may be either a fraction or a dimension.
  The platform's desired fixed height for a dialog along the major axis
@@ -1803,6 +1808,10 @@ containing a value of this type.
         public static final int dialog_fixed_width_minor=0x7f06000e;
         public static final int disabled_alpha_material_dark=0x7f060002;
         public static final int disabled_alpha_material_light=0x7f060001;
+        public static final int tab_height=0x7f06002e;
+        public static final int table_heading_font_size=0x7f06002d;
+        public static final int table_row_horiz_pad=0x7f060030;
+        public static final int table_row_vert_pad=0x7f06002f;
     }
     public static final class drawable {
         public static final int abc_ab_share_pack_holo_dark=0x7f020000;
@@ -1932,12 +1941,13 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f05003f;
         public static final int action_mode_bar_stub=0x7f05003e;
         public static final int action_mode_close_button=0x7f050031;
-        public static final int action_settings=0x7f050058;
         public static final int activity_chooser_view_content=0x7f050032;
+        public static final int addPlayerButton=0x7f050066;
         public static final int alignBounds=0x7f050002;
         public static final int alignMargins=0x7f050003;
         public static final int always=0x7f05001f;
         public static final int animationSurface=0x7f050051;
+        public static final int backButton2=0x7f05005b;
         public static final int beginning=0x7f050024;
         public static final int bottom=0x7f050005;
         public static final int center=0x7f05000c;
@@ -1947,8 +1957,10 @@ containing a value of this type.
         public static final int clip_horizontal=0x7f05000f;
         public static final int clip_vertical=0x7f05000e;
         public static final int collapseActionView=0x7f050021;
+        public static final int configTableLayout=0x7f050060;
         public static final int decor_content_parent=0x7f050040;
         public static final int default_activity_button=0x7f050035;
+        public static final int delPlayerButton=0x7f05006a;
         public static final int dialog=0x7f050022;
         public static final int disableHome=0x7f05001c;
         public static final int dropdown=0x7f050023;
@@ -1966,10 +1978,14 @@ containing a value of this type.
         public static final int icon=0x7f050037;
         public static final int ifRoom=0x7f05001e;
         public static final int image=0x7f050034;
+        public static final int ipCodeLabel=0x7f050062;
         public static final int knockButton=0x7f050057;
         public static final int left=0x7f050006;
         public static final int listMode=0x7f050014;
         public static final int list_item=0x7f050036;
+        public static final int localGameTab=0x7f05005c;
+        public static final int localTabLayout=0x7f05005d;
+        public static final int menu_settings=0x7f050070;
         public static final int messagePane=0x7f050055;
         public static final int messagePaneFrame=0x7f050054;
         public static final int middle=0x7f050025;
@@ -1977,11 +1993,22 @@ containing a value of this type.
         public static final int none=0x7f050016;
         public static final int normal=0x7f050013;
         public static final int opponentScore=0x7f050053;
+        public static final int playGameButton=0x7f05005a;
+        public static final int playerNameEditText=0x7f050068;
+        public static final int playerNameHeadingText=0x7f050064;
         public static final int playerScore=0x7f050056;
+        public static final int playerTypeHeadingText=0x7f050065;
+        public static final int playerTypeSpinner=0x7f050069;
         public static final int progress_circular=0x7f05002d;
         public static final int progress_horizontal=0x7f05002e;
         public static final int radio=0x7f05003c;
+        public static final int remoteGameTab=0x7f05005e;
+        public static final int remoteIPCodeEditText=0x7f05006f;
+        public static final int remoteNameEditText=0x7f05006c;
+        public static final int remoteTabLayout=0x7f05005f;
+        public static final int remote_player_spinner=0x7f05006d;
         public static final int right=0x7f050007;
+        public static final int saveConfigButton=0x7f050059;
         public static final int search_badge=0x7f050046;
         public static final int search_bar=0x7f050045;
         public static final int search_button=0x7f050047;
@@ -1992,6 +2019,7 @@ containing a value of this type.
         public static final int search_plate=0x7f05004a;
         public static final int search_src_text=0x7f05004b;
         public static final int search_voice_btn=0x7f05004f;
+        public static final int serverIPCode=0x7f05006e;
         public static final int shortcut=0x7f05003b;
         public static final int showCustom=0x7f05001b;
         public static final int showHome=0x7f050018;
@@ -2000,7 +2028,12 @@ containing a value of this type.
         public static final int split_action_bar=0x7f05002a;
         public static final int start=0x7f050010;
         public static final int submit_area=0x7f05004d;
+        public static final int tabHost=0x7f050058;
         public static final int tabMode=0x7f050015;
+        public static final int tableDataRow=0x7f05006b;
+        public static final int tableHeadingRow=0x7f050063;
+        public static final int textView1=0x7f050061;
+        public static final int textView2=0x7f050067;
         public static final int title=0x7f050038;
         public static final int top=0x7f050004;
         public static final int up=0x7f050027;
@@ -2059,7 +2092,13 @@ containing a value of this type.
         public static final int abc_search_view=0x7f030015;
         public static final int abc_simple_dropdown_hint=0x7f030016;
         public static final int activity_gin_rummy=0x7f030017;
-        public static final int support_simple_spinner_dropdown_item=0x7f030018;
+        public static final int game_config_main=0x7f030018;
+        public static final int game_config_tabhost=0x7f030019;
+        public static final int game_local_tab=0x7f03001a;
+        public static final int game_no_gui=0x7f03001b;
+        public static final int game_player_list_row=0x7f03001c;
+        public static final int game_remote_tab=0x7f03001d;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001e;
     }
     public static final class menu {
         public static final int gin_rummy=0x7f0c0000;
@@ -2118,21 +2157,29 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000d;
-        public static final int action_settings=0x7f0a0011;
+        public static final int add_player=0x7f0a0018;
         public static final int app_name=0x7f0a000f;
+        public static final int begin_game=0x7f0a0014;
+        public static final int dialog_continue_label=0x7f0a001e;
+        public static final int dialog_quit_label=0x7f0a001f;
+        public static final int dialog_quit_question=0x7f0a0020;
+        public static final int guest=0x7f0a001b;
         public static final int hello_world=0x7f0a0010;
+        public static final int local_tab=0x7f0a0021;
+        public static final int menu_settings=0x7f0a0011;
+        public static final int name_label=0x7f0a0015;
+        public static final int player_name=0x7f0a0019;
+        public static final int player_type=0x7f0a001a;
+        public static final int remote_tab=0x7f0a0022;
+        public static final int remove_player=0x7f0a0017;
+        public static final int save_config=0x7f0a0013;
+        public static final int save_config_as_default=0x7f0a001c;
+        public static final int server_ip_code=0x7f0a0016;
+        public static final int start_the_game=0x7f0a001d;
+        public static final int title_activity_game_main=0x7f0a0012;
     }
     public static final class style {
         /** 
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    
-
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        
-
         Base application theme for API 11+. This theme completely replaces
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
     
@@ -2144,11 +2191,8 @@ containing a value of this type.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f0b00eb;
-        /**  Application theme. 
- All customizations that are NOT specific to a particular API-level can go here. 
-         */
-        public static final int AppTheme=0x7f0b00ec;
+        public static final int AppBaseTheme=0x7f0b00ec;
+        public static final int AppTheme=0x7f0b00eb;
         public static final int Base_TextAppearance_AppCompat=0x7f0b0098;
         public static final int Base_TextAppearance_AppCompat_Body1=0x7f0b00a3;
         public static final int Base_TextAppearance_AppCompat_Body2=0x7f0b00a2;

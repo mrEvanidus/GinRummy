@@ -1,0 +1,12 @@
+package Animation;
+
+import gameObjects.Card;
+
+public class CardPath {
+	
+	Card card;
+	
+	public CardPath(Card card) {
+		this.card = card;
+	}
+}
