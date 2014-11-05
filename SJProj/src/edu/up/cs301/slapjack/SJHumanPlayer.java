@@ -1,5 +1,7 @@
 package edu.up.cs301.slapjack;
 
+import com.example.ginrummy.CardAnimator;
+
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,6 +10,7 @@ import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import edu.up.cs301.animation.AnimationSurface;
 import edu.up.cs301.animation.Animator;
 import edu.up.cs301.card.Card;
@@ -37,7 +40,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 	private final static float LEFT_BORDER_PERCENT = 4; // width of left border
 	private final static float RIGHT_BORDER_PERCENT = 20; // width of right border
 	private final static float VERTICAL_BORDER_PERCENT = 4; // width of top/bottom borders
-	
+
 	// our game state
 	protected SJState state;
 
@@ -46,10 +49,11 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// the amination surface
 	private AnimationSurface surface;
-	
+	private AnimationSurface board;
+
 	// the background color
 	private int backgroundColor;
-	
+
 	/**
 	 * constructor
 	 * 
@@ -58,9 +62,20 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @param bkColor
 	 * 		the background color
 	 */
-	public SJHumanPlayer(String name, int bkColor) {
+	public SJHumanPlayer(String name) {
 		super(name);
-		backgroundColor = bkColor;
+		backgroundColor = Color.GREEN;
+		//link the animation surface
+		edu.up.cs301.animation.AnimationSurface gameBoard = (edu.up.cs301.animation.AnimationSurface)this.findViewById(R.id.animationSurface);
+		CardAnimator animator = new CardAnimator();
+		gameBoard.setAnimator(animator);
+
+		//link the side bar containing the buttons and such
+		LinearLayout sideBar = (LinearLayout)findViewById(R.id.sideBar);
+		sideBar.setBackgroundColor(animator.backgroundColor());
+
+		//initiate the card images
+		Card.initImages(this);
 	}
 
 	/**
@@ -108,7 +123,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 		surface = (AnimationSurface) myActivity
 				.findViewById(R.id.animation_surface);
 		surface.setAnimator(this);
-		
+
 		// read in the card images
 		Card.initImages(activity);
 
@@ -170,7 +185,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 		the canvas on which we are to draw
 	 */
 	public void tick(Canvas g) {
-		
+
 		// ignore if we have not yet received the game state
 		if (state == null) return;
 
@@ -190,7 +205,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 			// draw the top card, face-up
 			drawCard(g, midTopLocation, c);
 		}
-		
+
 		// draw the opponent's cards, face down
 		RectF oppTopLocation = opponentTopCardLocation(); // drawing size/location
 		drawCardBacks(g, oppTopLocation,
@@ -200,7 +215,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 		RectF thisTopLocation = thisPlayerTopCardLocation(); // drawing size/location
 		drawCardBacks(g, thisTopLocation,
 				0.0025f*width, -0.01f*height, state.getDeck(this.playerNum).size());
-		
+
 		// draw a red bar to denote which player is to play (flip) a card
 		RectF currentPlayerRect =
 				state.toPlay() == this.playerNum ? thisTopLocation : oppTopLocation;
@@ -208,12 +223,12 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 				new RectF(currentPlayerRect.left,
 						currentPlayerRect.bottom,
 						currentPlayerRect.right,
-					height);
+						height);
 		Paint paint = new Paint();
 		paint.setColor(Color.RED);
 		g.drawRect(turnIndicator, paint);
 	}
-	
+
 	/**
 	 * @return
 	 * 		the rectangle that represents the location on the drawing
@@ -230,7 +245,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 				(LEFT_BORDER_PERCENT+CARD_WIDTH_PERCENT)*width/100f,
 				(100-VERTICAL_BORDER_PERCENT)*height/100f);
 	}
-	
+
 	/**
 	 * @return
 	 * 		the rectangle that represents the location on the drawing
@@ -247,7 +262,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 				(100-RIGHT_BORDER_PERCENT)*width/100f,
 				(100-VERTICAL_BORDER_PERCENT)*height/100f);
 	}
-	
+
 	/**
 	 * @return
 	 * 		the rectangle that represents the location on the drawing
@@ -265,7 +280,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 		float rectBottom = (100-VERTICAL_BORDER_PERCENT)*height/100f;
 		return new RectF(rectLeft, rectTop, rectRight, rectBottom);
 	}
-		
+
 	/**
 	 * draws a sequence of card-backs, each offset a bit from the previous one, so that all can be
 	 * seen to some extent
@@ -303,14 +318,14 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 		the motion-event
 	 */
 	public void onTouch(MotionEvent event) {
-		
+
 		// ignore everything except down-touch events
 		if (event.getAction() != MotionEvent.ACTION_DOWN) return;
 
 		// get the location of the touch on the surface
 		int x = (int) event.getX();
 		int y = (int) event.getY();
-		
+
 		// determine whether the touch occurred on the top-card of either
 		// the player's pile or the middle pile
 		RectF myTopCardLoc = thisPlayerTopCardLocation();
@@ -330,7 +345,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 			surface.flash(Color.RED, 50);
 		}
 	}
-	
+
 	/**
 	 * draws a card on the canvas; if the card is null, draw a card-back
 	 * 
@@ -364,7 +379,7 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 			c.drawOn(g, rect);
 		}
 	}
-	
+
 	/**
 	 * scales a rectangle, moving all edges with respect to its center
 	 * 
@@ -384,13 +399,13 @@ public class SJHumanPlayer extends GameHumanPlayer implements Animator {
 		float right = rect.right-midX;
 		float top = rect.top-midY;
 		float bottom = rect.bottom-midY;
-		
+
 		// scale each side; move back so that center is in original location
 		left = left*factor + midX;
 		right = right*factor + midX;
 		top = top*factor + midY;
 		bottom = bottom*factor + midY;
-		
+
 		// create/return the new rectangle
 		return new RectF(left, top, right, bottom);
 	}

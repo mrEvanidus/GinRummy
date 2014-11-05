@@ -30,31 +30,11 @@ public class SJMainActivity extends GameMainActivity {
 		playerTypes.add(new GamePlayerType("human player") {
 			public GamePlayer createPlayer(String name) {
 				return new SJHumanPlayer(name);
-			}});
+			}
 		});
 		playerTypes.add(new GamePlayerType("computer player (normal)") {
 			public GamePlayer createPlayer(String name) {
 				return new SJComputerPlayer(name);
-			}
-		});
-		playerTypes.add(new GamePlayerType("computer player (fast)") {
-			public GamePlayer createPlayer(String name) {
-				return new SJComputerPlayer(name, 0.3);
-			}
-		});
-		playerTypes.add(new GamePlayerType("computer player (slow)") {
-			public GamePlayer createPlayer(String name) {
-				return new SJComputerPlayer(name, 1.0);
-			}
-		});
-		playerTypes.add(new GamePlayerType("computer player (very fast)") {
-			public GamePlayer createPlayer(String name) {
-				return new SJComputerPlayer(name, 0.15);
-			}
-		});
-		playerTypes.add(new GamePlayerType("computer player (very slow)") {
-			public GamePlayer createPlayer(String name) {
-				return new SJComputerPlayer(name, 3.5);
 			}
 		});
 
