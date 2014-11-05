@@ -27,14 +27,10 @@ public class SJMainActivity extends GameMainActivity {
 		// Define the allowed player types
 		ArrayList<GamePlayerType> playerTypes = new ArrayList<GamePlayerType>();
 		
-		playerTypes.add(new GamePlayerType("human player (green)") {
+		playerTypes.add(new GamePlayerType("human player") {
 			public GamePlayer createPlayer(String name) {
-				return new SJHumanPlayer(name, Color.GREEN);
+				return new SJHumanPlayer(name);
 			}});
-		playerTypes.add(new GamePlayerType("human player (yellow)") {
-			public GamePlayer createPlayer(String name) {
-				return new SJHumanPlayer(name, Color.YELLOW);
-			}
 		});
 		playerTypes.add(new GamePlayerType("computer player (normal)") {
 			public GamePlayer createPlayer(String name) {
