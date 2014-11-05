@@ -1,2 +1,0 @@
-INDEX VERSION 1.126+P:\GinRummy\.metadata\.plugins\org.eclipse.jdt.core
-4105219375.index
