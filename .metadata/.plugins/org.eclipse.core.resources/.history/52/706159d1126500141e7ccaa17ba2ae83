@@ -1,0 +1,4 @@
+
+public class CardAnimator implements Animation.Animator {
+	
+}

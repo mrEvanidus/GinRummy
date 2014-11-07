@@ -464,7 +464,7 @@ View.OnClickListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.gin_rummy, menu);
+		getMenuInflater().inflate(R.menu.game_main, menu);
 		return true;
 	}//onCreateOptionsMenu
 
