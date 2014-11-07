@@ -1,7 +1,0 @@
-INDEX VERSION 1.126+C:\Users\Jaimiey\My Programs\GinRummy\.metadata\.plugins\org.eclipse.jdt.core
-484430560.index
-985474134.index
-1284074322.index
-3515282563.index
-4213557772.index
-842672830.index
