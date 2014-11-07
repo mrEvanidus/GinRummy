@@ -37,6 +37,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	private final static float LEFT_BORDER_PERCENT = 4; // width of left border
 	private final static float RIGHT_BORDER_PERCENT = 20; // width of right border
 	private final static float VERTICAL_BORDER_PERCENT = 4; // width of top/bottom borders
+	
+	private final static float STACKED_CARD_OFFSET = 0.001F;
 
 	// our game state
 	protected GRState state;
@@ -51,8 +53,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	//card information
 	private ArrayList<CardPath> paths;
+
 	//the width and hieght of the card
 	private static PointF cardDimensions;
+	private static float cardDimensionModifier = 0.75f;
 
 	//the positions of the decks
 	protected static PointF stockPos;
@@ -126,11 +130,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		paths = new ArrayList<CardPath>();
 
 		//set the default size of the card
-		cardDimensions = new PointF(261, 379);
+		cardDimensions = new PointF(261*cardDimensionModifier, 379*cardDimensionModifier);
 
 		//set the location of the decks
-		stockPos = new PointF(0.4f,0.25f);
-		discardPos = new PointF(0.6f,0.25f);
+		stockPos = new PointF(0.3f,0.25f);
+		discardPos = new PointF(0.5f,0.25f);
 		p1hand = new PointF(0.0f,0.75f);
 		p2hand = new PointF(0.0f,-0.25f);
 
@@ -194,6 +198,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public void tick(Canvas canvas) {
 
+
+		//TODO Remove this!
+		state = new GRState();
+		state.getDiscard().cards.add(new backCard());
+
 		// ignore if we have not yet received the game state
 		if (state == null) return;
 
@@ -202,18 +211,23 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		width = surface.getWidth();
 
 		//get the information from the state
-		Deck stock = state.getStock();
-		Deck discard = state.getDiscard();
-		Deck p1hand = state.getHand(0);
-		Deck p2hand = state.getHand(1);
-
+		Deck decks[] = {state.getStock(),state.getDiscard(),state.getHand(0),state.getHand(1)};
+		PointF deckPos[] = {stockPos, discardPos, p1hand, p2hand};
 
 		//draw the static cards
-		for (Card card : stock.cards) {
-			int idx = stock.cards.indexOf(card);
-
-			//draw the card
-			card.drawOn(canvas, adjustDimens(stockPos));
+		for (int idx = 0; idx < decks.length; idx++){
+			Deck deck = decks[idx];
+			for (Card card : deck.cards) {
+				int n = deck.cards.indexOf(card);
+				
+				//add a few pixels to the position
+				RectF position = adjustDimens(deckPos[idx]);
+				position.set(new RectF(position.left + STACKED_CARD_OFFSET*position.width()*n, position.top - STACKED_CARD_OFFSET*position.height()*n,
+						position.right + STACKED_CARD_OFFSET*position.width()*n, position.bottom - STACKED_CARD_OFFSET*position.height()*n));
+				
+				//draw the card
+				card.drawOn(canvas, position);
+			}
 		}
 
 		//advance and draw the card paths
@@ -232,22 +246,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				paths.remove(idx);
 			}
 		}
-		//draw teh stock
-		if (stock != null) {
-			//if there are cards in the stock pile draw them.
-			PointF pos = CardAnimator.getStockPos();
 
-			//convert relative position to pixel position
-			float x = (pos.x*width);
-			float y = (pos.y*height);
-
-
-
-
-			//			drawCard(g, stockPos, null);
-			//			drawCardBacks(g, stockPos,
-			//					0.0025f*width, -0.01f*height, stock.size());
-		}
 
 		//		// draw the opponent's cards, face down
 		//		RectF oppTopLocation = opponentTopCardLocation(); // drawing size/location
@@ -363,26 +362,26 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public void onTouch(MotionEvent event) {
 
-//		// ignore everything except down-touch events
-//		if (event.getAction() != MotionEvent.ACTION_DOWN) return;
-//
-//		// get the location of the touch on the surface
-//		int touchX = (int) event.getX();
-//		int touchY = (int) event.getY();
-//
-//		if (adjustDimens(stockPos).contains(touchX, touchY)) {
-//			//draw from the stock pile
-//			game.sendAction(new GRDrawAction(this, true));
-//		}
-//		//		else if (middleTopCardLoc.contains(x, y)) {
-//		//			// it's on the middlel pile: we're slapping a card: send
-//		//			// action to the game
-//		//			game.sendAction(new GRSlapAction(this));
-//		//		}
-//		else {
-//			// illegal touch-location: flash for 1/20 second
-//			surface.flash(Color.RED, 50);
-//		}
+		//		// ignore everything except down-touch events
+		//		if (event.getAction() != MotionEvent.ACTION_DOWN) return;
+		//
+		//		// get the location of the touch on the surface
+		//		int touchX = (int) event.getX();
+		//		int touchY = (int) event.getY();
+		//
+		//		if (adjustDimens(stockPos).contains(touchX, touchY)) {
+		//			//draw from the stock pile
+		//			game.sendAction(new GRDrawAction(this, true));
+		//		}
+		//		//		else if (middleTopCardLoc.contains(x, y)) {
+		//		//			// it's on the middlel pile: we're slapping a card: send
+		//		//			// action to the game
+		//		//			game.sendAction(new GRSlapAction(this));
+		//		//		}
+		//		else {
+		//			// illegal touch-location: flash for 1/20 second
+		//			surface.flash(Color.RED, 50);
+		//		}
 	}
 
 	//	/** TODO: delete this when done
@@ -463,10 +462,18 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		float y = location.y * height;
 
 		//get the size of the card
-		PointF dimens = CardAnimator.getCardDimensions();
+		PointF dimens = getCardDimensions();
 
 		//set the card boundary and return
 		RectF adjustedRect = new RectF(x, y, x + dimens.x, y + dimens.y);
 		return adjustedRect;
+	}
+
+	/**
+	 * gets the size (in pixels) of our cards
+	 * @return
+	 */
+	private PointF getCardDimensions() {
+		return cardDimensions;
 	}
 }
