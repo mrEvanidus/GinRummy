@@ -7392,3 +7392,6 @@ org.eclipse.core.internal.resources.ResourceException: Resource '/android-suppor
 
 !ENTRY org.eclipse.ui 2 2 2014-11-07 09:24:07.992
 !MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
+
+!ENTRY org.eclipse.ui 4 4 2014-11-07 10:45:46.805
+!MESSAGE Referenced part does not exist yet: org.eclipse.ui.views.ProblemView.

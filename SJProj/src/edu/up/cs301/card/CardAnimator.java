@@ -40,10 +40,13 @@ public class CardAnimator implements Animator {
 		
 		//set the location of the decks
 		stockPos = new PointF(0.4f,0.25f);
+		discardPos = new PointF(0.6f,0.25f);
+		p1hand = new PointF(0.0f,0.75f);
+		p2hand = new PointF(0.0f,-0.25f);
 
-		//create a new card
-		cards.add(new backCard());
-		cardPos.add(new RectF(0,0,cardDimensions.x,cardDimensions.y));
+//		//create a new card
+//		cards.add(new backCard());
+//		cardPos.add(new RectF(0,0,cardDimensions.x,cardDimensions.y));
 	}
 
 	public int interval() {
@@ -115,8 +118,8 @@ public class CardAnimator implements Animator {
 			float origY = cardPos.get(touchedCardIdx).top;
 			
 			//move the card to the tapped location along a path
-			paths.add(new CardPath(cards.get(touchedCardIdx), new PointF(origX, origY), new PointF((float)Math.random()*500, (float)Math.random()*500)));
-			cards.remove(cards.get(touchedCardIdx));
+//			paths.add(new CardPath(cards.get(touchedCardIdx), new PointF(origX, origY),new PointF((float)Math.random()*500, (float)Math.random()*500)));
+//			cards.remove(cards.get(touchedCardIdx));
 		}
 
 	}
@@ -135,10 +138,6 @@ public class CardAnimator implements Animator {
 		return cardPos;
 	}
 
-	public void setCardPos(ArrayList<RectF> cardPos) {
-		this.cardPos = cardPos;
-	}
-
 	/**
 	 * return RELATIVE stock position
 	 * @return
@@ -147,32 +146,16 @@ public class CardAnimator implements Animator {
 		return stockPos;
 	}
 
-	public static void setStockPos(PointF stockPos) {
-		CardAnimator.stockPos = stockPos;
-	}
-
 	public static PointF getDiscardPos() {
 		return discardPos;
-	}
-
-	public static void setDiscardPos(PointF discardPos) {
-		CardAnimator.discardPos = discardPos;
 	}
 
 	public static PointF getP1hand() {
 		return p1hand;
 	}
 
-	public static void setP1hand(PointF p1hand) {
-		CardAnimator.p1hand = p1hand;
-	}
-
 	public static PointF getP2hand() {
 		return p2hand;
-	}
-
-	public static void setP2hand(PointF p2hand) {
-		CardAnimator.p2hand = p2hand;
 	}
 
 	public static PointF getCardDimensions() {

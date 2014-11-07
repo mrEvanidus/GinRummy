@@ -13,11 +13,14 @@ public class CardPath {
 	private PointF destination;
 	private RectF location;
 	private int progress; //the number of ticks that have elapsed
+
+	private Deck originDeck;
 	
-	public CardPath(Card card, PointF origin, PointF destination) {
+	public CardPath(Card card, PointF origin, PointF destination, Deck originDeck) {
 		this.card = card;
 		this.origin = origin;
 		this.destination = destination;
+		this.originDeck = originDeck;
 		progress = 0;
 	}
 
@@ -83,5 +86,10 @@ public class CardPath {
 	 */
 	public void drawOn(Canvas canvas) {
 		card.drawOn(canvas, location);
+	}
+
+	public Deck getOriginDeck() {
+		// TODO Auto-generated method stub
+		return originDeck;
 	}
 }
