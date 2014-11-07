@@ -1,68 +1,31 @@
 package edu.up.cs301.card;
 
 import java.util.ArrayList;
+
+import edu.up.cs301.animation.*;
 import edu.up.cs301.card.*;
+import edu.up.cs301.ginrummy.GRState;
 import android.graphics.*;
 import android.view.MotionEvent;
 
-public class CardAnimator implements edu.up.cs301.animation.Animator {
+public class CardAnimator implements Animator {
 
 	private static final int FRAME_INTERVAL = 10;
 	private static final int BACKGROUND_COLOR = 0xff278734;
 
 	//card information
 	private ArrayList<CardPath> paths;
+	//the width and hieght of the card
+	private static PointF cardDimensions;
 	protected ArrayList<Card> cards;
 	protected ArrayList<RectF> cardPos;
 
 	//the positions of the decks
 	protected static PointF stockPos;
+	protected static PointF discardPos;
 	protected static PointF p1hand;
 	protected static PointF p2hand;
 	
-	public ArrayList<RectF> getCardPos() {
-		return cardPos;
-	}
-
-	public void setCardPos(ArrayList<RectF> cardPos) {
-		this.cardPos = cardPos;
-	}
-
-	public static PointF getStockPos() {
-		return stockPos;
-	}
-
-	public static void setStockPos(PointF stockPos) {
-		CardAnimator.stockPos = stockPos;
-	}
-
-	public static PointF getP1hand() {
-		return p1hand;
-	}
-
-	public static void setP1hand(PointF p1hand) {
-		CardAnimator.p1hand = p1hand;
-	}
-
-	public static PointF getP2hand() {
-		return p2hand;
-	}
-
-	public static void setP2hand(PointF p2hand) {
-		CardAnimator.p2hand = p2hand;
-	}
-
-	//the width and hieght of the card
-	private static PointF cardDimensions;
-
-	public static PointF getCardDimensions() {
-		return cardDimensions;
-	}
-
-	public static void setCardDimensions(PointF cardDimensions) {
-		CardAnimator.cardDimensions = cardDimensions;
-	}
-
 	//constructor
 	public CardAnimator() {
 		super();
@@ -157,4 +120,67 @@ public class CardAnimator implements edu.up.cs301.animation.Animator {
 		}
 
 	}
+	
+	/**
+	 * adds card info to this animator
+	 * @param c
+	 * @param pos
+	 */
+	public void add(Card c, RectF pos) {
+		cards.add(c);
+		cardPos.add(pos);
+	}
+
+	public ArrayList<RectF> getCardPos() {
+		return cardPos;
+	}
+
+	public void setCardPos(ArrayList<RectF> cardPos) {
+		this.cardPos = cardPos;
+	}
+
+	/**
+	 * return RELATIVE stock position
+	 * @return
+	 */
+	public static PointF getStockPos() {
+		return stockPos;
+	}
+
+	public static void setStockPos(PointF stockPos) {
+		CardAnimator.stockPos = stockPos;
+	}
+
+	public static PointF getDiscardPos() {
+		return discardPos;
+	}
+
+	public static void setDiscardPos(PointF discardPos) {
+		CardAnimator.discardPos = discardPos;
+	}
+
+	public static PointF getP1hand() {
+		return p1hand;
+	}
+
+	public static void setP1hand(PointF p1hand) {
+		CardAnimator.p1hand = p1hand;
+	}
+
+	public static PointF getP2hand() {
+		return p2hand;
+	}
+
+	public static void setP2hand(PointF p2hand) {
+		CardAnimator.p2hand = p2hand;
+	}
+
+	public static PointF getCardDimensions() {
+		return cardDimensions;
+	}
+
+	public static void setCardDimensions(PointF cardDimensions) {
+		CardAnimator.cardDimensions = cardDimensions;
+	}
+
 }
