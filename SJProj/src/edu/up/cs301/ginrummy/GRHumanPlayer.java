@@ -7,7 +7,7 @@ import android.graphics.*;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import edu.up.cs301.animation.*;
 import edu.up.cs301.card.*;
@@ -31,14 +31,22 @@ import edu.up.cs301.game.infoMsg.NotYourTurnInfo;
 public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// sizes and locations of card decks and cards, expressed as percentages
-	// of the screen height and width
-	private final static float CARD_HEIGHT_PERCENT = 50; // height of a card
-	private final static float CARD_WIDTH_PERCENT = 17; // width of a card
-	private final static float LEFT_BORDER_PERCENT = 4; // width of left border
-	private final static float RIGHT_BORDER_PERCENT = 20; // width of right border
-	private final static float VERTICAL_BORDER_PERCENT = 4; // width of top/bottom borders
+	// of the screen height and width TODO: Delete these too...
+//	private final static float CARD_HEIGHT_PERCENT = 50; // height of a card
+//	private final static float CARD_WIDTH_PERCENT = 17; // width of a card
+//	private final static float LEFT_BORDER_PERCENT = 4; // width of left border
+//	private final static float RIGHT_BORDER_PERCENT = 20; // width of right border
+//	private final static float VERTICAL_BORDER_PERCENT = 4; // width of top/bottom borders
 	
+	//how much a card on top of another should be offset by
 	private final static float STACKED_CARD_OFFSET = 0.001F;
+	
+	//the width and hieght of the card, and the size it should be grown or shrunk by
+	private final static PointF CARD_DIMENSIONS = new PointF(261, 379);
+	private static float CARD_DIMENSION_MODIFIER = 0.75f;
+	
+	//the background color
+	private static final int BACK_COLOR = 0xff277714;
 
 	// our game state
 	protected GRState state;
@@ -48,25 +56,19 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// the animation surface
 	private AnimationSurface surface;
-	int width = 0;
-	int height = 0;
+	
+	//the knock and exit buttons
+	Button knockButton;
+	Button exitButton;
 
 	//card information
 	private ArrayList<CardPath> paths;
 
-	//the width and hieght of the card
-	private static PointF cardDimensions;
-	private static float cardDimensionModifier = 0.75f;
-
 	//the positions of the decks
 	protected static PointF stockPos;
 	protected static PointF discardPos;
-	protected static PointF p1hand;
-	protected static PointF p2hand;
-
-	// the background color
-	private int backgroundColor;
-
+	protected static PointF playerHandPos[] = new PointF[2];
+	
 	/**
 	 * constructor
 	 * 
@@ -77,7 +79,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public GRHumanPlayer(String name) {
 		super(name);
-		backgroundColor = 0xff278734;
 	}
 
 	/**
@@ -127,21 +128,18 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		backCard.initImages(activity);
 		Card.initImages(activity);
 
+		//initialize our path list
 		paths = new ArrayList<CardPath>();
-
-		//set the default size of the card
-		cardDimensions = new PointF(261*cardDimensionModifier, 379*cardDimensionModifier);
 
 		//set the location of the decks
 		stockPos = new PointF(0.3f,0.25f);
 		discardPos = new PointF(0.5f,0.25f);
-		p1hand = new PointF(0.0f,0.75f);
-		p2hand = new PointF(0.0f,-0.25f);
+		playerHandPos[0] = new PointF(0.0f,0.75f);
+		playerHandPos[1] = new PointF(0.0f,-0.25f);
 
 		// if the state is not null, simulate having just received the state so that
 		// any state-related processing is done
 		if (state != null) {
-			state.getStock().add(new backCard());
 			receiveInfo(state);
 		}
 	}
@@ -168,7 +166,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 		the background color
 	 */
 	public int backgroundColor() {
-		return backgroundColor;
+		return BACK_COLOR;
 	}
 
 	/**
@@ -201,18 +199,21 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		//TODO Remove this!
 		state = new GRState();
-		state.getDiscard().cards.add(new backCard());
+		for (int i = 0; i < 10; i++){
+			state.getDiscard().cards.add(state.getStock().cards.get(0));
+			state.getStock().cards.remove(0);
+			state.getHand(0).cards.add(state.getStock().cards.get(0));
+			state.getStock().cards.remove(0);
+			state.getHand(1).cards.add(state.getStock().cards.get(0));
+			state.getStock().cards.remove(0);
+		}
 
 		// ignore if we have not yet received the game state
 		if (state == null) return;
 
-		// get the height and width of the animation surface
-		height = surface.getHeight();
-		width = surface.getWidth();
-
 		//get the information from the state
-		Deck decks[] = {state.getStock(),state.getDiscard(),state.getHand(0),state.getHand(1)};
-		PointF deckPos[] = {stockPos, discardPos, p1hand, p2hand};
+		Deck decks[] = {state.getStock(),state.getDiscard()};
+		PointF deckPos[] = {stockPos, discardPos};
 
 		//draw the static cards
 		for (int idx = 0; idx < decks.length; idx++){
@@ -222,8 +223,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				
 				//add a few pixels to the position
 				RectF position = adjustDimens(deckPos[idx]);
-				position.set(new RectF(position.left + STACKED_CARD_OFFSET*position.width()*n, position.top - STACKED_CARD_OFFSET*position.height()*n,
-						position.right + STACKED_CARD_OFFSET*position.width()*n, position.bottom - STACKED_CARD_OFFSET*position.height()*n));
+				position.set(new RectF(position.left + STACKED_CARD_OFFSET*position.width()*n,
+						position.top - STACKED_CARD_OFFSET*position.height()*n,
+						position.right + STACKED_CARD_OFFSET*position.width()*n,
+						position.bottom - STACKED_CARD_OFFSET*position.height()*n
+						));
 				
 				//draw the card
 				card.drawOn(canvas, position);
@@ -235,7 +239,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			int idx = paths.indexOf(path);
 
 			//advance the card along the path
-			RectF newPos = path.advance();
+			path.advance();
 
 			//draw the card
 			path.drawOn(canvas);
@@ -458,8 +462,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	private RectF adjustDimens(PointF location) {
 
 		//get the relative position of the card
-		float x = location.x * width;
-		float y = location.y * height;
+		float x = location.x * surface.getWidth();
+		float y = location.y * surface.getHeight();
 
 		//get the size of the card
 		PointF dimens = getCardDimensions();
@@ -474,6 +478,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @return
 	 */
 	private PointF getCardDimensions() {
-		return cardDimensions;
+		return new PointF(CARD_DIMENSIONS.x*CARD_DIMENSION_MODIFIER, CARD_DIMENSIONS.y*CARD_DIMENSION_MODIFIER);
 	}
 }
