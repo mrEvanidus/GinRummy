@@ -32,44 +32,55 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:layout_weight=".25"
-            android:text="Exit" />
+            android:layout_weight="1"
+            android:background="@drawable/btn_ginrummy_default"
+            android:minHeight="0dip"
+            android:text="Exit"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/opponentScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".25"
-            android:text="TextView" />
+            android:text="@string/oppScore"
+            android:textColor="@color/white" />
 
         <FrameLayout
             android:id="@+id/messagePaneFrame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" >
+            android:layout_weight="5" >
 
             <TextView
                 android:id="@+id/messagePane"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="TextView" />
+                android:text="@string/messagePane"
+                android:textColor="@color/white" />
+
         </FrameLayout>
 
         <TextView
             android:id="@+id/playerScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".25"
-            android:text="TextView" />
+            android:text="@string/myScore"
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/knockButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:layout_weight="0.25"
-            android:text="Knock" />
+            android:layout_weight="1"
+            android:background="@drawable/btn_ginrummy_default"
+            android:minHeight="0dip"
+            android:text="Knock"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+
     </LinearLayout>
 
 </LinearLayout>

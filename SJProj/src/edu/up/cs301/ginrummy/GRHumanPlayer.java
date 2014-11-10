@@ -1,14 +1,14 @@
 package edu.up.cs301.ginrummy;
 
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.graphics.*;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 import edu.up.cs301.animation.*;
 import edu.up.cs301.card.*;
 import edu.up.cs301.game.GameHumanPlayer;
@@ -32,19 +32,20 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// sizes and locations of card decks and cards, expressed as percentages
 	// of the screen height and width TODO: Delete these too...
-//	private final static float CARD_HEIGHT_PERCENT = 50; // height of a card
-//	private final static float CARD_WIDTH_PERCENT = 17; // width of a card
-//	private final static float LEFT_BORDER_PERCENT = 4; // width of left border
-//	private final static float RIGHT_BORDER_PERCENT = 20; // width of right border
-//	private final static float VERTICAL_BORDER_PERCENT = 4; // width of top/bottom borders
-	
+	//	private final static float CARD_HEIGHT_PERCENT = 50; // height of a card
+	//	private final static float CARD_WIDTH_PERCENT = 17; // width of a card
+	//	private final static float LEFT_BORDER_PERCENT = 4; // width of left border
+	//	private final static float RIGHT_BORDER_PERCENT = 20; // width of right border
+	//	private final static float VERTICAL_BORDER_PERCENT = 4; // width of top/bottom borders
+
 	//how much a card on top of another should be offset by
-	private final static float STACKED_CARD_OFFSET = 0.001F;
-	
+	private final static float STACKED_CARD_OFFSET = 0.005F;
+	private final static float HAND_CARD_OFFSET = 0.055F;
+
 	//the width and hieght of the card, and the size it should be grown or shrunk by
 	private final static PointF CARD_DIMENSIONS = new PointF(261, 379);
 	private static float CARD_DIMENSION_MODIFIER = 0.75f;
-	
+
 	//the background color
 	private static final int BACK_COLOR = 0xff277714;
 
@@ -56,19 +57,31 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// the animation surface
 	private AnimationSurface surface;
-	
+
 	//the knock and exit buttons
 	Button knockButton;
 	Button exitButton;
 
+	//the score text fields
+	TextView oppScore;
+	TextView myScore;
+
 	//card information
 	private ArrayList<CardPath> paths;
 
+	//dragged card
+	private Card draggedCard;
+
+	private PointF draggedCardPos;
+	
 	//the positions of the decks
 	protected static PointF stockPos;
 	protected static PointF discardPos;
-	protected static PointF playerHandPos[] = new PointF[2];
-	
+	//	protected static PointF playerHandPos[] = new PointF[2];
+
+	//player hand positions
+	protected ArrayList<PointF> p1handPos = new ArrayList<PointF>();
+	protected ArrayList<PointF> p2handPos = new ArrayList<PointF>();
 	/**
 	 * constructor
 	 * 
@@ -123,6 +136,27 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		surface = (AnimationSurface) activity.findViewById(R.id.animationSurface);
 		surface.setAnimator(this);
 
+		//initialize the buttons
+		knockButton = (Button)activity.findViewById(R.id.knockButton);
+		exitButton = (Button)activity.findViewById(R.id.exitButton);
+
+		//initialze the text fields
+		oppScore = (TextView)activity.findViewById(R.id.opponentScore);
+		myScore = (TextView)activity.findViewById(R.id.playerScore);
+
+		//set up knock button listener
+		knockButton.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				//game.sendAction(new GRKnockAction(this, knockCard));
+			}});
+		//set up exit button listener
+		exitButton.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				System.exit(0);
+			}});
+
 		//ERIC
 		// read in the card images
 		backCard.initImages(activity);
@@ -134,8 +168,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//set the location of the decks
 		stockPos = new PointF(0.3f,0.25f);
 		discardPos = new PointF(0.5f,0.25f);
-		playerHandPos[0] = new PointF(0.0f,0.75f);
-		playerHandPos[1] = new PointF(0.0f,-0.25f);
+
+		//		playerHandPos[0] = new PointF(0.0f,0.75f);
+		//		playerHandPos[1] = new PointF(0.6f,-0.25f);
 
 		// if the state is not null, simulate having just received the state so that
 		// any state-related processing is done
@@ -196,7 +231,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public void tick(Canvas canvas) {
 
-
 		//TODO Remove this!
 		state = new GRState();
 		for (int i = 0; i < 10; i++){
@@ -215,12 +249,12 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		Deck decks[] = {state.getStock(),state.getDiscard()};
 		PointF deckPos[] = {stockPos, discardPos};
 
-		//draw the static cards
-		for (int idx = 0; idx < decks.length; idx++){
+		//draw the stock and discard piles
+		for (int idx = decks.length-1; idx >= 0; idx--){
 			Deck deck = decks[idx];
 			for (Card card : deck.cards) {
 				int n = deck.cards.indexOf(card);
-				
+
 				//add a few pixels to the position
 				RectF position = adjustDimens(deckPos[idx]);
 				position.set(new RectF(position.left + STACKED_CARD_OFFSET*position.width()*n,
@@ -228,10 +262,46 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 						position.right + STACKED_CARD_OFFSET*position.width()*n,
 						position.bottom - STACKED_CARD_OFFSET*position.height()*n
 						));
-				
+
 				//draw the card
 				card.drawOn(canvas, position);
 			}
+		}
+
+		//draw the player's hands
+		p1handPos.clear();
+		for (Card card : state.getHand(0).cards) {
+
+			int n = state.getHand(0).cards.indexOf(card);
+			p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*n, 0.75f));
+
+			//add a few pixels to the position
+			//			RectF position = adjustDimens(p1handPos.get(n));
+			//			position.set(new RectF(position.left + HAND_CARD_OFFSET*position.width()*n,
+			//					position.top,
+			//					position.right + HAND_CARD_OFFSET*position.width()*n,
+			//					position.bottom
+			//					));
+
+			//draw the card
+			card.drawOn(canvas, adjustDimens(p1handPos.get(n)));
+		}
+
+		p2handPos.clear();
+		//draw the opponent's hand
+		for (Card card : state.getHand(1).cards) {
+			int n = state.getHand(1).cards.indexOf(card);
+			p2handPos.add(new PointF(0.55f - HAND_CARD_OFFSET*n, -0.25f));
+			//add a few pixels to the position
+			//			RectF position = adjustDimens(p2handPos.get(n));
+			//			position.set(new RectF(position.left - HAND_CARD_OFFSET*position.width()*n,
+			//					position.top,
+			//					position.right - HAND_CARD_OFFSET*position.width()*n,
+			//					position.bottom
+			//					));
+
+			//draw the card
+			card.drawOn(canvas, adjustDimens(p2handPos.get(n)));
 		}
 
 		//advance and draw the card paths
@@ -250,7 +320,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				paths.remove(idx);
 			}
 		}
-
+		
+		//draw the dragged card
+		if (draggedCard != null && draggedCardPos != null) {
+			draggedCard.drawOn(canvas, adjustDimens(draggedCardPos));
+		}
 
 		//		// draw the opponent's cards, face down
 		//		RectF oppTopLocation = opponentTopCardLocation(); // drawing size/location
@@ -366,24 +440,42 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public void onTouch(MotionEvent event) {
 
-		//		// ignore everything except down-touch events
-		//		if (event.getAction() != MotionEvent.ACTION_DOWN) return;
-		//
-		//		// get the location of the touch on the surface
-		//		int touchX = (int) event.getX();
-		//		int touchY = (int) event.getY();
-		//
+		// get the location of the touch on the surface
+		int touchX = (int) event.getX();
+		int touchY = (int) event.getY();
+		// ignore everything except down-touch events
+		if (event.getAction() == MotionEvent.ACTION_DOWN){
+	
+			for (PointF p : p1handPos) {
+				if (adjustDimens(p).contains(touchX, touchY)) {
+					int i = p1handPos.indexOf(p);
+					//select a card to be dragged
+					draggedCard = state.getHand(0).cards.get(i);
+				}
+			}
+		}
+		else if (event.getAction() == MotionEvent.ACTION_UP) {
+			draggedCard = null;
+			draggedCardPos = null;
+		}
+		else {
+			draggedCardPos = new PointF(touchX, touchY);
+		}
+
 		//		if (adjustDimens(stockPos).contains(touchX, touchY)) {
 		//			//draw from the stock pile
 		//			game.sendAction(new GRDrawAction(this, true));
 		//		}
-		//		//		else if (middleTopCardLoc.contains(x, y)) {
-		//		//			// it's on the middlel pile: we're slapping a card: send
-		//		//			// action to the game
-		//		//			game.sendAction(new GRSlapAction(this));
-		//		//		}
+		//		else if (adjustDimens(discardPos).contains(touchX, touchY)) {
+		//			game.sendAction(new GRDrawAction(this, false));
+		//		}
+		//		else if (middleTopCardLoc.contains(x, y)) {
+		//			// it's on the middlel pile: we're slapping a card: send
+		//			// action to the game
+		//			game.sendAction(new GRSlapAction(this));
+		//		}
 		//		else {
-		//			// illegal touch-location: flash for 1/20 second
+		//			//illegal touch-location: flash for 1/20 second
 		//			surface.flash(Color.RED, 50);
 		//		}
 	}
