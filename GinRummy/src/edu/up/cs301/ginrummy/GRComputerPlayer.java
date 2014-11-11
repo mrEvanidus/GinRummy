@@ -38,6 +38,9 @@ public class GRComputerPlayer extends GameComputerPlayer {
     public GRComputerPlayer(String name) {
         // invoke superclass constructor
         super(name);
+        randDeck = new Random();
+        randCard = new Random();
+        
     }
     /**
      * callback method, called when we receive a message, typically from
@@ -60,6 +63,13 @@ public class GRComputerPlayer extends GameComputerPlayer {
     		if(savedState.getPhase() == savedState.DRAW_PHASE){
     			// Draw a card from a random pile
     			boolean rd = randDeck.nextBoolean();
+    			
+    			try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     			game.sendAction(new GRDrawAction(this,rd));
     		} 
     		//DISCARD PHASE
@@ -67,6 +77,13 @@ public class GRComputerPlayer extends GameComputerPlayer {
     			// Discard a random card
     			int rc = randCard.nextInt(10);
     			Card randomCard = savedState.getHand(THIS_PLAYER).cards.get(rc);
+    			
+    			try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     			game.sendAction(new GRDiscardAction(this, randomCard));
     		}
     	}

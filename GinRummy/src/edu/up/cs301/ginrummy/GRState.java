@@ -66,7 +66,8 @@ public class GRState extends GameState
     	playerMelds = new ArrayList<ArrayList<Meld>>();
     	
     	// randomly pick the player who starts
-    	whoseTurn = (int)(2*Math.random());
+    	//whoseTurn = (int)(2*Math.random());
+    	whoseTurn = 1;
     	turnPhase = DRAW_PHASE;
     	
     	playerHands[0] = new Deck();
@@ -83,7 +84,14 @@ public class GRState extends GameState
     	discard = new Deck();
     	
     	stock.add52();
+    	stock.shuffle();
     	
+    	for(int i = 0; i < 10; i++){
+    		drawFrom(true,0);
+    		drawFrom(true,1);
+    	}
+    	
+    	stock.moveTopCardTo(discard);
     }
     
     /**
@@ -94,8 +102,8 @@ public class GRState extends GameState
     public GRState(GRState orig) {
     	// set index of player whose turn it is
     	whoseTurn = orig.whoseTurn;
-    	playerHands[0] = orig.playerHands[0];
-    	playerHands[1] = orig.playerHands[1];
+    	playerHands[0] = new Deck(orig.playerHands[0]);
+    	playerHands[1] = new Deck(orig.playerHands[1]);
     	stock = orig.stock;
     	discard = orig.discard;
     	turnPhase = orig.turnPhase;

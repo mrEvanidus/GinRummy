@@ -68,11 +68,11 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		// make a copy of the state; null out all cards except for the
 		// top card in the middle deck
 		GRState stateForPlayer = new GRState(state); // copy of state
-		//stateForPlayer.nullCardsFor(getPlayerIdx(p)); // put nulls except for visible card
+		stateForPlayer.nullCardsFor(getPlayerIdx(p)); // put nulls except for visible card
 		
 		//TODO Fix
 		// send the modified copy of the state to the player
-		p.sendInfo(state);
+		p.sendInfo(stateForPlayer);
 	}
 	
 	/**
