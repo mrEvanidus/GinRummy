@@ -22,6 +22,6 @@ public class GRDrawAction extends GRMoveAction {
 	}
 
 	public boolean fromStock(){
-		return fromStock();
+		return fromStock;
 	}
 }

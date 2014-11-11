@@ -58,6 +58,8 @@ public class GRComputerPlayer extends GameComputerPlayer {
     	if(savedState.whoseTurn() == THIS_PLAYER){
     		//DRAW PHASE
     		if(savedState.getPhase() == savedState.DRAW_PHASE){
+    			
+    			if (randDeck == null) return;
     			// Draw a card from a random pile
     			boolean rd = randDeck.nextBoolean();
     			game.sendAction(new GRDrawAction(this,rd));

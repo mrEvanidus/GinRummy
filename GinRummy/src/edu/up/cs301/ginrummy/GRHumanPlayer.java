@@ -65,6 +65,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	//the score text fields
 	TextView oppScore;
 	TextView myScore;
+	
+	//the message pane
+	TextView messagePane;
 
 	//card information
 	private ArrayList<CardPath> paths;
@@ -73,7 +76,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	private Card draggedCard;
 
 	private PointF draggedCardPos;
-	
+
 	//the positions of the decks
 	protected static PointF stockPos;
 	protected static PointF discardPos;
@@ -143,6 +146,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//initialze the text fields
 		oppScore = (TextView)activity.findViewById(R.id.opponentScore);
 		myScore = (TextView)activity.findViewById(R.id.playerScore);
+		messagePane = (TextView)activity.findViewById(R.id.messagePane);
 
 		//set up knock button listener
 		knockButton.setOnClickListener(new OnClickListener(){
@@ -233,6 +237,14 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		// ignore if we have not yet received the game state
 		if (state == null) return;
+		
+		//post a message to our message pane
+		if (state.getPhase() == GRState.DRAW_PHASE) {
+			messagePane.setText("Draw a card.");
+		}
+		else {
+			messagePane.setText("Discard a card.");
+		}
 
 		//get the information from the state
 		Deck decks[] = {state.getStock(),state.getDiscard()};
@@ -309,7 +321,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				paths.remove(idx);
 			}
 		}
-		
+
 		//draw the dragged card
 		if (draggedCard != null && draggedCardPos != null) {
 			draggedCard.drawOn(canvas, adjustDimens(draggedCardPos));
@@ -427,37 +439,38 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 		the motion-event
 	 * @return 
 	 */
-	public void onTouch(MotionEvent event) {
+	public void onTouch(MotionEvent event) { 
 
 		// get the location of the touch on the surface
 		int touchX = (int) event.getX();
 		int touchY = (int) event.getY();
-		// ignore everything except down-touch events
+
+		//on down touch events:
 		if (event.getAction() == MotionEvent.ACTION_DOWN){
-	
-			for (PointF p : p1handPos) {
-				if (adjustDimens(p).contains(touchX, touchY)) {
-					int i = p1handPos.indexOf(p);
-					//select a card to be dragged
-					draggedCard = state.getHand(0).cards.get(i);
-				}
+
+			//			for (PointF p : p1handPos) {
+			//				if (adjustDimens(p).contains(touchX, touchY)) {
+			//					int i = p1handPos.indexOf(p);
+			//					//select a card to be dragged
+			//					draggedCard = state.getHand(0).cards.get(i);
+			//				}
+			//			}
+			//		}
+			//		else if (event.getAction() == MotionEvent.ACTION_UP) {
+			//			draggedCard = null;
+			//			draggedCardPos = null;
+			//		}
+			//		else {
+			//			draggedCardPos = new PointF(touchX, touchY);
+			//		}
+			if (adjustDimens(stockPos).contains(touchX, touchY)) {
+				//draw from the stock pile
+				game.sendAction(new GRDrawAction(this, true));
+			}
+			else if (adjustDimens(discardPos).contains(touchX, touchY)) {
+				game.sendAction(new GRDrawAction(this, false));
 			}
 		}
-		else if (event.getAction() == MotionEvent.ACTION_UP) {
-			draggedCard = null;
-			draggedCardPos = null;
-		}
-		else {
-			draggedCardPos = new PointF(touchX, touchY);
-		}
-
-		//		if (adjustDimens(stockPos).contains(touchX, touchY)) {
-		//			//draw from the stock pile
-		//			game.sendAction(new GRDrawAction(this, true));
-		//		}
-		//		else if (adjustDimens(discardPos).contains(touchX, touchY)) {
-		//			game.sendAction(new GRDrawAction(this, false));
-		//		}
 		//		else if (middleTopCardLoc.contains(x, y)) {
 		//			// it's on the middlel pile: we're slapping a card: send
 		//			// action to the game
