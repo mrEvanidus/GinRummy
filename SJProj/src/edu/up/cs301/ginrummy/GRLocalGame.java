@@ -1,7 +1,6 @@
 package edu.up.cs301.ginrummy;
 
 import android.util.Log;
-import edu.up.cs301.card.Rank;
 import edu.up.cs301.game.GamePlayer;
 import edu.up.cs301.game.LocalGame;
 import edu.up.cs301.game.actionMsg.GameAction;

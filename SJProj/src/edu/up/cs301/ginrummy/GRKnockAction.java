@@ -1,5 +1,6 @@
 package edu.up.cs301.ginrummy;
 
+import android.view.View.OnClickListener;
 import edu.up.cs301.card.Card;
 import edu.up.cs301.game.GamePlayer;
 
@@ -16,7 +17,7 @@ public class GRKnockAction extends GRMoveAction {
 		super(player);
 		knockCard = kc;
 	}
-	
+
 	@Override
 	public boolean isKnock() {
 		return true;
