@@ -283,7 +283,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			int n = state.getHand(1).cards.indexOf(card);
 			p2handPos.add(new PointF(0.55f - HAND_CARD_OFFSET*n, -0.25f));
 			//add a few pixels to the position
-
+			
 			//draw the card
 			card.drawOn(canvas, adjustDimens(p2handPos.get(n)));
 		}
@@ -327,26 +327,21 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//on down touch events:
 		if (event.getAction() == MotionEvent.ACTION_DOWN){
 
-			//check for discard
 			if (state.getPhase() == GRState.DISCARD_PHASE){
-				//the card to discard
-				Card discard = null;
 				for (PointF p : p1handPos) {
-
+					Card discard;
 					//check each card hand position to see if it was touched
 					if (adjustDimens(p).contains(touchX, touchY)) {
 						int i = p1handPos.indexOf(p);
 
 						//select the card
-						discard = state.getHand(0).cards.get(i);
+						discard = state.getHand(0).cards.get(i));
+						
 					}
-
+					//discard the selected card
+					game.sendAction(new GRDiscardAction(this, discard));
 				}
-				//discard the selected card
-				if (discard != null) game.sendAction(new GRDiscardAction(this, discard));
 			}
-			
-			//check for draw
 			else if (state.getPhase() == GRState.DRAW_PHASE) {
 				if (adjustDimens(stockPos).contains(touchX, touchY)) {
 					//draw from the stock pile
