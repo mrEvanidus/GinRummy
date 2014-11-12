@@ -282,7 +282,13 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			int n = state.getHand(1).cards.indexOf(card);
 			p2handPos.add(new PointF(0.55f - HAND_CARD_OFFSET*n, -0.25f));
 			//add a few pixels to the position
-			
+			//			RectF position = adjustDimens(p2handPos.get(n));
+			//			position.set(new RectF(position.left - HAND_CARD_OFFSET*position.width()*n,
+			//					position.top,
+			//					position.right - HAND_CARD_OFFSET*position.width()*n,
+			//					position.bottom
+			//					));
+
 			//draw the card
 			card.drawOn(canvas, adjustDimens(p2handPos.get(n)));
 		}

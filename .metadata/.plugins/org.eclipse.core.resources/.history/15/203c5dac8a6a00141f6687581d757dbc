@@ -64,12 +64,12 @@ public class GRComputerPlayer extends GameComputerPlayer {
     			// Draw a card from a random pile
     			boolean rd = randDeck.nextBoolean();
     			
-//    			try {
-//					Thread.sleep(2000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+    			try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     			game.sendAction(new GRDrawAction(this,rd));
     		} 
     		//DISCARD PHASE
@@ -78,12 +78,12 @@ public class GRComputerPlayer extends GameComputerPlayer {
     			int rc = randCard.nextInt(10);
     			Card randomCard = savedState.getHand(THIS_PLAYER).cards.get(rc);
     			
-//    			try {
-//					Thread.sleep(2000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+    			try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     			game.sendAction(new GRDiscardAction(this, randomCard));
     		}
     	}
