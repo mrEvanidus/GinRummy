@@ -104,8 +104,8 @@ public class GRState extends GameState
     	whoseTurn = orig.whoseTurn;
     	playerHands[0] = new Deck(orig.playerHands[0]);
     	playerHands[1] = new Deck(orig.playerHands[1]);
-    	stock = orig.stock;
-    	discard = orig.discard;
+    	stock = new Deck(orig.stock);
+    	discard = new Deck(orig.discard);
     	turnPhase = orig.turnPhase;
     	rounds = orig.rounds;
     	playerScores[0] = orig.playerScores[0];

@@ -34,7 +34,7 @@ public class GRState extends GameState
     
 	private Deck[] playerHands = new Deck[2];
 	private int[] playerScores = new int[2];
-	private ArrayList<Meld>[] playerMelds = new ArrayList<Meld>()[2];
+	private ArrayList<ArrayList<Meld>> playerMelds;
 	
     // whose turn is it to turn a card?
     private int whoseTurn;
@@ -61,8 +61,13 @@ public class GRState extends GameState
      *  
      */
     public GRState() {
+    	
+    	//initialize the meld lists
+    	playerMelds = new ArrayList<ArrayList<Meld>>();
+    	
     	// randomly pick the player who starts
-    	whoseTurn = (int)(2*Math.random());
+    	//whoseTurn = (int)(2*Math.random());
+    	whoseTurn = 1;
     	turnPhase = DRAW_PHASE;
     	
     	playerHands[0] = new Deck();
@@ -79,7 +84,14 @@ public class GRState extends GameState
     	discard = new Deck();
     	
     	stock.add52();
+    	stock.shuffle();
     	
+    	for(int i = 0; i < 10; i++){
+    		drawFrom(true,0);
+    		drawFrom(true,1);
+    	}
+    	
+    	stock.moveTopCardTo(discard);
     }
     
     /**
@@ -90,8 +102,8 @@ public class GRState extends GameState
     public GRState(GRState orig) {
     	// set index of player whose turn it is
     	whoseTurn = orig.whoseTurn;
-    	playerHands[0] = orig.playerHands[0];
-    	playerHands[1] = orig.playerHands[1];
+    	playerHands[0] = new Deck(orig.playerHands[0]);
+    	playerHands[1] = new Deck(orig.playerHands[1]);
     	stock = orig.stock;
     	discard = orig.discard;
     	turnPhase = orig.turnPhase;
@@ -203,7 +215,7 @@ public class GRState extends GameState
     				c.setID = ID;
     				val = c.getRank().value(1);
         		}
-				playerMelds[pidx].add(new Meld(a, true, val*a.size(), ID));
+				playerMelds.get(pidx).add(new Meld(a, true, val*a.size(), ID));
 				ID++;
 			}
     		
@@ -256,7 +268,7 @@ public class GRState extends GameState
     						runCount += c2.getRank().value(1);
         					c2.runID = ID;
         				}
-	    				playerMelds[pidx].add(new Meld(temp, false, runCount, ID));
+	    				playerMelds.get(pidx).add(new Meld(temp, false, runCount, ID));
 	    				ID++;
 	    				runCount = 0;
 					}

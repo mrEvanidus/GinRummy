@@ -70,7 +70,6 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		GRState stateForPlayer = new GRState(state); // copy of state
 		stateForPlayer.nullCardsFor(getPlayerIdx(p)); // put nulls except for visible card
 		
-		//TODO Fix
 		// send the modified copy of the state to the player
 		p.sendInfo(stateForPlayer);
 	}
@@ -153,6 +152,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			}
 		}
 		
+		sendAllUpdatedState();
 		// return true, because the move was successful if we get here
 		return true;
 	}
