@@ -11,13 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import edu.up.cs301.animation.*;
 import edu.up.cs301.card.*;
-import edu.up.cs301.game.GameHumanPlayer;
-import edu.up.cs301.game.GameMainActivity;
-import edu.up.cs301.game.R;
-import edu.up.cs301.game.infoMsg.GameInfo;
-import edu.up.cs301.game.infoMsg.GameState;
-import edu.up.cs301.game.infoMsg.IllegalMoveInfo;
-import edu.up.cs301.game.infoMsg.NotYourTurnInfo;
+import edu.up.cs301.game.*;
+import edu.up.cs301.game.infoMsg.*;
 
 /**
  * A GUI that allows a human to play Slapjack. Moves are made by clicking
@@ -27,27 +22,24 @@ import edu.up.cs301.game.infoMsg.NotYourTurnInfo;
  * 
  * @author Steven R. Vegdahl
  * @version July 2013
+ * 
+ * @author Jaimiey Sears
+ * @version November 2014
  */
 public class GRHumanPlayer extends GameHumanPlayer implements Animator {
-
-	// sizes and locations of card decks and cards, expressed as percentages
-	// of the screen height and width TODO: Delete these too...
-	//	private final static float CARD_HEIGHT_PERCENT = 50; // height of a card
-	//	private final static float CARD_WIDTH_PERCENT = 17; // width of a card
-	//	private final static float LEFT_BORDER_PERCENT = 4; // width of left border
-	//	private final static float RIGHT_BORDER_PERCENT = 20; // width of right border
-	//	private final static float VERTICAL_BORDER_PERCENT = 4; // width of top/bottom borders
 
 	//how much a card on top of another should be offset by
 	private final static float STACKED_CARD_OFFSET = 0.005F;
 	private final static float HAND_CARD_OFFSET = 0.055F;
 
-	//the width and hieght of the card, and the size it should be grown or shrunk by
+	//the width and height of the card images
 	private final static PointF CARD_DIMENSIONS = new PointF(261, 379);
+	// the size a card should be grown or shrunk by
+	//TODO: for device cross-compatibility, make this change based on canvas size
 	private static float CARD_DIMENSION_MODIFIER = 0.75f;
 
-	//the background color
-	private static final int BACK_COLOR = 0xff277714;
+	//colors used
+	public static final int FELT_GREEN = 0xff277714;
 
 	// our game state
 	protected GRState state;
@@ -59,42 +51,36 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	private AnimationSurface surface;
 
 	//the knock and exit buttons
-	Button knockButton;
-	Button exitButton;
+	Button knockButton, exitButton;
 
-	//the score text fields
-	TextView oppScore;
-	TextView myScore;
-	
-	//the message pane
-	TextView messagePane;
+	//the score and message pane text fields
+	private TextView oppScore, myScore, messagePane;
 
 	//card information
 	private ArrayList<CardPath> paths;
 
 	//dragged card
 	private Card draggedCard;
-
 	private PointF draggedCardPos;
 
 	//the positions of the decks
-	protected static PointF stockPos;
-	protected static PointF discardPos;
+	protected static PointF stockPos, discardPos;
+
 	//	protected static PointF playerHandPos[] = new PointF[2];
 
 	//player hand positions
-	protected ArrayList<PointF> p1handPos = new ArrayList<PointF>();
-	protected ArrayList<PointF> p2handPos = new ArrayList<PointF>();
+	protected ArrayList<PointF> p1handPos, p2handPos;
+
 	/**
 	 * constructor
 	 * 
 	 * @param name
 	 * 		the player's name
-	 * @param bkColor
-	 * 		the background color
 	 */
 	public GRHumanPlayer(String name) {
 		super(name);
+		p1handPos = new ArrayList<PointF>();
+		p2handPos = new ArrayList<PointF>();
 	}
 
 	/**
@@ -105,7 +91,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	@Override
 	public void receiveInfo(GameInfo info) {
-		Log.i("SJComputerPlayer", "receiving updated state ("+info.getClass()+")");
+		Log.i("GRComputerPlayer", "receiving updated state ("+info.getClass()+")");
 		if (info instanceof IllegalMoveInfo || info instanceof NotYourTurnInfo) {
 			// if we had an out-of-turn or illegal move, flash the screen
 			surface.flash(Color.RED, 50);
@@ -143,7 +129,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		knockButton = (Button)activity.findViewById(R.id.knockButton);
 		exitButton = (Button)activity.findViewById(R.id.exitButton);
 
-		//initialze the text fields
+		//initialize the text fields
 		oppScore = (TextView)activity.findViewById(R.id.opponentScore);
 		myScore = (TextView)activity.findViewById(R.id.playerScore);
 		messagePane = (TextView)activity.findViewById(R.id.messagePane);
@@ -151,17 +137,16 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//set up knock button listener
 		knockButton.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				// TODO Knock button handler
 				//game.sendAction(new GRKnockAction(this, knockCard));
 			}});
 		//set up exit button listener
 		exitButton.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				// TODO Exit button handler
 				System.exit(0);
 			}});
 
-		//ERIC
 		// read in the card images
 		backCard.initImages(activity);
 		Card.initImages(activity);
@@ -172,6 +157,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//set the location of the decks
 		stockPos = new PointF(0.3f,0.25f);
 		discardPos = new PointF(0.5f,0.25f);
+
 
 		//		playerHandPos[0] = new PointF(0.0f,0.75f);
 		//		playerHandPos[1] = new PointF(0.6f,-0.25f);
@@ -193,7 +179,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	/**
 	 * @return
-	 * 		the amimation interval, in milliseconds
+	 * 		the animation interval, in milliseconds
 	 */
 	public int interval() {
 		// 1/20 of a second
@@ -205,7 +191,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 		the background color
 	 */
 	public int backgroundColor() {
-		return BACK_COLOR;
+		return FELT_GREEN;
 	}
 
 	/**
@@ -237,13 +223,16 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		// ignore if we have not yet received the game state
 		if (state == null) return;
-		
+
+		//TODO: figure out why the messagePane and scorePanes are always null.
 		//post a message to our message pane
-		if (state.getPhase() == GRState.DRAW_PHASE) {
-			messagePane.setText("Draw a card.");
-		}
-		else {
-			messagePane.setText("Discard a card.");
+		if (messagePane == null){
+			if (state.getPhase() == GRState.DRAW_PHASE) {
+				messagePane.setText("Draw a card.");
+			}
+			else {
+				messagePane.setText("Discard a card.");
+			}
 		}
 
 		//get the information from the state
@@ -326,111 +315,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		if (draggedCard != null && draggedCardPos != null) {
 			draggedCard.drawOn(canvas, adjustDimens(draggedCardPos));
 		}
-
-		//		// draw the opponent's cards, face down
-		//		RectF oppTopLocation = opponentTopCardLocation(); // drawing size/location
-		//		drawCardBacks(g, oppTopLocation,
-		//				0.0025f*width, -0.01f*height, state.getDeck(1-this.playerNum).size());
-
-		//		// draw my cards, face down
-		//		RectF thisTopLocation = thisPlayerTopCardLocation(); // drawing size/location
-		//		drawCardBacks(g, thisTopLocation,
-		//				0.0025f*width, -0.01f*height, state.getDeck(this.playerNum).size());
-
-		//		// draw a red bar to denote which player is to play (flip) a card
-		//		RectF currentPlayerRect =
-		//				state.toPlay() == this.playerNum ? thisTopLocation : oppTopLocation;
-		//		RectF turnIndicator =
-		//				new RectF(currentPlayerRect.left,
-		//						currentPlayerRect.bottom,
-		//						currentPlayerRect.right,
-		//					height);
-		//		Paint paint = new Paint();
-		//		paint.setColor(Color.RED);
-		//		g.drawRect(turnIndicator, paint);
 	}
-
-	//	/**
-	//	 * @return
-	//	 * 		the rectangle that represents the location on the drawing
-	//	 * 		surface where the top card in the opponent's deck is to
-	//	 * 		be drawn
-	//	 */
-	//	private RectF opponentTopCardLocation() {
-	//		// near the left-bottom of the drawing surface, based on the height
-	//		// and width, and the percentages defined above
-	//		int width = surface.getWidth();
-	//		int height = surface.getHeight();
-	//		return new RectF(LEFT_BORDER_PERCENT*width/100f,
-	//				(100-VERTICAL_BORDER_PERCENT-CARD_HEIGHT_PERCENT)*height/100f,
-	//				(LEFT_BORDER_PERCENT+CARD_WIDTH_PERCENT)*width/100f,
-	//				(100-VERTICAL_BORDER_PERCENT)*height/100f);
-	//	}
-
-	//	/**
-	//	 * @return
-	//	 * 		the rectangle that represents the location on the drawing
-	//	 * 		surface where the top card in the current player's deck is to
-	//	 * 		be drawn
-	//	 */	
-	//	private RectF thisPlayerTopCardLocation() {
-	//		// near the right-bottom of the drawing surface, based on the height
-	//		// and width, and the percentages defined above
-	//		int width = surface.getWidth();
-	//		int height = surface.getHeight();
-	//		return new RectF((100-RIGHT_BORDER_PERCENT-CARD_WIDTH_PERCENT)*width/100f,
-	//				(100-VERTICAL_BORDER_PERCENT-CARD_HEIGHT_PERCENT)*height/100f,
-	//				(100-RIGHT_BORDER_PERCENT)*width/100f,
-	//				(100-VERTICAL_BORDER_PERCENT)*height/100f);
-	//	}
-
-	//	/**
-	//	 * @return TODO DELETE WHEN DONE
-	//	 * 		the rectangle that represents the location on the drawing
-	//	 * 		surface where the top card in the middle pile is to
-	//	 * 		be drawn
-	//	 */	
-	//	private RectF middlePileTopCardLocation() {
-	//		// near the middle-bottom of the drawing surface, based on the height
-	//		// and width, and the percentages defined above
-	//		int height = surface.getHeight();
-	//		int width = surface.getWidth();
-	//		float rectLeft = (100-CARD_WIDTH_PERCENT+LEFT_BORDER_PERCENT-RIGHT_BORDER_PERCENT)*width/200;
-	//		float rectRight = rectLeft + width*CARD_WIDTH_PERCENT/100;
-	//		float rectTop = (100-VERTICAL_BORDER_PERCENT-CARD_HEIGHT_PERCENT)*height/100f;
-	//		float rectBottom = (100-VERTICAL_BORDER_PERCENT)*height/100f;
-	//		return new RectF(rectLeft, rectTop, rectRight, rectBottom);
-	//	}
-
-	//	/** TODO delete when done
-	//	 * draws a sequence of card-backs, each offset a bit from the previous one, so that all can be
-	//	 * seen to some extent
-	//	 * 
-	//	 * @param g
-	//	 * 		the canvas to draw on
-	//	 * @param topRect
-	//	 * 		the rectangle that defines the location of the top card (and the size of all
-	//	 * 		the cards
-	//	 * @param deltaX
-	//	 * 		the horizontal change between the drawing position of two consecutive cards
-	//	 * @param deltaY
-	//	 * 		the vertical change between the drawing position of two consecutive cards
-	//	 * @param numCards
-	//	 * 		the number of card-backs to draw
-	//	 */
-	//	private void drawCardBacks(Canvas g, RectF topRect, float deltaX, float deltaY,
-	//			int numCards) {
-	//		// loop through from back to front, drawing a card-back in each location
-	//		for (int i = numCards-1; i >= 0; i--) {
-	//			// determine theh position of this card's top/left corner
-	//			float left = topRect.left + i*deltaX;
-	//			float top = topRect.top + i*deltaY;
-	//			// draw a card-back (hence null) into the appropriate rectangle
-	//			drawCard(g,
-	//					new RectF(left, top, left + topRect.width(), top + topRect.height()),
-	//					null);
-	//		}
-	//	}
 
 	/**
 	 * callback method: we have received a touch on the animation surface
@@ -448,38 +333,28 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//on down touch events:
 		if (event.getAction() == MotionEvent.ACTION_DOWN){
 
-			//			for (PointF p : p1handPos) {
-			//				if (adjustDimens(p).contains(touchX, touchY)) {
-			//					int i = p1handPos.indexOf(p);
-			//					//select a card to be dragged
-			//					draggedCard = state.getHand(0).cards.get(i);
-			//				}
-			//			}
-			//		}
-			//		else if (event.getAction() == MotionEvent.ACTION_UP) {
-			//			draggedCard = null;
-			//			draggedCardPos = null;
-			//		}
-			//		else {
-			//			draggedCardPos = new PointF(touchX, touchY);
-			//		}
-			if (adjustDimens(stockPos).contains(touchX, touchY)) {
-				//draw from the stock pile
-				game.sendAction(new GRDrawAction(this, true));
+			if (state.getPhase() == GRState.DISCARD_PHASE){
+				for (PointF p : p1handPos) {
+					//check each card hand position to see if it was touched
+					if (adjustDimens(p).contains(touchX, touchY)) {
+						int i = p1handPos.indexOf(p);
+
+						//discard the selected card
+						game.sendAction(new GRDiscardAction(this, state.getHand(0).cards.get(i)));
+					}
+				}
 			}
-			else if (adjustDimens(discardPos).contains(touchX, touchY)) {
-				game.sendAction(new GRDrawAction(this, false));
+			else if (state.getPhase() == GRState.DRAW_PHASE) {
+				if (adjustDimens(stockPos).contains(touchX, touchY)) {
+					//draw from the stock pile
+					game.sendAction(new GRDrawAction(this, true));
+				}
+				else if (adjustDimens(discardPos).contains(touchX, touchY)) {
+					//draw from the discard pile
+					game.sendAction(new GRDrawAction(this, false));
+				}
 			}
 		}
-		//		else if (middleTopCardLoc.contains(x, y)) {
-		//			// it's on the middlel pile: we're slapping a card: send
-		//			// action to the game
-		//			game.sendAction(new GRSlapAction(this));
-		//		}
-		//		else {
-		//			//illegal touch-location: flash for 1/20 second
-		//			surface.flash(Color.RED, 50);
-		//		}
 	}
 
 	//	/** TODO: delete this when done
@@ -552,7 +427,14 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	//		return new RectF(left, top, right, bottom);
 	//	}
 
-
+	/**
+	 * 
+	 * @param location
+	 * 			a PointF which describes the location(in screen percent)
+	 * 			where the card will be drawn 
+	 * @return
+	 * 			a RectF describing the boundary where the card will be drawn
+	 */
 	private RectF adjustDimens(PointF location) {
 
 		//get the relative position of the card
@@ -570,6 +452,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	/**
 	 * gets the size (in pixels) of our cards
 	 * @return
+	 * 		a PointF containing the scaled size of the cards.
 	 */
 	private PointF getCardDimensions() {
 		return new PointF(CARD_DIMENSIONS.x*CARD_DIMENSION_MODIFIER, CARD_DIMENSIONS.y*CARD_DIMENSION_MODIFIER);

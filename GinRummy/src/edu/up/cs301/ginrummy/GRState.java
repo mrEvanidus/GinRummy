@@ -78,12 +78,12 @@ public class GRState extends GameState
     	rounds = 0;
     	ID = 1;
     	
-    	gameMessage = null;
+    	gameMessage = "Player "+whoseTurn+"'s Turn.";
     	stock = new Deck();
     	discard = new Deck();
     	
     	stock.add52();
-    	
+    	/*deal(10); TODO:implement this method please!*/
     }
     
     /**
@@ -149,6 +149,7 @@ public class GRState extends GameState
     	}
     }
     
+    //TODO WHAT IS THIS ??? Comments Plz
     public int genHand(int idx, Deck hand){
     	
     	Deck handcopy = hand;
@@ -351,11 +352,11 @@ public class GRState extends GameState
     
     public void nullCardsFor(int playeridx){
     	if(playeridx == 0){
-    		playerHands[1].nullifyDeck();
+    		//playerHands[1].nullifyDeck();
     		stock.nullifyDeck();
     		// TODO nullify all but top of discard
     	}else if(playeridx == 1){
-    		playerHands[0].nullifyDeck();
+    		//playerHands[0].nullifyDeck();
     		stock.nullifyDeck();
     	}
     	
