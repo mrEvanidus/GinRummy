@@ -395,10 +395,10 @@ public class GRState extends GameState
   * ERIC: New method that sends a card to the discard pile. This can be called when the player
   * has been dragging a card to discard and hovers it over the discard pile. 
   */
-    public boolean releaseCard(Card disCard, int playeridx){
+    public boolean takeFromPlayer(Card disCard, int playeridx){
     	
-    	discard.add(disCard);
-    	//playerHands[playeridx].remove(disCard);
+    	//discard.add(disCard);
+    	playerHands[playeridx].remove(disCard);
     	return true;
     }
     

@@ -62,15 +62,15 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	//dragged card
 	private Card draggedCard;
 	private PointF draggedCardPos;
-	
+
 	//ERIC: touched Coordinates
 	private int touchedX;
 	private int touchedY;
 
 	//ERIC: card being moved
 	private Card touchedCard;
-	
-	
+
+
 
 	//the positions of the decks
 	protected static PointF stockPos, discardPos;
@@ -245,8 +245,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			}
 		}
 
+		GRState stateCopy = state;
+		
 		//get the information from the state
-		Deck decks[] = {state.getStock(),state.getDiscard()};
+		Deck decks[] = {stateCopy.getStock(),stateCopy.getDiscard()};
 		PointF deckPos[] = {stockPos, discardPos};
 
 		//draw the stock and discard piles
@@ -271,9 +273,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//draw the player's hands
 		p1handPos.clear();
 		synchronized(this){
-			for (Card card : state.getHand(0).cards) {
+			for (Card card : stateCopy.getHand(0).cards) {
 
-				int n = state.getHand(0).cards.indexOf(card);
+				int n = stateCopy.getHand(0).cards.indexOf(card);
 				p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*n, 0.75f));
 
 				//add a few pixels to the position
@@ -285,16 +287,17 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				//					));
 
 				//draw the card
-				card.drawOn(canvas, adjustDimens(p1handPos.get(n)));
+				if (touchedCard == null) {
+					card.drawOn(canvas, adjustDimens(p1handPos.get(n)));
+				}
+				else if (!touchedCard.equals(card)) card.drawOn(canvas, adjustDimens(p1handPos.get(n)));
 			}
 		}
-		
-		
 
 		p2handPos.clear();
 		//draw the opponent's hand
 		synchronized(this){
-			Deck copy = state.getHand(1);
+			Deck copy = stateCopy.getHand(1);
 			ArrayList<PointF> copypos = p2handPos;
 			for (Card card : copy.cards) {
 				int n = copy.cards.indexOf(card);
@@ -307,7 +310,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 			}
 		}
-
+		
 		//advance and draw the card paths
 		for (CardPath path : paths)  {
 			int idx = paths.indexOf(path);
@@ -324,18 +327,18 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				paths.remove(idx);
 			}
 		}
-		
+
 		//ERIC: Commented out dragged card below
 		//draw the dragged card
-	/*	if (draggedCard != null && draggedCardPos != null) {
+		/*	if (draggedCard != null && draggedCardPos != null) {
 			draggedCard.drawOn(canvas, adjustDimens(draggedCardPos));
 		}*/
-		
+
 		//ERIC
 		if (touchedCard != null) {
 			touchedCard.drawOn(canvas, new RectF(touchedX, touchedY, touchedX + getCardDimensions().x, touchedY+getCardDimensions().y) );
 		}
-		
+
 	}
 
 	/**
@@ -350,15 +353,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		// get the location of the touch on the surface
 		int touchX = (int) event.getX();
 		int touchY = (int) event.getY();
-		
-		
+
+
 		//on down touch events:
-		if (event.getAction() == MotionEvent.ACTION_DOWN||
-				event.getAction() == MotionEvent.ACTION_MOVE){		//ERIC
-			
-			//ERIC: when we move a card, move it from its center
-			touchedX = touchX - (int)getCardDimensions().x/2;
-			touchedY = touchY - (int)getCardDimensions().y/2;
+		if (event.getAction() == MotionEvent.ACTION_DOWN){		//ERIC
+
 
 			//check for discard
 			if (state.getPhase() == GRState.DISCARD_PHASE){
@@ -374,43 +373,51 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 						//select the card
 						discard = state.getHand(0).cards.get(i);
-						
+
 						//ERIC: make touchedCard the card to discard
 						touchedCard = discard;
-						
-					}
 
+					}
 				}
-				//ERIC: Moved this line to Action_up section
-				//discard the selected card
-				//if (discard != null) game.sendAction(new GRDiscardAction(this, discard));
-				
+
 			}
-			
-			//check for draw
-			else if (state.getPhase() == GRState.DRAW_PHASE) {
-				if (adjustDimens(stockPos).contains(touchX, touchY)) {
-					//draw from the stock pile
-					game.sendAction(new GRDrawAction(this, true));
-				}
-				else if (adjustDimens(discardPos).contains(touchX, touchY)) {
-					//draw from the discard pile
-					game.sendAction(new GRDrawAction(this, false));
-				}
+			//ERIC: Moved this line to Action_up section
+			//discard the selected card
+			//				if (discard != null) game.sendAction(new GRDiscardAction(this, discard));
+
+		}
+
+		//check for draw
+		else if (state.getPhase() == GRState.DRAW_PHASE) {
+			if (adjustDimens(stockPos).contains(touchX, touchY)) {
+				//draw from the stock pile
+				game.sendAction(new GRDrawAction(this, true));
+			}
+			else if (adjustDimens(discardPos).contains(touchX, touchY)) {
+				//draw from the discard pile
+				game.sendAction(new GRDrawAction(this, false));
 			}
 		}
-		
+
 		//ERIC: When we release our finger and the card is hovered over the discard
 		else if (event.getAction() == MotionEvent.ACTION_UP) {
-			
-			RectF discardLocation = adjustDimens(discardPos);
 
 			if (adjustDimens(discardPos).contains(touchX, touchY)) {
 				//discard the selected card
-				if (touchedCard != null) game.sendAction(new GRDiscardAction(this, touchedCard));
-								
+				//ERIC: Moved discard action call to here
+				if (touchedCard != null) {
+					game.sendAction(new GRDiscardAction(this, touchedCard));
+				}
+				//				touchedX = (int) (discardLocation.centerX() - getCardDimensions().x/2);
+				//				touchedY = (int) (discardLocation.centerY() - getCardDimensions().y/2);
+				touchedCard = null;
 			}
-			
+
+		}
+		else {
+			//ERIC: when we move a card, move it from its center
+			touchedX = touchX - (int)getCardDimensions().x/2;
+			touchedY = touchY - (int)getCardDimensions().y/2;
 		}
 	}
 
