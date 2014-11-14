@@ -62,6 +62,13 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	//dragged card
 	private Card draggedCard;
 	private PointF draggedCardPos;
+	
+	//ERIC: touched Coordinates
+	private int touchedX;
+	private int touchedY;
+
+	//ERIC: card being moved
+	private backCard touchedCard;
 
 	//the positions of the decks
 	protected static PointF stockPos, discardPos;
@@ -81,6 +88,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		super(name);
 		p1handPos = new ArrayList<PointF>();
 		p2handPos = new ArrayList<PointF>();
+		//ERIC
+		touchedCard = new backCard();
 	}
 
 	/**
@@ -277,6 +286,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				card.drawOn(canvas, adjustDimens(p1handPos.get(n)));
 			}
 		}
+		
+		
 
 		p2handPos.clear();
 		//draw the opponent's hand
@@ -311,11 +322,15 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				paths.remove(idx);
 			}
 		}
-
+		
+		//ERIC: Commented out dragged card below
 		//draw the dragged card
-		if (draggedCard != null && draggedCardPos != null) {
+	/*	if (draggedCard != null && draggedCardPos != null) {
 			draggedCard.drawOn(canvas, adjustDimens(draggedCardPos));
-		}
+		}*/
+		
+		//ERIC
+		touchedCard.drawOn(canvas, new RectF(touchedX, touchedY, touchedX + getCardDimensions().x, touchedY+getCardDimensions().y) );
 	}
 
 	/**
@@ -332,7 +347,13 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		int touchY = (int) event.getY();
 
 		//on down touch events:
-		if (event.getAction() == MotionEvent.ACTION_DOWN){
+		if (event.getAction() == MotionEvent.ACTION_DOWN||
+				event.getAction() == MotionEvent.ACTION_MOVE){		//ERIC
+			
+			
+			//ERIC: when we move a card, move it from its center
+			touchedX = touchX - (int)getCardDimensions().x/2;
+			touchedY = touchY - (int)getCardDimensions().y/2;
 
 			//check for discard
 			if (state.getPhase() == GRState.DISCARD_PHASE){
