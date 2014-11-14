@@ -64,6 +64,8 @@ public class GRState extends GameState
     	
     	//initialize the meld lists
     	playerMelds = new ArrayList<ArrayList<Meld>>();
+    	playerMelds.add(new ArrayList<Meld>());
+    	playerMelds.add(new ArrayList<Meld>());
     	
     	// randomly pick the player who starts
     	//whoseTurn = (int)(2*Math.random());
@@ -120,7 +122,7 @@ public class GRState extends GameState
     	Deck handcopy = hand;
     	for(Card c : handcopy.cards){
     		//if the given card is a problem card...
-    		if(c.getRL() > 0 && c.getSL() > 0){
+    		if(c.getRL() >=3 && c.getSL() >= 3){
     			c.isProblem = true;
     			problemCards.add(c);
     		}
@@ -164,28 +166,36 @@ public class GRState extends GameState
     		String comb = Integer.toBinaryString(idx);
     		String reversed = new StringBuilder(comb).reverse().toString();
     		for(Card c : handcopy.cards){
-    			if(c.getRL() > 0 && c.getSL() > 0){
-    				if(reversed.charAt(0) == '0'){
+    			if(c.getRL() >= 3 && c.getSL() >= 3){
+    				if(reversed.charAt(0) == '0' || reversed == null){
     					c.setSL(0);
     					c.setID = 0;
-    					reversed = reversed.substring(1);
+    					if(reversed != null){
+    						reversed = reversed.substring(1);
+    					}
     				}else{
     					c.setRL(0);
     					c.runID = 0;
-    					reversed = reversed.substring(1);
+    					if(reversed != null){
+    						reversed = reversed.substring(1);
+    					}
     				}
     			}
     		}
     	}
     	int dc = 0;
     	for(Card c : handcopy.cards){
-    		if(c.getRL() > 0 && c.getSL() > 0){
+    		if(c.getRL() >= 3 && c.getSL() >= 3){
     			return -1;
     		}
     		if(c.getRL() >= 3 || c.getSL() >= 3){
     			
     		}else{
-    			dc += c.getRank().value(1);
+    			if(c.getRank().value(1) <= 10){
+    				dc += c.getRank().value(1);
+    			}else{
+    				dc += 10;
+    			}
     		}
     	}
     	return dc;
@@ -194,8 +204,17 @@ public class GRState extends GameState
     //TODO this is buggy
     public void assessMelds(int pidx){
     	ArrayList<ArrayList<Card>> ranks = new ArrayList<ArrayList<Card>>();
+    	for(int i = 0; i < 13; i++){
+    		ranks.add(new ArrayList<Card>());
+    	}
     	ArrayList<ArrayList<Card>> suits = new ArrayList<ArrayList<Card>>();
-    	
+    	for(int i = 0; i < 4; i++){
+    		ArrayList<Card> temp= new ArrayList<Card>();
+    		for(int j = 0; j < 13; j++){
+    			temp.add(null);
+    		}
+    		suits.add(temp);
+    	}
     	// SET DETECTION
     	//put cards cards in arraylists of same rank
     	for( Card c : playerHands[pidx].cards){
@@ -227,28 +246,34 @@ public class GRState extends GameState
     	// Sort hand into suits
     	for( Card c : playerHands[pidx].cards){
     		if(c.getSuit().shortName() == 'C'){
-    			suits.get(0).add(c);
+    			suits.get(0).set(c.getRank().value(1) - 1, c);;
     		}
     		else if(c.getSuit().shortName() == 'D'){
-    			suits.get(1).add(c);
+    			suits.get(1).set(c.getRank().value(1) - 1, c);
     		}
     		else if(c.getSuit().shortName() == 'H'){
-    			suits.get(2).add(c);
+    			suits.get(2).set(c.getRank().value(1) - 1, c);
     		}
     		else if(c.getSuit().shortName() == 'S'){
-    			suits.get(3).add(c);
+    			suits.get(3).set(c.getRank().value(1) - 1, c);
     		}
     		else {
     			//this is a bad
     		}
     	}
     	
-    	// Sort suits by rank
-    	for(ArrayList<Card> a : suits){
-    		for(Card c : a){
-    			a.set(c.getRank().value(1) - 1, c);
-    		}
-    	}
+//    	for(ArrayList<Card> s : suits){
+//    		for(int i = 0; i < 13; i++){
+//    			s.add(null);
+//    		}
+//    	}
+//    	
+//    	// Sort suits by rank
+//    	for(ArrayList<Card> a : suits){
+//    		for(Card c : a){
+//    			a.set(c.getRank().value(1) - 1, c);
+//    		}
+//    	}
     	
     	for(int i = 0; i < 4; i++){
     		int runCount = 0;
@@ -332,6 +357,14 @@ public class GRState extends GameState
     	return playerScores[1];
     }
     
+    public ArrayList<Meld> getMeldsForPlayer(int pidx){
+    	if(pidx == 0){
+    		return playerMelds.get(0);
+    	}else if(pidx == 1){
+    		return playerMelds.get(1);
+    	}
+    	return null;
+    }
     public boolean drawFrom(boolean fromStock, int playeridx){
     	if(fromStock){
     		stock.moveTopCardTo(playerHands[playeridx]);

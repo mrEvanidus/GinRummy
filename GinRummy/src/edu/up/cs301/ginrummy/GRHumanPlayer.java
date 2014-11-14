@@ -220,7 +220,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 		the canvas on which we are to draw
 	 */
 	public void tick(Canvas canvas) {
-
 		// ignore if we have not yet received the game state
 		if (state == null) return;
 
@@ -260,32 +259,40 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		//draw the player's hands
 		p1handPos.clear();
-		for (Card card : state.getHand(0).cards) {
+		synchronized(this){
+			for (Card card : state.getHand(0).cards) {
 
-			int n = state.getHand(0).cards.indexOf(card);
-			p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*n, 0.75f));
+				int n = state.getHand(0).cards.indexOf(card);
+				p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*n, 0.75f));
 
-			//add a few pixels to the position
-			//			RectF position = adjustDimens(p1handPos.get(n));
-			//			position.set(new RectF(position.left + HAND_CARD_OFFSET*position.width()*n,
-			//					position.top,
-			//					position.right + HAND_CARD_OFFSET*position.width()*n,
-			//					position.bottom
-			//					));
+				//add a few pixels to the position
+				//			RectF position = adjustDimens(p1handPos.get(n));
+				//			position.set(new RectF(position.left + HAND_CARD_OFFSET*position.width()*n,
+				//					position.top,
+				//					position.right + HAND_CARD_OFFSET*position.width()*n,
+				//					position.bottom
+				//					));
 
-			//draw the card
-			card.drawOn(canvas, adjustDimens(p1handPos.get(n)));
+				//draw the card
+				card.drawOn(canvas, adjustDimens(p1handPos.get(n)));
+			}
 		}
 
 		p2handPos.clear();
 		//draw the opponent's hand
-		for (Card card : state.getHand(1).cards) {
-			int n = state.getHand(1).cards.indexOf(card);
-			p2handPos.add(new PointF(0.55f - HAND_CARD_OFFSET*n, -0.25f));
-			//add a few pixels to the position
+		synchronized(this){
+			Deck copy = state.getHand(1);
+			ArrayList<PointF> copypos = p2handPos;
+			for (Card card : copy.cards) {
+				int n = copy.cards.indexOf(card);
+				copypos.add(new PointF(0.55f - HAND_CARD_OFFSET*n, -0.25f));
+				//add a few pixels to the position
 
-			//draw the card
-			card.drawOn(canvas, adjustDimens(p2handPos.get(n)));
+				//draw the card
+				//TODO thread bug is here
+				card.drawOn(canvas, adjustDimens(copypos.get(n)));
+
+			}
 		}
 
 		//advance and draw the card paths

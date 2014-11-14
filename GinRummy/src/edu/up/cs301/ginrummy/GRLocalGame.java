@@ -129,6 +129,10 @@ public class GRLocalGame extends LocalGame implements GRGame {
 				// Remove the requested card from the player's hand and place it atop the discard pile
 				state.discard(da.discardCard(), thisPlayerIdx);
 				
+				//state.assessMelds(thisPlayerIdx);
+				//state.canKnock(state.getHand(thisPlayerIdx),state.getMeldsForPlayer(thisPlayerIdx));
+			
+				
 				//Set the turn to the other player and set phase to draw phase
 				state.setPhase(state.DRAW_PHASE);
 				if(state.whoseTurn() == 0){
@@ -142,10 +146,9 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			}
 			//KNOCK PHASE
 			else if (grma.isKnock() && state.getPhase() == GRState.DISCARD_PHASE){
-				//If the player can knock, flag in the state that it is the end of the round
-//				if(state.canKnock(state.whoseTurn())){
-//					state.isEndOfRound = true;
-//				}
+				if(state.canKnock(state.getHand(thisPlayerIdx),state.getMeldsForPlayer(thisPlayerIdx))){
+					state.isEndOfRound = true;
+				}
 			}
 			else {
 				return false;
