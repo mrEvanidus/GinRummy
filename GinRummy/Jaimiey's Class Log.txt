@@ -1,6 +1,6 @@
 CLASS LOG
-CardAnimator
+CardAnimator - deleted
 CardPath
-SJHumanPlayer (GUI) >> GRHumanPlayer (TODO)
+GRHumanPlayer (TODO)
 GRHumanPlayer now displays a (predefined) state
 	stock and discard only.

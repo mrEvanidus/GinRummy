@@ -1,26 +1,22 @@
 package edu.up.cs301.card;
 
-import edu.up.cs301.card.*;
 import android.graphics.*;
 
 public class CardPath {
 	
-	private static float animationDuration = 50; //how long the animation will take, default 50 ticks
+	private float animationDuration = 50; //how long the animation will take, default 50 ticks
 	
 	//instance variables
 	private Card card;
 	private PointF origin;
 	private PointF destination;
-	private RectF location;
+	private PointF location;
 	private int progress; //the number of ticks that have elapsed
-
-	private Deck originDeck;
 	
-	public CardPath(Card card, PointF origin, PointF destination, Deck originDeck) {
+	public CardPath(Card card, PointF origin, PointF destination) {
 		this.card = card;
 		this.origin = origin;
 		this.destination = destination;
-		this.originDeck = originDeck;
 		progress = 0;
 	}
 
@@ -37,7 +33,7 @@ public class CardPath {
 	}
 	
 	public void setAnimationSpeed(float speed) {
-		this.animationDuration = speed;
+		animationDuration = speed;
 	}
 	
 	public float getAnimationSpeed() {
@@ -56,17 +52,17 @@ public class CardPath {
 	 * advances the animation by one tick
 	 * @return the updated location of the card
 	 */
-	public RectF advance() {
+	public PointF advance() {
+		if (isComplete()) return null;
 		//advance the card linearly along the path
-		//find the change amount, in pixels
-		float dx = origin.x + (destination.x - origin.x)/animationDuration*progress;
+		//find the change amount
+		float dx = origin.x + (destination.x - origin.x)/animationDuration*(float)progress;
 		float dy = origin.y + (destination.y - origin.y)/animationDuration*progress;
 		
 		progress++;
 		
-		//set the location of the card
-		location = new RectF(dx,dy,dx + CardAnimator.getCardDimensions().x,
-				dy + CardAnimator.getCardDimensions().y);
+		//set the new location of the card
+		location = new PointF(dx,dy);
 		
 		return location;
 	}
@@ -78,18 +74,5 @@ public class CardPath {
 	 */
 	public boolean isComplete() {
 		return progress == animationDuration;
-	}
-
-	/**
-	 * draws the card at the appropriate location
-	 * @param canvas
-	 */
-	public void drawOn(Canvas canvas) {
-		card.drawOn(canvas, location);
-	}
-
-	public Deck getOriginDeck() {
-		// TODO Auto-generated method stub
-		return originDeck;
 	}
 }
