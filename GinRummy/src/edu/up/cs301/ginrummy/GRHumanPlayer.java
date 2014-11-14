@@ -68,7 +68,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	private int touchedY;
 
 	//ERIC: card being moved
-	private backCard touchedCard;
+	private Card touchedCard;
+	
+	
 
 	//the positions of the decks
 	protected static PointF stockPos, discardPos;
@@ -89,7 +91,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		p1handPos = new ArrayList<PointF>();
 		p2handPos = new ArrayList<PointF>();
 		//ERIC
-		touchedCard = new backCard();
+		//touchedCard = new backCard();
 	}
 
 	/**
@@ -330,7 +332,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		}*/
 		
 		//ERIC
-		touchedCard.drawOn(canvas, new RectF(touchedX, touchedY, touchedX + getCardDimensions().x, touchedY+getCardDimensions().y) );
+		if (touchedCard != null) {
+			touchedCard.drawOn(canvas, new RectF(touchedX, touchedY, touchedX + getCardDimensions().x, touchedY+getCardDimensions().y) );
+		}
+		
 	}
 
 	/**
@@ -345,11 +350,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		// get the location of the touch on the surface
 		int touchX = (int) event.getX();
 		int touchY = (int) event.getY();
-
+		
+		
 		//on down touch events:
 		if (event.getAction() == MotionEvent.ACTION_DOWN||
 				event.getAction() == MotionEvent.ACTION_MOVE){		//ERIC
-			
 			
 			//ERIC: when we move a card, move it from its center
 			touchedX = touchX - (int)getCardDimensions().x/2;
@@ -358,6 +363,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			//check for discard
 			if (state.getPhase() == GRState.DISCARD_PHASE){
 				//the card to discard
+				//ERIC: Moved this line to top of onTouch so that it can be accessed anywhere
+				//in onTouch
 				Card discard = null;
 				for (PointF p : p1handPos) {
 
@@ -367,11 +374,17 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 						//select the card
 						discard = state.getHand(0).cards.get(i);
+						
+						//ERIC: make touchedCard the card to discard
+						touchedCard = discard;
+						
 					}
 
 				}
+				//ERIC: Moved this line to Action_up section
 				//discard the selected card
-				if (discard != null) game.sendAction(new GRDiscardAction(this, discard));
+				//if (discard != null) game.sendAction(new GRDiscardAction(this, discard));
+				
 			}
 			
 			//check for draw
@@ -385,6 +398,19 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					game.sendAction(new GRDrawAction(this, false));
 				}
 			}
+		}
+		
+		//ERIC: When we release our finger and the card is hovered over the discard
+		else if (event.getAction() == MotionEvent.ACTION_UP) {
+			
+			RectF discardLocation = adjustDimens(discardPos);
+
+			if (adjustDimens(discardPos).contains(touchX, touchY)) {
+				//discard the selected card
+				if (touchedCard != null) game.sendAction(new GRDiscardAction(this, touchedCard));
+								
+			}
+			
 		}
 	}
 

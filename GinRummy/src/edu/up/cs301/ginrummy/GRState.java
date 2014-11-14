@@ -379,12 +379,29 @@ public class GRState extends GameState
     	return true;
     }
     
-    public boolean discard(Card disCard, int playeridx){
+ /*
+  * ERIC: Discard no longer automatically discards. It just removes a card from playerHands
+  * Then, the player is free to drag around the removed card to the discard pile.    
+  */
+ public boolean discard(Card disCard, int playeridx){
     	
+    	//ERIC: don't add discard automatically to discard. We want to drag the card. 
     	discard.add(disCard);
     	playerHands[playeridx].remove(disCard);
     	return true;
     }
+    
+ /*
+  * ERIC: New method that sends a card to the discard pile. This can be called when the player
+  * has been dragging a card to discard and hovers it over the discard pile. 
+  */
+    public boolean releaseCard(Card disCard, int playeridx){
+    	
+    	discard.add(disCard);
+    	//playerHands[playeridx].remove(disCard);
+    	return true;
+    }
+    
     
     public Card getTopDiscard(){
     	return discard.peekAtTopCard();
