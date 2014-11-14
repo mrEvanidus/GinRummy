@@ -51,7 +51,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	private AnimationSurface surface;
 
 	//the knock and exit buttons
-	Button knockButton, exitButton;
+	Button exitButton;
 
 	//the score and message pane text fields
 	private TextView oppScore, myScore, messagePane;
@@ -73,7 +73,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 
 	//the positions of the decks
-	protected static PointF stockPos, discardPos;
+	protected static PointF stockPos, discardPos, knockPos;
 
 	//	protected static PointF playerHandPos[] = new PointF[2];
 
@@ -117,6 +117,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			// at the next animation-tick, which should occur within 1/20 of a second
 			this.state = (GRState)info;
 			Log.i("human player", "receiving");
+			if (state.getPhase() == GRState.DRAW_PHASE){
+					messagePane.setText("It's Your Turn:\nDraw a card.");
+			}
 		}
 	}
 
@@ -137,7 +140,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		surface.setAnimator(this);
 
 		//initialize the buttons
-		knockButton = (Button)activity.findViewById(R.id.knockButton);
 		exitButton = (Button)activity.findViewById(R.id.exitButton);
 
 		//initialize the text fields
@@ -145,12 +147,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		myScore = (TextView)activity.findViewById(R.id.playerScore);
 		messagePane = (TextView)activity.findViewById(R.id.messagePane);
 
-		//set up knock button listener
-		knockButton.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
-				// TODO Knock button handler
-				//game.sendAction(new GRKnockAction(this, knockCard));
-			}});
 		//set up exit button listener
 		exitButton.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
@@ -166,9 +162,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		paths = new ArrayList<CardPath>();
 
 		//set the location of the decks
+		knockPos = new PointF(0.1f, 0.25f);
 		stockPos = new PointF(0.3f,0.25f);
 		discardPos = new PointF(0.5f,0.25f);
-
 
 		//		playerHandPos[0] = new PointF(0.0f,0.75f);
 		//		playerHandPos[1] = new PointF(0.6f,-0.25f);
@@ -327,14 +323,17 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				paths.remove(idx);
 			}
 		}
+		
+		//draw the knocking box
+		Paint p = new Paint();
+		p.setStyle(Paint.Style.STROKE);
+		p.setColor(Color.GREEN);
+		p.setTextSize(24);
+		canvas.drawText("KNOCK", knockPos.x*surface.getWidth() + getCardDimensions().x/6,
+				knockPos.y*surface.getHeight() + getCardDimensions().y/2, p);
+		canvas.drawRect(adjustDimens(knockPos), p);
 
-		//ERIC: Commented out dragged card below
-		//draw the dragged card
-		/*	if (draggedCard != null && draggedCardPos != null) {
-			draggedCard.drawOn(canvas, adjustDimens(draggedCardPos));
-		}*/
-
-		//ERIC
+		//draw the card being dragged
 		if (touchedCard != null) {
 			touchedCard.drawOn(canvas, new RectF(touchedX, touchedY, touchedX + getCardDimensions().x, touchedY+getCardDimensions().y) );
 		}
@@ -381,9 +380,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				}
 
 			}
-			//ERIC: Moved this line to Action_up section
-			//discard the selected card
-			//				if (discard != null) game.sendAction(new GRDiscardAction(this, discard));
 
 		}
 
@@ -408,9 +404,16 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				if (touchedCard != null) {
 					game.sendAction(new GRDiscardAction(this, touchedCard));
 				}
-				//				touchedX = (int) (discardLocation.centerX() - getCardDimensions().x/2);
-				//				touchedY = (int) (discardLocation.centerY() - getCardDimensions().y/2);
+				//move the touched card back to origin
 				touchedCard = null;
+			}
+			else if (adjustDimens(knockPos).contains(touchX,touchY)) {
+				
+				//knock with the selected card
+				//ERIC: Moved discard action call to here
+				if (touchedCard != null) {
+					game.sendAction(new GRKnockAction(this, touchedCard));
+				}
 			}
 
 		}
@@ -420,76 +423,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			touchedY = touchY - (int)getCardDimensions().y/2;
 		}
 	}
-
-	//	/** TODO: delete this when done
-	//	 * draws a card on the canvas; if the card is null, draw a card-back
-	//	 * 
-	//	 * @param g
-	//	 * 		the canvas object
-	//	 * @param rect
-	//	 * 		a rectangle defining the location to draw the card
-	//	 * @param c
-	//	 * 		the card to draw; if null, a card-back is drawn
-	//	 */
-	//	private static void drawCard(Canvas g, RectF rect, Card c) {
-	//		if (c == null || c instanceof backCard) {
-	//			// null: draw a card-back, consisting of a blue card
-	//			// with a white line near the border. We implement this
-	//			// by drawing 3 concentric rectangles:
-	//			// - blue, full-size
-	//			// - white, slightly smaller
-	//			// - blue, even slightly smaller
-	//			
-	//			/*Paint white = new Paint();
-	//			white.setColor(Color.WHITE);
-	//			Paint blue = new Paint();
-	//			blue.setColor(Color.BLUE);
-	//			RectF inner1 = scaledBy(rect, 0.96f); // scaled by 96%
-	//			RectF inner2 = scaledBy(rect, 0.98f); // scaled by 98%
-	//			g.drawRect(rect, blue); // outer rectangle: blue
-	//			g.drawRect(inner2, white); // middle rectangle: white
-	//			g.drawRect(inner1, blue); // inner rectangle: blue
-	//*/			
-	//			//ERIC
-	//			backCard selectBackCard = new backCard();
-	//			selectBackCard.drawOn(g, rect);
-	//			
-	//		}
-	//		else {
-	//			// just draw the card
-	//			c.drawOn(g, rect);
-	//		}
-	//	}
-	//	
-	//	/** TODO: DELETE WHEN DONE
-	//	 * scales a rectangle, moving all edges with respect to its center
-	//	 * 
-	//	 * @param rect
-	//	 * 		the original rectangle
-	//	 * @param factor
-	//	 * 		the scaling factor
-	//	 * @return
-	//	 * 		the scaled rectangle
-	//	 */
-	//	private static RectF scaledBy(RectF rect, float factor) {
-	//		// compute the edge locations of the original rectangle, but with
-	//		// the middle of the rectangle moved to the origin
-	//		float midX = (rect.left+rect.right)/2;
-	//		float midY = (rect.top+rect.bottom)/2;
-	//		float left = rect.left-midX;
-	//		float right = rect.right-midX;
-	//		float top = rect.top-midY;
-	//		float bottom = rect.bottom-midY;
-	//		
-	//		// scale each side; move back so that center is in original location
-	//		left = left*factor + midX;
-	//		right = right*factor + midX;
-	//		top = top*factor + midY;
-	//		bottom = bottom*factor + midY;
-	//		
-	//		// create/return the new rectangle
-	//		return new RectF(left, top, right, bottom);
-	//	}
 
 	/**
 	 * 
@@ -519,6 +452,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 		a PointF containing the scaled size of the cards.
 	 */
 	private PointF getCardDimensions() {
-		return new PointF(CARD_DIMENSIONS.x*CARD_DIMENSION_MODIFIER, CARD_DIMENSIONS.y*CARD_DIMENSION_MODIFIER);
+		return new PointF(CARD_DIMENSIONS.x*CARD_DIMENSION_MODIFIER,
+				CARD_DIMENSIONS.y*CARD_DIMENSION_MODIFIER);
 	}
 }
