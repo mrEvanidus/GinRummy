@@ -33,10 +33,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	private final static float HAND_CARD_OFFSET = 0.055F;
 
 	//the width and height of the card images
-	private final static PointF CARD_DIMENSIONS = new PointF(261, 379);
+	private final static PointF CARD_DIMENSIONS = new PointF(500, 726);
 	// the size a card should be grown or shrunk by
 	//TODO: for device cross-compatibility, make this change based on canvas size
-	private static float CARD_DIMENSION_MODIFIER = 0.75f;
+	private static float CARD_DIMENSION_MODIFIER = 0.4f;
 
 	//colors used
 	public static final int FELT_GREEN = 0xff277714;
@@ -182,7 +182,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public int interval() {
 		// 1/20 of a second
-		return 10;
+		return 5;
 	}
 
 	/**
@@ -386,7 +386,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			}
 		}//ACTION_DOWN
 
-		//ERIC: When we release our finger and the card is hovered over the discard
+		// When we release our finger and the card is hovered over the discard
 		else if (event.getAction() == MotionEvent.ACTION_UP) {
 			if (touchedCard != null && touchedPos != null) {
 				
