@@ -1,6 +1,7 @@
 package edu.up.cs301.ginrummy;
 
 import android.util.Log;
+import edu.up.cs301.card.Card;
 import edu.up.cs301.card.Rank;
 import edu.up.cs301.game.GamePlayer;
 import edu.up.cs301.game.LocalGame;
@@ -146,8 +147,72 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			}
 			//KNOCK PHASE
 			else if (grma.isKnock() && state.getPhase() == GRState.DISCARD_PHASE){
-				if(state.canKnock(state.getHand(thisPlayerIdx),state.getMeldsForPlayer(thisPlayerIdx))){
+				GRState copy = state;
+				//(GRKnockAction)grma.knockCard();
+				GRKnockAction copy_grma = (GRKnockAction)grma;
+				Card theCard = copy_grma.knockCard();
+				copy.getHand(thisPlayerIdx).cards.remove(theCard);
+				
+				copy.assessMelds(thisPlayerIdx);
+				if(copy.canKnock(copy.getHand(thisPlayerIdx),copy.getMeldsForPlayer(thisPlayerIdx))){
 					state.isEndOfRound = true;
+					state.getHand(thisPlayerIdx).cards.remove(theCard);
+					
+					state.assessMelds(0);
+					state.assessMelds(1);
+					state.canKnock(state.getHand(0), state.getMeldsForPlayer(0));
+					state.canKnock(state.getHand(1), state.getMeldsForPlayer(1));
+					
+					//
+					int p0dw = state.genHand(-1,state.getHand(0));
+					int p1dw = state.genHand(-1,state.getHand(1));
+					
+					if(p0dw < p1dw){
+						if(p0dw == 0){
+							state.setScore(0,20);
+						}
+						state.setScore(0,p1dw - p0dw);	
+						if(thisPlayerIdx != 0){
+							//Give undercut points
+							state.setScore(thisPlayerIdx,10);
+						}
+					}else if (p0dw > p1dw){
+						if(p1dw == 0){
+							state.setScore(1,20);
+						}
+						state.setScore(1,p0dw - p1dw);	
+						if(thisPlayerIdx != 1){
+							//Give undercut points
+							state.setScore(thisPlayerIdx,10);
+						}
+					}else{
+						//If both players scores are equal
+						if(p0dw == 0 && p1dw == 0){
+							//If both players have gin
+							//Give the player who knocks 20 pts
+							state.setScore(thisPlayerIdx, 20);
+						}
+						else{
+							if(thisPlayerIdx == 0){
+								state.setScore(1,10);
+							}else{
+								state.setScore(0,10);
+							}
+						}
+					}
+					
+					//Whichever player knocked goes first
+					if(thisPlayerIdx == 0){
+						state.setWhoseTurn(0);
+					}else{
+						state.setWhoseTurn(1);
+					}
+					
+					state.initNewRound();
+					
+				}
+				else{
+					return false;
 				}
 			}
 			else {
