@@ -31,9 +31,14 @@ public class GRMainActivity extends GameMainActivity {
 			public GamePlayer createPlayer(String name) {
 				return new GRHumanPlayer(name);
 			}});
-		playerTypes.add(new GamePlayerType("computer player (normal)") {
+		playerTypes.add(new GamePlayerType("Computer Player (easy)") {
 			public GamePlayer createPlayer(String name) {
 				return new GRComputerPlayer(name);
+			}
+		});
+		playerTypes.add(new GamePlayerType("Computer Player (normal)") {
+			public GamePlayer createPlayer(String name) {
+				return new GRComputerPlayerSmart(name);
 			}
 		});
 

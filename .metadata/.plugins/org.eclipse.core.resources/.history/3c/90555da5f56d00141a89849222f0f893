@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<solid xmlns:android="http://schemas.android.com/apk/res/android"
+    android:dither="true"
+    android:variablePadding="true" >
+
+    <item
+        android:alpha="0"
+        android:state_enabled="false"/>
+ <!-- invisible when deactivated -->
+    <item
+        android:alpha="1"
+        android:color="@color/lake_erie"/>
+ <!-- blue when active -->
+
+</solid>

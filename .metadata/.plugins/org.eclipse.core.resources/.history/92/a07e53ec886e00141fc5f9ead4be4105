@@ -1,0 +1,4 @@
+BUG LOG:
+Major bug: when touching surface, game will occasionally crash
+	and log a ConcurrentModificationException
+	EDIT: (Maybe) fixed by GRState stateCopy = new GRState(state);

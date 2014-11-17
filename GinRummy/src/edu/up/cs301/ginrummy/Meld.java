@@ -18,5 +18,11 @@ public class Meld {
 		id = meldID;
 	}
 	
+	//ERIC: Need to retrieve the melds
+	public ArrayList<Card> getMeldCards() {
+		return cards;
+		
+	}
+	
 	
 }

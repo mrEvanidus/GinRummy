@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:constantSize="true"
+    android:dither="true"
+    android:variablePadding="true" >
+    <item android:state_pressed="true"
+        android:textColor="@color/black"
+          android:drawable="@color/lake_erie" /> <!-- pressed -->
+    <item android:state_pressed="false"
+        android:textColor="@color/invisible"
+        android:drawable="@color/invisible" /> <!-- default -->
+</selector>

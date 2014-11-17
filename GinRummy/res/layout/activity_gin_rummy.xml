@@ -8,23 +8,23 @@
 <edu.up.cs301.animation.AnimationSurface
     android:id="@+id/animationSurface"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_weight="1" />
+    android:layout_height="fill_parent" />
 
 <LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
     <FrameLayout
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="1" >
+
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.2"
+        android:layout_weight="0.15"
         android:orientation="vertical" >
 
         <Button
@@ -50,7 +50,7 @@
             android:id="@+id/messagePaneFrame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="5" >
+            android:layout_weight="6" >
 
             <TextView
                 android:id="@+id/messagePane"
@@ -58,28 +58,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/messagePane"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="22sp" />
 
         </FrameLayout>
-
+        
         <TextView
             android:id="@+id/playerScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/myScore"
             android:textColor="@color/white" />
-
-        <Button
-            android:id="@+id/knockButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:layout_weight="1"
-            android:background="@drawable/btn_ginrummy_default"
-            android:minHeight="0dip"
-            android:text="Knock"
-            android:textColor="@color/white"
-            android:textSize="24sp" />
 
     </LinearLayout>
 

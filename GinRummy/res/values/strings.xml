@@ -24,4 +24,5 @@
     <string name="myScore">Your Score</string>
     <string name="oppScore">Opponent Score</string>
     <string name="messagePane">Message Pane</string>
+    <string name="knockstring">KNOCK</string>
 </resources>
