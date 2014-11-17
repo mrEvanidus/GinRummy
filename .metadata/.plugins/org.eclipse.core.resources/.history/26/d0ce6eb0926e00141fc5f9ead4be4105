@@ -1,0 +1,9 @@
+BUG LOG:
+Major bug: when touching surface, game will occasionally crash
+	and log a ConcurrentModificationException
+	EDIT: (Maybe) fixed by GRState stateCopy = new GRState(state);
+	at top of tick() method in GRHumanPlayer
+
+Minor bug (1 occurrence):
+	ComputerPlayer(smart) hangs for no apparent reason, well into the game.
+	Theorized that he tried to knock and for some reason that didn't work.

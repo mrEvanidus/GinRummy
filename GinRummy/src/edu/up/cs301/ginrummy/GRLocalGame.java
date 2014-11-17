@@ -39,7 +39,6 @@ public class GRLocalGame extends LocalGame implements GRGame {
      */
     @Override
     protected String checkIfGameOver() {
-    	
     	if( state.getp1score() >= 100){
     		// TODO If display wrong player name, your bug is here
     		return this.playerNames[0] + " is the winner";
@@ -105,7 +104,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 	@Override
 	protected boolean makeMove(GameAction action) {
 		
-		// check that we have slap-jack action; if so cast it
+		// check that we have gin rummy action; if so cast it
 		if (!(action instanceof GRMoveAction)) {
 			return false;
 		} 
@@ -153,6 +152,10 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			}
 			//KNOCK PHASE
 			else if (grma.isKnock() && state.getPhase() == GRState.DISCARD_PHASE){
+				
+				//TODO: JAIMIEY: I found a bug in my code which was fixed by replacing similar code with
+				//GRState copy = new GRState(state);
+				
 				GRState copy = state;
 				//(GRKnockAction)grma.knockCard();
 				GRKnockAction copy_grma = (GRKnockAction)grma;
@@ -213,7 +216,6 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					}else{
 						state.setWhoseTurn(1);
 					}
-					
 					state.initNewRound();
 					
 				}

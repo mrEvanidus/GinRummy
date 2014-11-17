@@ -14,6 +14,7 @@ import edu.up.cs301.animation.*;
 import edu.up.cs301.card.*;
 import edu.up.cs301.game.*;
 import edu.up.cs301.game.infoMsg.*;
+import edu.up.cs301.game.util.MessageBox;
 
 /**
  * A GUI that allows a human to play Gin Rummy. Moves are made by clicking
@@ -120,6 +121,14 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			this.state = (GRState) info;
 			Log.i("human player", "receiving");
 
+			//if hand is over show a popup
+			if (state.isEndOfRound) {
+				String msg = String.format("Round Over.\nYour Score: %d\n Your Opponent's Score: %d" , 
+						state.getp1score(), state.getp2score());
+				MessageBox.popUpMessage(msg, myActivity);
+				return;
+			}
+			
 			//score messages
 			oppScore.setText("Opponent Score: "
 					+ ((Integer) state.getp2score()).toString());
@@ -149,6 +158,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public void setAsGui(GameMainActivity activity) {
 
+		this.myActivity = activity;
+		
 		// Load the layout resource for the new configuration
 		activity.setContentView(R.layout.activity_gin_rummy);
 
