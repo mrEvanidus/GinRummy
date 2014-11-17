@@ -33,7 +33,7 @@ public class GRMainActivity extends GameMainActivity {
 			}});
 		playerTypes.add(new GamePlayerType("computer player (normal)") {
 			public GamePlayer createPlayer(String name) {
-				return new GRComputerPlayer(name);
+				return new GRComputerPlayerSmart(name);
 			}
 		});
 

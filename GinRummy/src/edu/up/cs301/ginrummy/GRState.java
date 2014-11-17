@@ -54,7 +54,9 @@ public class GRState extends GameState
     private String gameMessage;
     
     //mystery variable!!
-    private int combo;
+    private boolean fromDiscard;
+    
+    private Card lastPicked;
     /**
      * Constructor for objects of class SJState. Initializes for the beginning of the
      * game, with a random player as the first to turn card
@@ -81,6 +83,8 @@ public class GRState extends GameState
     	rounds = 0;
     	ID = 1;
     	
+    	setLastPicked(null);
+    	setFromDiscard(true);
     	gameMessage = null;
     	stock = new Deck();
     	discard = new Deck();
@@ -143,6 +147,9 @@ public class GRState extends GameState
     	whoseTurn = orig.whoseTurn;
     	playerHands[0] = new Deck(orig.playerHands[0]);
     	playerHands[1] = new Deck(orig.playerHands[1]);
+    	playerMelds = new ArrayList<ArrayList<Meld>>();
+    	playerMelds.add(new ArrayList<Meld>(orig.playerMelds.get(0)));
+    	playerMelds.add(new ArrayList<Meld>(orig.playerMelds.get(1)));
     	stock = new Deck(orig.stock);
     	discard = new Deck(orig.discard);
     	turnPhase = orig.turnPhase;
@@ -459,9 +466,13 @@ public class GRState extends GameState
     }
     public boolean drawFrom(boolean fromStock, int playeridx){
     	if(fromStock){
+    		setLastPicked(stock.peekAtTopCard());
     		stock.moveTopCardTo(playerHands[playeridx]);
+    		setFromDiscard(false);
     	} else {
+    		setLastPicked(discard.peekAtTopCard());
     		discard.moveTopCardTo(playerHands[playeridx]);
+    		setFromDiscard(true);
     	}
     	
     	//TODO discuss case where all cards are drawn
@@ -519,5 +530,21 @@ public class GRState extends GameState
 	public Deck getDiscard() {
 		// TODO Auto-generated method stub
 		return discard;
+	}
+
+	public boolean isFromDiscard() {
+		return fromDiscard;
+	}
+
+	public void setFromDiscard(boolean fromDiscard) {
+		this.fromDiscard = fromDiscard;
+	}
+
+	public Card getLastPicked() {
+		return lastPicked;
+	}
+
+	public void setLastPicked(Card lastPicked) {
+		this.lastPicked = lastPicked;
 	}
 }

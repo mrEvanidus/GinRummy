@@ -73,6 +73,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		
 		// send the modified copy of the state to the player
 		p.sendInfo(stateForPlayer);
+		//p.sendInfo(state);
 	}
 	
 	/**
@@ -125,24 +126,29 @@ public class GRLocalGame extends LocalGame implements GRGame {
 				state.setPhase(state.DISCARD_PHASE);
 			}
 			//DISCARD PHASE
-			else if (grma.isDiscard() && state.getPhase() == GRState.DISCARD_PHASE) { 
+			else if (grma.isDiscard() && state.getPhase() == GRState.DISCARD_PHASE) {
+				
 				GRDiscardAction da = (GRDiscardAction) action;
-				// Remove the requested card from the player's hand and place it atop the discard pile
-				state.discard(da.discardCard(), thisPlayerIdx);
-				
-				//state.assessMelds(thisPlayerIdx);
-				//state.canKnock(state.getHand(thisPlayerIdx),state.getMeldsForPlayer(thisPlayerIdx));
-			
-				
-				//Set the turn to the other player and set phase to draw phase
-				state.setPhase(state.DRAW_PHASE);
-				if(state.whoseTurn() == 0){
-					state.setWhoseTurn(1);
-				}
-				else if (state.whoseTurn() == 1){
-					state.setWhoseTurn(0);
-				} else {
-					// never get here
+				if(!(state.isFromDiscard() && state.getLastPicked().equals(da.discardCard()))){
+					// Remove the requested card from the player's hand and place it atop the discard pile
+					state.discard(da.discardCard(), thisPlayerIdx);
+
+					//state.assessMelds(thisPlayerIdx);
+					//state.canKnock(state.getHand(thisPlayerIdx),state.getMeldsForPlayer(thisPlayerIdx));
+
+
+					//Set the turn to the other player and set phase to draw phase
+					state.setPhase(state.DRAW_PHASE);
+					if(state.whoseTurn() == 0){
+						state.setWhoseTurn(1);
+					}
+					else if (state.whoseTurn() == 1){
+						state.setWhoseTurn(0);
+					} else {
+						// never get here
+					}
+				}else {
+					return false;
 				}
 			}
 			//KNOCK PHASE
