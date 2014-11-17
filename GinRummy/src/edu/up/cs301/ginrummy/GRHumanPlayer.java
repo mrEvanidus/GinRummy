@@ -24,6 +24,7 @@ import edu.up.cs301.game.infoMsg.*;
  * @version July 2013
  * 
  * @author Jaimiey Sears
+ * @author Eric Tsai
  * @version November 2014
  */
 public class GRHumanPlayer extends GameHumanPlayer implements Animator {
@@ -41,6 +42,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// colors used
 	public static final int FELT_GREEN = 0xff277714;
+	public static final int LAKE_ERIE = 0xff6183A6;
 
 	// our game state
 	protected GRState state;
@@ -65,8 +67,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// ERIC: touched Coordinates
 	private PointF touchedPos, originPos;
-	// private int touchedX;
-	// private int touchedY;
 
 	// the positions of the decks
 	protected static PointF stockPos, discardPos, knockPos;
@@ -122,8 +122,15 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			if (state.getPhase() == GRState.DRAW_PHASE) {
 				messagePane.setText("It's Your Turn:\nDraw a card.");
 			}
+<<<<<<< HEAD
 			
 			
+=======
+			else if (state.getPhase() == GRState.DISCARD_PHASE) {
+				messagePane.setText("Discard a Card.");
+			}
+
+>>>>>>> origin/Jaimiey-v-11-16-14
 		}
 	}
 
@@ -290,8 +297,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 						* position.width() * n, position.top
 						- STACKED_CARD_OFFSET * position.height() * n,
 						position.right + STACKED_CARD_OFFSET * position.width()
-								* n, position.bottom - STACKED_CARD_OFFSET
-								* position.height() * n));
+						* n, position.bottom - STACKED_CARD_OFFSET
+						* position.height() * n));
 
 				// draw the card
 				card.drawOn(canvas, position);
@@ -371,6 +378,37 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			touchedCard.drawOn(canvas, adjustDimens(touchedPos));
 		}
 
+		//display the round end message pane
+		if (state.isEndOfRound) {
+			drawRoundEndBox(canvas);
+		}
+	}//tick
+
+	/**
+	 * draws the end round message box onto the screen
+	 * @param canvas
+	 * 			the canvas to draw onto
+	 */
+	private void drawRoundEndBox(Canvas canvas) {
+		// TODO Auto-generated method stub
+
+		//initialize the final message rectangle and paint
+		RectF messagePaneRect = new RectF(surface.getWidth()/3,
+				surface.getHeight()/3, surface.getWidth()*2/3,
+				surface.getHeight()*2/3);
+		
+		//box paint
+		Paint messagePanePaint = new Paint();
+		messagePanePaint.setColor(LAKE_ERIE);
+		
+		//text paint
+		Paint blackPaint = new Paint();
+		blackPaint.setColor(Color.BLACK);
+		blackPaint.setTextSize(24);
+		
+		//draw the message box and text
+		canvas.drawRect(messagePaneRect, messagePanePaint);
+		canvas.drawText("Round Over!", messagePaneRect.centerX(), messagePaneRect.centerY(), blackPaint);
 	}
 
 	/**
@@ -425,9 +463,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					touchedCard = state.getHand(0).cards.get(i);
 					touchedPos = new PointF(
 							((float) touchX - getCardDimensions().x / 2)
-									/ (float) surface.getWidth(),
+							/ (float) surface.getWidth(),
 							((float) touchY - getCardDimensions().y / 2)
-									/ (float) surface.getHeight());
+							/ (float) surface.getHeight());
 					originPos = p;
 
 					// cancel any animation
@@ -491,9 +529,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			// set screen relative position of the dragged card
 			touchedPos = new PointF(
 					((float) touchX - getCardDimensions().x / 2)
-							/ (float) surface.getWidth(),
+					/ (float) surface.getWidth(),
 					((float) touchY - getCardDimensions().y / 2)
-							/ (float) surface.getHeight());
+					/ (float) surface.getHeight());
 		}
 	}
 
