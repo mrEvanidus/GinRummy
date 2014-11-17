@@ -57,6 +57,9 @@ public class GRState extends GameState
     private boolean fromDiscard;
     
     private Card lastPicked;
+    
+    private boolean lastMoveWasDraw;
+    
     /**
      * Constructor for objects of class SJState. Initializes for the beginning of the
      * game, with a random player as the first to turn card
@@ -101,40 +104,42 @@ public class GRState extends GameState
 //    	for(int i = 0; i < 10; i++){
 //    		switch (i){
 //    			case 0:
-//    				playerHands[0].cards.set(i, new Card(Rank.THREE, Suit.Spade));
+//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Spade));
 //    				break;
 //    			case 1:
-//    				playerHands[0].cards.set(i, new Card(Rank.FIVE, Suit.Spade));
+//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Heart));
 //    				break;
 //    			case 2:
-//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Spade));
+//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
 //    				break;
 //    			case 3:
-//    				playerHands[0].cards.set(i, new Card(Rank.NINE, Suit.Spade));
+//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
 //    				break;
 //    			case 4:
-//    				playerHands[0].cards.set(i, new Card(Rank.TEN, Suit.Spade));
+//    				playerHands[0].cards.set(i, new Card(Rank.NINE, Suit.Heart));
 //    				break;
 //    			case 5:
-//    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Spade));
+//    				playerHands[0].cards.set(i, new Card(Rank.TEN, Suit.Heart));
 //    				break;
 //    			case 6:
-//    				playerHands[0].cards.set(i, new Card(Rank.QUEEN, Suit.Spade));
+//    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Heart));
 //    				break;
 //    			case 7:
-//    				playerHands[0].cards.set(i, new Card(Rank.FIVE, Suit.Club));
+//    				playerHands[0].cards.set(i, new Card(Rank.QUEEN, Suit.Heart));
 //    				break;
 //    			case 8:
-//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Heart));
+//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Club));
 //    				break;
 //    			case 9:
-//    				playerHands[0].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
+//    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
 //    				break;
 //    			
 //    		}
 //    	}
     	
+    	
     	stock.moveTopCardTo(discard);
+    	//discard.add(new Card(Rank.KING,Suit.Heart));
     }
     
     /**
@@ -290,7 +295,7 @@ public class GRState extends GameState
     	ArrayList<ArrayList<Card>> suits = new ArrayList<ArrayList<Card>>();
     	for(int i = 0; i < 4; i++){
     		ArrayList<Card> temp= new ArrayList<Card>();
-    		for(int j = 0; j < 13; j++){
+    		for(int j = 0; j < 14; j++){
     			temp.add(null);
     		}
     		suits.add(temp);
