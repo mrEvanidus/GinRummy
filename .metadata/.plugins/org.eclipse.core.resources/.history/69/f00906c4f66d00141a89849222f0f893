@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000</color>
+    <color name="white">#fff</color>
+    <color name="green">#0F0</color>
+    <color name="red">#ff0000</color>
+    <color name="felt_green">#277714</color>
+    <color name="forest_green">#0D370D</color>
+    <color name="lake_erie">#6183A6</color>
+    <color name="invisible">#00000000</color>
+</resources>

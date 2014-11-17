@@ -2,4 +2,6 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="android.graphics.Paint.Style"/>
 <fullyQualifiedTypeName name="edu.up.cs301.game.R.string"/>
+<fullyQualifiedTypeName name="edu.up.cs301.game.R.id"/>
+<fullyQualifiedTypeName name="edu.up.cs301.game.R.color"/>
 </qualifiedTypeNameHistroy>

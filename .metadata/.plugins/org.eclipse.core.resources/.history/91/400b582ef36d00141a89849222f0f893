@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<solid xmlns:android="http://schemas.android.com/apk/res/android"
+    android:constantSize="true"
+    android:dither="true"
+    android:variablePadding="true" >
+    <item android:state_enabled="false"
+          android:alpha="0" /> <!-- invisible when deactivated -->
+    <item android:drawable="@color/green" /> <!-- default -->
+</solid>
