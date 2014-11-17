@@ -122,15 +122,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			if (state.getPhase() == GRState.DRAW_PHASE) {
 				messagePane.setText("It's Your Turn:\nDraw a card.");
 			}
-<<<<<<< HEAD
-			
-			
-=======
 			else if (state.getPhase() == GRState.DISCARD_PHASE) {
 				messagePane.setText("Discard a Card.");
 			}
-
->>>>>>> origin/Jaimiey-v-11-16-14
 		}
 	}
 
