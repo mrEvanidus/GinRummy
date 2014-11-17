@@ -40,6 +40,8 @@ public class Card implements Serializable {
     public int runID;
     public int setID;
     public boolean isProblem;
+    public int priority;
+    
     /**
      * Constructor for class card
      *
@@ -53,6 +55,7 @@ public class Card implements Serializable {
         setLength = 0;
         runID = 0;
         setID = 0;
+        priority = 0;
     }
 
     /**
