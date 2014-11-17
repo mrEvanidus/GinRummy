@@ -29,8 +29,8 @@ import edu.up.cs301.game.infoMsg.*;
 public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// how much a card on top of another should be offset by
-	private final static float STACKED_CARD_OFFSET = 0.005F;
-	private final static float HAND_CARD_OFFSET = 0.055F;
+	private final static float STACKED_CARD_OFFSET = 0.005F;  	
+	private final static float HAND_CARD_OFFSET = 0.06F;			//ERIC: originally 0.055F
 
 	// the width and height of the card images
 	private final static PointF CARD_DIMENSIONS = new PointF(500, 726);
@@ -55,7 +55,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	Button exitButton;
 
 	// the score and message pane text fields
-	private TextView oppScore, myScore, messagePane;
+	private TextView oppScore, myScore, messagePane;  
 
 	// moving card information
 	CardPath path;
@@ -75,6 +75,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// player hand positions
 	protected ArrayList<PointF> p1handPos, p2handPos;
+	
+	
+	//ERIC: Player 1's melds
+	private ArrayList<Meld> p1Melds;	
 
 	/**
 	 * constructor
@@ -118,6 +122,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			if (state.getPhase() == GRState.DRAW_PHASE) {
 				messagePane.setText("It's Your Turn:\nDraw a card.");
 			}
+			
+			
 		}
 	}
 
@@ -145,7 +151,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		oppScore = (TextView) activity.findViewById(R.id.opponentScore);
 		myScore = (TextView) activity.findViewById(R.id.playerScore);
 		messagePane = (TextView) activity.findViewById(R.id.messagePane);
-
+		
+		
 		// set up exit button listener
 		exitButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -230,15 +237,42 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//
 		// TODO: figure out why the messagePane and scorePanes are always null.
 		// post a message to our message pane
-		if (messagePane == null) {
-			if (state.getPhase() == GRState.DRAW_PHASE) {
-				messagePane.setText("Draw a card.");
-			} else {
-				messagePane.setText("Discard a card.");
-			}
-		}
+//		if (messagePane == null) {
+//			if (state.getPhase() == GRState.DRAW_PHASE) {
+//				messagePane.setText("Draw a card.");
+//			} else {
+//				messagePane.setText("Discard a card.");
+//			}
+//		}
 
 		GRState stateCopy = state;
+				
+		//ERIC: START: IF THE END OF ROUND, SHOW MELDS 
+		if (state.isEndOfRound) {
+			
+			p1Melds = state.getMeldsForPlayer(0);		
+			p1handPos.clear();
+			synchronized (this) {
+					//Iterate through each group of melds
+					//"melds" is a meld in "p1Melds"
+					for (Meld melds : p1Melds) {
+						int indexOfMeld = p1Melds.indexOf(melds);
+						//Iterate through each card in a meld
+						//"meldCard" is a card in "melds"
+						for (Card meldCard : melds.getMeldCards()) {
+							
+							int indexOfMeldCard = melds.getMeldCards().indexOf(meldCard);							
+							p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*indexOfMeld
+									+ HAND_CARD_OFFSET*indexOfMeldCard, 0.75f));
+							meldCard.drawOn(canvas, adjustDimens(p1handPos.get(indexOfMeldCard)));							
+						}						
+					}								
+			}
+			
+			return;			//return because we only want the melds drawn on the screen
+		}
+		//ERIC: END: AT END OF ROUND, SHOW MELDS
+	
 
 		// get the information from the state
 		Deck decks[] = { stateCopy.getStock(), stateCopy.getDiscard() };
@@ -351,7 +385,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		// get the location of the touch on the surface
 		int touchX = (int) event.getX();
 		int touchY = (int) event.getY();
-
+		
+		
+		
 		oppScore.setText("Opponent Score: "
 				+ ((Integer) state.getp2score()).toString());
 		myScore.setText("Your Score: "
@@ -403,6 +439,27 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		// When we release our finger and the card is hovered over the discard
 		else if (event.getAction() == MotionEvent.ACTION_UP) {
 			if (touchedCard != null && touchedPos != null) {
+				
+			
+				
+				//START: ERIC: Implementing rearranging cards in hand
+				int i = state.getHand(0).cards.indexOf(touchedCard);
+				state.getHand(0).cards.remove(touchedCard);
+				for (PointF p : p1handPos) {
+
+					if (adjustDimens(p).contains(touchX, touchY)) {
+						//find index of card that we're dragging card to
+						i = p1handPos.indexOf(p);	
+						
+						//create new path to new location for card
+						originPos.x = touchX;
+						originPos.y = touchY;
+					}
+				}
+				//ERIC: Replace card being hovered over with dragged card				
+				state.getHand(0).cards.add(i, touchedCard);			
+				//END: ERIC: Implementing rearranging cards in hand
+				
 
 				// check for discard
 				if (adjustDimens(discardPos).contains(touchX, touchY)) {

@@ -60,7 +60,7 @@
                 android:textColor="@color/white" />
 
         </FrameLayout>
-
+        
         <TextView
             android:id="@+id/playerScore"
             android:layout_width="wrap_content"
