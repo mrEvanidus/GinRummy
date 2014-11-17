@@ -1,0 +1,6 @@
+CLASS LOG
+CardAnimator - deleted
+CardPath
+GRHumanPlayer (TODO)
+GRHumanPlayer now displays a (predefined) state
+	stock and discard only.

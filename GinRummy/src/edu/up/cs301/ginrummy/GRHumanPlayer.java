@@ -16,7 +16,7 @@ import edu.up.cs301.game.*;
 import edu.up.cs301.game.infoMsg.*;
 
 /**
- * A GUI that allows a human to play Slapjack. Moves are made by clicking
+ * A GUI that allows a human to play Gin Rummy. Moves are made by clicking
  * regions on a surface. Presently, it is laid out for landscape orientation. If
  * the device is held in portrait mode, the cards will be very long and skinny.
  * 
@@ -75,8 +75,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// player hand positions
 	protected ArrayList<PointF> p1handPos, p2handPos;
-	
-	
+
+
 	//ERIC: Player 1's melds
 	private ArrayList<Meld> p1Melds;	
 
@@ -119,11 +119,23 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			// second
 			this.state = (GRState) info;
 			Log.i("human player", "receiving");
-			if (state.getPhase() == GRState.DRAW_PHASE) {
-				messagePane.setText("It's Your Turn:\nDraw a card.");
-			}
-			else if (state.getPhase() == GRState.DISCARD_PHASE) {
-				messagePane.setText("Discard a Card.");
+
+			//score messages
+			oppScore.setText("Opponent Score: "
+					+ ((Integer) state.getp2score()).toString());
+			myScore.setText("Your Score: "
+					+ ((Integer) state.getp1score()).toString());
+
+			//state messages
+			if (state.whoseTurn() == 0){
+				if (state.getPhase() == GRState.DRAW_PHASE) {
+					messagePane.setText("It's Your Turn:\nDraw a card.");
+				}
+				else if (state.getPhase() == GRState.DISCARD_PHASE) {
+					messagePane.setText("It's Your Turn:\nDiscard a Card.");
+				}
+			}else{
+				messagePane.setText("Your opponent is taking their turn.");
 			}
 		}
 	}
@@ -152,8 +164,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		oppScore = (TextView) activity.findViewById(R.id.opponentScore);
 		myScore = (TextView) activity.findViewById(R.id.playerScore);
 		messagePane = (TextView) activity.findViewById(R.id.messagePane);
-		
-		
+
+
 		// set up exit button listener
 		exitButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -238,42 +250,42 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//
 		// TODO: figure out why the messagePane and scorePanes are always null.
 		// post a message to our message pane
-//		if (messagePane == null) {
-//			if (state.getPhase() == GRState.DRAW_PHASE) {
-//				messagePane.setText("Draw a card.");
-//			} else {
-//				messagePane.setText("Discard a card.");
-//			}
-//		}
+		//		if (messagePane == null) {
+		//			if (state.getPhase() == GRState.DRAW_PHASE) {
+		//				messagePane.setText("Draw a card.");
+		//			} else {
+		//				messagePane.setText("Discard a card.");
+		//			}
+		//		}
 
-		GRState stateCopy = state;
-				
+		GRState stateCopy = new GRState(state);
+
 		//ERIC: START: IF THE END OF ROUND, SHOW MELDS 
 		if (state.isEndOfRound) {
-			
+
 			p1Melds = state.getMeldsForPlayer(0);		
 			p1handPos.clear();
 			synchronized (this) {
-					//Iterate through each group of melds
-					//"melds" is a meld in "p1Melds"
-					for (Meld melds : p1Melds) {
-						int indexOfMeld = p1Melds.indexOf(melds);
-						//Iterate through each card in a meld
-						//"meldCard" is a card in "melds"
-						for (Card meldCard : melds.getMeldCards()) {
-							
-							int indexOfMeldCard = melds.getMeldCards().indexOf(meldCard);							
-							p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*indexOfMeld
-									+ HAND_CARD_OFFSET*indexOfMeldCard, 0.75f));
-							meldCard.drawOn(canvas, adjustDimens(p1handPos.get(indexOfMeldCard)));							
-						}						
-					}								
+				//Iterate through each group of melds
+				//"melds" is a meld in "p1Melds"
+				for (Meld melds : p1Melds) {
+					int indexOfMeld = p1Melds.indexOf(melds);
+					//Iterate through each card in a meld
+					//"meldCard" is a card in "melds"
+					for (Card meldCard : melds.getMeldCards()) {
+
+						int indexOfMeldCard = melds.getMeldCards().indexOf(meldCard);							
+						p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*indexOfMeld
+								+ HAND_CARD_OFFSET*indexOfMeldCard, 0.75f));
+						meldCard.drawOn(canvas, adjustDimens(p1handPos.get(indexOfMeldCard)));							
+					}						
+				}								
 			}
-			
+
 			return;			//return because we only want the melds drawn on the screen
 		}
 		//ERIC: END: AT END OF ROUND, SHOW MELDS
-	
+
 
 		// get the information from the state
 		Deck decks[] = { stateCopy.getStock(), stateCopy.getDiscard() };
@@ -301,20 +313,12 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		// draw the player's hands
 		p1handPos.clear();
+		ArrayList<Card> hand = stateCopy.getHand(0).cards;
 		synchronized (this) {
-			for (Card card : stateCopy.getHand(0).cards) {
+			for (Card card : hand) {
 
-				int n = stateCopy.getHand(0).cards.indexOf(card);
+				int n = hand.indexOf(card);
 				p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET * n, 0.75f));
-
-				// add a few pixels to the position
-				// RectF position = adjustDimens(p1handPos.get(n));
-				// position.set(new RectF(position.left +
-				// HAND_CARD_OFFSET*position.width()*n,
-				// position.top,
-				// position.right + HAND_CARD_OFFSET*position.width()*n,
-				// position.bottom
-				// ));
 
 				// draw the card, if it is not being dragged or animated
 				if ((touchedCard != null && touchedCard.equals(card))
@@ -390,16 +394,16 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		RectF messagePaneRect = new RectF(surface.getWidth()/3,
 				surface.getHeight()/3, surface.getWidth()*2/3,
 				surface.getHeight()*2/3);
-		
+
 		//box paint
 		Paint messagePanePaint = new Paint();
 		messagePanePaint.setColor(LAKE_ERIE);
-		
+
 		//text paint
 		Paint blackPaint = new Paint();
 		blackPaint.setColor(Color.BLACK);
 		blackPaint.setTextSize(24);
-		
+
 		//draw the message box and text
 		canvas.drawRect(messagePaneRect, messagePanePaint);
 		canvas.drawText("Round Over!", messagePaneRect.centerX(), messagePaneRect.centerY(), blackPaint);
@@ -417,13 +421,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		// get the location of the touch on the surface
 		int touchX = (int) event.getX();
 		int touchY = (int) event.getY();
-		
-		
-		
-		oppScore.setText("Opponent Score: "
-				+ ((Integer) state.getp2score()).toString());
-		myScore.setText("Your Score: "
-				+ ((Integer) state.getp1score()).toString());
+
 		// on down touch events:
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -471,27 +469,30 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		// When we release our finger and the card is hovered over the discard
 		else if (event.getAction() == MotionEvent.ACTION_UP) {
 			if (touchedCard != null && touchedPos != null) {
-				
-			
-				
+
+
+
 				//START: ERIC: Implementing rearranging cards in hand
 				int i = state.getHand(0).cards.indexOf(touchedCard);
 				state.getHand(0).cards.remove(touchedCard);
-				for (PointF p : p1handPos) {
+				synchronized(this) {
+					for (PointF p : p1handPos) {
 
-					if (adjustDimens(p).contains(touchX, touchY)) {
-						//find index of card that we're dragging card to
-						i = p1handPos.indexOf(p);	
-						
-						//create new path to new location for card
-						originPos.x = touchX;
-						originPos.y = touchY;
+						if (adjustDimens(p).contains(touchX, touchY)) {
+							//find index of card that we're dragging card to
+							i = p1handPos.indexOf(p);	
+
+							//create new path to new location for card
+							originPos.x = touchX;
+							originPos.y = touchY;
+						}
 					}
+
+					//ERIC: Replace card being hovered over with dragged card				
+					state.getHand(0).cards.add(i, touchedCard);
 				}
-				//ERIC: Replace card being hovered over with dragged card				
-				state.getHand(0).cards.add(i, touchedCard);			
 				//END: ERIC: Implementing rearranging cards in hand
-				
+
 
 				// check for discard
 				if (adjustDimens(discardPos).contains(touchX, touchY)) {

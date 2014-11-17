@@ -58,7 +58,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/messagePane"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="22sp" />
 
         </FrameLayout>
         

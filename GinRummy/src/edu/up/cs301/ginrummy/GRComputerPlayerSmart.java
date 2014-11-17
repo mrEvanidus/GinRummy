@@ -101,12 +101,12 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     		//DRAW PHASE
     		if(savedState.getPhase() == savedState.DRAW_PHASE){
     			//delay
-//        		try {
-//    				Thread.sleep(500);
-//    			} catch (InterruptedException e) {
-//    				// TODO Auto-generated catch block
-//    				e.printStackTrace();
-//    			}
+        		try {
+    				Thread.sleep(500);
+    			} catch (InterruptedException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
     			synchronized(this){
     				savedState.assessMelds(THIS_PLAYER);
     				savedState.canKnock(savedState.getHand(THIS_PLAYER), savedState.getMeldsForPlayer(THIS_PLAYER));
@@ -133,12 +133,12 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     		//DISCARD PHASE
     		else if (savedState.getPhase() == savedState.DISCARD_PHASE){
     			//delay
-//        		try {
-//    				Thread.sleep(500);
-//    			} catch (InterruptedException e) {
-//    				// TODO Auto-generated catch block
-//    				e.printStackTrace();
-//    			}
+        		try {
+    				Thread.sleep(500);
+    			} catch (InterruptedException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
     			synchronized(this){
     				savedState.assessMelds(THIS_PLAYER);
     				savedState.canKnock(savedState.getHand(THIS_PLAYER), savedState.getMeldsForPlayer(THIS_PLAYER));
