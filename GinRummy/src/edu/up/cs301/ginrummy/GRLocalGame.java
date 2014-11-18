@@ -277,12 +277,9 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					}else{
 						state.setWhoseTurn(1);
 					}
-<<<<<<< HEAD
-					state.initNewRound();
-=======
-					
+			
+					sendAllUpdatedState();
 					//state.initNewRound();
->>>>>>> origin/JohnMatt-11-17
 					
 				}
 				else{

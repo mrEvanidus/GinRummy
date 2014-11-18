@@ -126,6 +126,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				String msg = String.format("Round Over.\nYour Score: %d\n Your Opponent's Score: %d" , 
 						state.getp1score(), state.getp2score());
 				MessageBox.popUpMessage(msg, myActivity);
+				game.sendAction(new GRNextRoundAction(this));
 				return;
 			}
 			
