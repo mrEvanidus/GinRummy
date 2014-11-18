@@ -278,12 +278,14 @@ public class GRLocalGame extends LocalGame implements GRGame {
 						state.setWhoseTurn(1);
 					}
 					
-					state.initNewRound();
+					//state.initNewRound();
 					
 				}
 				else{
 					return false;
 				}
+			}else if(grma.isNextRound() && state.isEndOfRound){
+				state.initNewRound();
 			}
 			else {
 				return false;
