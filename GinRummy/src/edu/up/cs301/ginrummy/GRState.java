@@ -552,11 +552,15 @@ public class GRState extends GameState
     
     public void nullCardsFor(int playeridx){
     	if(playeridx == 0){
-    		playerHands[1].nullifyDeck();
+    		//if(!isEndOfRound){
+    			playerHands[1].nullifyDeck();
+    		//}
     		stock.nullifyDeck();
     		// TODO nullify all but top of discard
     	}else if(playeridx == 1){
-    		playerHands[0].nullifyDeck();
+    		//if(!isEndOfRound){
+    			playerHands[0].nullifyDeck();
+    		//}
     		stock.nullifyDeck();
     	}
     	

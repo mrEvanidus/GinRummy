@@ -51,17 +51,18 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     
     public Card cardToDiscard(Deck hand){
     	for(Card c : hand.cards){
-    		if(c.getRL() ==  1 && c.getSL() == 1){
+    		if(c.getRL() >= 3 || c.getSL() >= 3){
+    			c.priority = MELD;
+    		}else if(c.getRL() ==  1 && c.getSL() == 1){
     			c.priority = SINGLETON;
     		}else if(c.getRL() == 2 && c.getSL() == 2){
     			c.priority = TWO_HALF_MELD;
     		}else if(c.getRL() == 2 || c.getSL() == 2){
     			c.priority = ONE_HALF_MELD;
-    		}else if(c.getRL() >= 3 || c.getSL() >= 3){
-    			c.priority = MELD;
     		}else{
-    			c.priority = 5000;
+    			c.priority = 20;
     		}
+    		
     		if(c.getRank().value(1) < 10){
     			c.priority *= c.getRank().value(1);
     		}else{

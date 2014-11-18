@@ -278,6 +278,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 						state.setWhoseTurn(1);
 					}
 					
+					sendAllUpdatedState();
 					//state.initNewRound();
 					
 				}
