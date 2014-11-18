@@ -1,7 +1,10 @@
 package edu.up.cs301.ginrummy;
 
+import java.util.ArrayList;
+
 import android.util.Log;
 import edu.up.cs301.card.Card;
+import edu.up.cs301.card.Deck;
 import edu.up.cs301.card.Rank;
 import edu.up.cs301.game.GamePlayer;
 import edu.up.cs301.game.LocalGame;
@@ -152,11 +155,8 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			}
 			//KNOCK PHASE
 			else if (grma.isKnock() && state.getPhase() == GRState.DISCARD_PHASE){
-				
-				//TODO: JAIMIEY: I found a bug in my code which was fixed by replacing similar code with
-				//GRState copy = new GRState(state);
-				
-				GRState copy = state;
+			
+				GRState copy = new GRState(state);
 				//(GRKnockAction)grma.knockCard();
 				GRKnockAction copy_grma = (GRKnockAction)grma;
 				Card theCard = copy_grma.knockCard();
@@ -172,7 +172,68 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					state.canKnock(state.getHand(0), state.getMeldsForPlayer(0));
 					state.canKnock(state.getHand(1), state.getMeldsForPlayer(1));
 					
-					//
+					//Lay off cards
+					if(thisPlayerIdx == 1){
+						for(int i = 0; i<2;i++){
+							ArrayList<Card> tempToAdd = new ArrayList<Card>();
+							ArrayList<Card> tempToRemove = new ArrayList<Card>();
+							for(Card c : state.getHand(0).cards){
+								if(c.runID == 0 && c.setID == 0){
+									int dw = state.genHand(-1, state.getHand(1));
+									GRState s = new GRState(state);
+									s.getHand(1).cards.add(c);
+									s.assessMelds(1);
+									s.canKnock(s.getHand(1), s.getMeldsForPlayer(1));
+									int dw2 = s.genHand(-1, s.getHand(1));
+
+									if(dw == dw2){
+										tempToAdd.add(c);
+										tempToRemove.remove(c);
+									}
+								}
+							}
+							for(Card c : tempToAdd){
+								state.getHand(1).cards.add(c);
+							}
+							for(Card c : tempToRemove){
+								state.getHand(0).cards.remove(c);
+							}
+						}
+					}else{
+						for(int i = 0; i<2;i++){
+							ArrayList<Card> tempToAdd = new ArrayList<Card>();
+							ArrayList<Card> tempToRemove = new ArrayList<Card>();
+							for(Card c : state.getHand(1).cards){
+								if(c.runID == 0 && c.setID == 0){
+									int dw = state.genHand(-1, state.getHand(0));
+									GRState s = new GRState(state);
+									s.getHand(0).cards.add(c);
+									s.assessMelds(0);
+									s.canKnock(s.getHand(0), s.getMeldsForPlayer(0));
+									int dw2 = s.genHand(-1, s.getHand(0));
+
+									if(dw == dw2){
+										tempToAdd.add(c);
+										tempToRemove.remove(c);
+									}
+								}
+								
+							}
+							for(Card c : tempToAdd){
+								state.getHand(0).cards.add(c);
+							}
+							for(Card c : tempToRemove){
+								state.getHand(1).cards.remove(c);
+							}
+						}
+					}
+					
+					state.assessMelds(0);
+					state.assessMelds(1);
+					state.canKnock(state.getHand(0), state.getMeldsForPlayer(0));
+					state.canKnock(state.getHand(1), state.getMeldsForPlayer(1));
+					
+					//Get the deadwood
 					int p0dw = state.genHand(-1,state.getHand(0));
 					int p1dw = state.genHand(-1,state.getHand(1));
 					
@@ -216,12 +277,19 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					}else{
 						state.setWhoseTurn(1);
 					}
+<<<<<<< HEAD
 					state.initNewRound();
+=======
+					
+					//state.initNewRound();
+>>>>>>> origin/JohnMatt-11-17
 					
 				}
 				else{
 					return false;
 				}
+			}else if(grma.isNextRound() && state.isEndOfRound){
+				state.initNewRound();
 			}
 			else {
 				return false;
