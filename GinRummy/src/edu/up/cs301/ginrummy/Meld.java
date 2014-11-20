@@ -12,12 +12,18 @@ public class Meld {
 	private int id;
 	
 	public Meld(ArrayList<Card> meldCards, boolean set, int meldVal, int meldID){
-		cards = meldCards;
+		cards = new ArrayList<Card>(meldCards);
 		isSet = set;
 		val   = meldVal;
 		id = meldID;
 	}
 	
+	public Meld(Meld orig){
+		cards = new ArrayList<Card>(orig.cards);
+		isSet = orig.isSet;
+		val = orig.val;
+		id = orig.id;
+	}
 	//ERIC: Need to retrieve the melds
 	public ArrayList<Card> getMeldCards() {
 		return cards;

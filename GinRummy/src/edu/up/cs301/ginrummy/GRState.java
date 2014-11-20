@@ -191,8 +191,18 @@ public class GRState extends GameState
     	playerHands[0] = new Deck(orig.playerHands[0]);
     	playerHands[1] = new Deck(orig.playerHands[1]);
     	playerMelds = new ArrayList<ArrayList<Meld>>();
-    	playerMelds.add(new ArrayList<Meld>(orig.playerMelds.get(0)));
-    	playerMelds.add(new ArrayList<Meld>(orig.playerMelds.get(1)));
+    	
+    	playerMelds.add(new ArrayList<Meld>());
+    	playerMelds.add(new ArrayList<Meld>());
+    	//PROBLEM LIES HERE
+    	for (Meld m : orig.playerMelds.get(0)){
+    		
+    		playerMelds.get(0).add(new Meld(m));
+    	}
+    	for (Meld m :  orig.playerMelds.get(1)){
+    		playerMelds.get(1).add(new Meld(m));
+    	}
+    	
     	stock = new Deck(orig.stock);
     	discard = new Deck(orig.discard);
     	turnPhase = orig.turnPhase;
@@ -325,6 +335,7 @@ public class GRState extends GameState
      * @param pidx the player's hand to assess
      */
     public void assessMelds(int pidx){
+    	(playerMelds.get(pidx)).clear();
     	//Store cards by rank
     	ArrayList<ArrayList<Card>> ranks = new ArrayList<ArrayList<Card>>();
     	for(int i = 0; i < 13; i++){
@@ -359,7 +370,7 @@ public class GRState extends GameState
     				c.setID = ID;
     				val = c.getRank().value(1);
         		}
-				playerMelds.get(pidx).add(new Meld(a, true, val*a.size(), ID));
+				(playerMelds.get(pidx)).add(new Meld(a, true, val*a.size(), ID));
 				ID++;
 			}
     		
@@ -410,7 +421,7 @@ public class GRState extends GameState
     						runCount += c2.getRank().value(1);
         					c2.runID = ID;
         				}
-	    				playerMelds.get(pidx).add(new Meld(temp, false, runCount, ID));
+	    				(playerMelds.get(pidx)).add(new Meld(temp, false, runCount, ID));
 	    				ID++;
 	    				runCount = 0;
 					}

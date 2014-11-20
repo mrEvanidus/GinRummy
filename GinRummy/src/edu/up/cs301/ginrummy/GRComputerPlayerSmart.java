@@ -92,9 +92,9 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     		return;
     	}
     	
-    	if(savedState != null && savedState.isEndOfRound){
-    		return;
-    	}
+//    	if(savedState != null && savedState.isEndOfRound){
+//    		return;
+//    	}
     	
     	// update our state variable
     	savedState = (GRState)info;
