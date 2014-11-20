@@ -124,6 +124,11 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		if(canMove(thisPlayerIdx)){
 			//DRAW PHASE
 			if (grma.isDraw() && state.getPhase() == GRState.DRAW_PHASE) {
+				//If there are 2 two cards in the stockpile, begin a new round
+				if(state.getStock().size() <= 3){
+					state.initNewRound();
+				}
+				
 				GRDrawAction da = (GRDrawAction) action;
 				state.drawFrom(da.fromStock(), thisPlayerIdx);
 				state.setPhase(state.DISCARD_PHASE);
@@ -279,7 +284,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					}
 					
 					sendAllUpdatedState();
-					//state.initNewRound();
+					state.initNewRound();
 					
 				}
 				else{

@@ -141,10 +141,14 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     				e.printStackTrace();
     			}
     			synchronized(this){
-    				savedState.assessMelds(THIS_PLAYER);
-    				savedState.canKnock(savedState.getHand(THIS_PLAYER), savedState.getMeldsForPlayer(THIS_PLAYER));
-    				Card c = cardToDiscard(savedState.getHand(THIS_PLAYER));
-    				if(savedState.canKnock(savedState.getHand(THIS_PLAYER), savedState.getMeldsForPlayer(THIS_PLAYER))){
+    				GRState s = new GRState(savedState);
+    				Card c = cardToDiscard(s.getHand(THIS_PLAYER));
+    				s.getHand(THIS_PLAYER).remove(c);
+    				
+    				s.assessMelds(THIS_PLAYER);
+    				s.canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER));
+    				
+    				if(s.canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER))){
     					game.sendAction(new GRKnockAction(this,c));
     				}else{
     					game.sendAction(new GRDiscardAction(this, c));
