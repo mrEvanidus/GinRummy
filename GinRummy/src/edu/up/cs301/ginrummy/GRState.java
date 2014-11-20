@@ -60,6 +60,7 @@ public class GRState extends GameState
     
     private boolean lastMoveWasDraw;
     
+    public int toGoFirst;
     /**
      * Constructor for objects of class SJState. Initializes for the beginning of the
      * game, with a random player as the first to turn card
@@ -104,77 +105,77 @@ public class GRState extends GameState
     	}
     	
     	//TEST HAND
-    	for(int i = 0; i < 10; i++){
-    		switch (i){
-    			case 0:
-    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Spade));
-    				break;
-    			case 1:
-    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Club));
-    				break;
-    			case 2:
-    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
-    				break;
-    			case 3:
-    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
-    				break;
-    			case 4:
-    				playerHands[0].cards.set(i, new Card(Rank.NINE, Suit.Heart));
-    				break;
-    			case 5:
-    				playerHands[0].cards.set(i, new Card(Rank.TEN, Suit.Heart));
-    				break;
-    			case 6:
-    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Heart));
-    				break;
-    			case 7:
-    				playerHands[0].cards.set(i, new Card(Rank.QUEEN, Suit.Heart));
-    				break;
-    			case 8:
-    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Club));
-    				break;
-    			case 9:
-    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Diamond));
-    				break;
-    			
-    		}
-    	}
-    	
-    	for(int i = 0; i < 10; i++){
-    		switch (i){
-    			case 0:
-    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Spade));
-    				break;
-    			case 1:
-    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Heart));
-    				break;
-    			case 2:
-    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
-    				break;
-    			case 3:
-    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Heart));
-    				break;
-    			case 4:
-    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Spade));
-    				break;
-    			case 5:
-    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Club));
-    				break;
-    			case 6:
-    				playerHands[1].cards.set(i, new Card(Rank.KING, Suit.Heart));
-    				break;
-    			case 7:
-    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
-    				break;
-    			case 8:
-    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
-    				break;
-    			case 9:
-    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Diamond));
-    				break;
-    			
-    		}
-    	}
+//    	for(int i = 0; i < 10; i++){
+//    		switch (i){
+//    			case 0:
+//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Spade));
+//    				break;
+//    			case 1:
+//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Club));
+//    				break;
+//    			case 2:
+//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
+//    				break;
+//    			case 3:
+//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
+//    				break;
+//    			case 4:
+//    				playerHands[0].cards.set(i, new Card(Rank.NINE, Suit.Heart));
+//    				break;
+//    			case 5:
+//    				playerHands[0].cards.set(i, new Card(Rank.TEN, Suit.Heart));
+//    				break;
+//    			case 6:
+//    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Heart));
+//    				break;
+//    			case 7:
+//    				playerHands[0].cards.set(i, new Card(Rank.QUEEN, Suit.Heart));
+//    				break;
+//    			case 8:
+//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Club));
+//    				break;
+//    			case 9:
+//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Diamond));
+//    				break;
+//    			
+//    		}
+//    	}
+//    	
+//    	for(int i = 0; i < 10; i++){
+//    		switch (i){
+//    			case 0:
+//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Spade));
+//    				break;
+//    			case 1:
+//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Heart));
+//    				break;
+//    			case 2:
+//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
+//    				break;
+//    			case 3:
+//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Heart));
+//    				break;
+//    			case 4:
+//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Spade));
+//    				break;
+//    			case 5:
+//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Club));
+//    				break;
+//    			case 6:
+//    				playerHands[1].cards.set(i, new Card(Rank.KING, Suit.Heart));
+//    				break;
+//    			case 7:
+//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
+//    				break;
+//    			case 8:
+//    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
+//    				break;
+//    			case 9:
+//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Diamond));
+//    				break;
+//    			
+//    		}
+//    	}
     	
     	stock.moveTopCardTo(discard);
     	//discard.add(new Card(Rank.KING,Suit.Heart));
@@ -443,11 +444,14 @@ public class GRState extends GameState
     	stock.moveAllCardsTo(d);
     	discard.moveAllCardsTo(d);
     	
+    	
     	//reset end of round
     	isEndOfRound = false;
     	
     	//Reset phase, shuffle deck
     	turnPhase = DRAW_PHASE;
+    	whoseTurn = toGoFirst;
+    	
     	stock.add52();
     	stock.shuffle();
     	
@@ -570,15 +574,15 @@ public class GRState extends GameState
     
     public void nullCardsFor(int playeridx){
     	if(playeridx == 0){
-    		//if(!isEndOfRound){
-    			//playerHands[1].nullifyDeck();
-    		//}
+    		if(!isEndOfRound){
+    			playerHands[1].nullifyDeck();
+    		}
     		stock.nullifyDeck();
     		// TODO nullify all but top of discard
     	}else if(playeridx == 1){
-    		//if(!isEndOfRound){
+    		if(!isEndOfRound){
     			playerHands[0].nullifyDeck();
-    		//}
+    		}
     		stock.nullifyDeck();
     	}
     	

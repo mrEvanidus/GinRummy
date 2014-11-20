@@ -169,6 +169,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 				
 				copy.assessMelds(thisPlayerIdx);
 				if(copy.canKnock(copy.getHand(thisPlayerIdx),copy.getMeldsForPlayer(thisPlayerIdx))){
+					state.toGoFirst = thisPlayerIdx;
 					state.isEndOfRound = true;
 					state.setPhase(state.DRAW_PHASE);
 					state.setWhoseTurn(0);
