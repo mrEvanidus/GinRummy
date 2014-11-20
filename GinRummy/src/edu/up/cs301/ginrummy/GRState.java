@@ -72,6 +72,8 @@ public class GRState extends GameState
     	playerMelds.add(new ArrayList<Meld>());
     	playerMelds.add(new ArrayList<Meld>());
     	
+    	isEndOfRound = false;
+    	
     	// randomly pick the player who starts
     	//whoseTurn = (int)(2*Math.random());
     	whoseTurn = 0;
@@ -198,6 +200,7 @@ public class GRState extends GameState
     	playerScores[0] = orig.playerScores[0];
     	playerScores[1] = orig.playerScores[1];
     	ID = orig.ID;
+    	isEndOfRound = orig.isEndOfRound;
         //TODO add new stuff to copy constructor
     }
     
@@ -428,6 +431,9 @@ public class GRState extends GameState
     	playerHands[1].moveAllCardsTo(d);
     	stock.moveAllCardsTo(d);
     	discard.moveAllCardsTo(d);
+    	
+    	//reset end of round
+    	isEndOfRound = false;
     	
     	//Reset phase, shuffle deck
     	turnPhase = DRAW_PHASE;

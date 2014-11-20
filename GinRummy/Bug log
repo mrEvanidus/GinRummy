@@ -7,3 +7,7 @@ Major bug: when touching surface, game will occasionally crash
 Minor bug (1 occurrence):
 	ComputerPlayer(smart) hangs for no apparent reason, well into the game.
 	Theorized that he tried to knock and for some reason that didn't work.
+	
+Minor bug:
+	When discarding, cards will appear momentarily at their
+	in-hand location before new state is received.
