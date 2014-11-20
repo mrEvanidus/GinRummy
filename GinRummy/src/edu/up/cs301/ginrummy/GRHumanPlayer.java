@@ -415,6 +415,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			//message box to show at the end of the round
 			//TODO: Get the message from the state;
 			//TODO: get john to put a message in the state
+			synchronized(this){
 			MessageBox.popUpChoice(msg, "Next Round", "View Table",
 
 					//listener for when the "next round" button is pressed
@@ -431,6 +432,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					}},
 					myActivity); //pop-up choice
 
+			}
 			return;
 		}
 

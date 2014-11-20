@@ -92,6 +92,10 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     		return;
     	}
     	
+    	if(savedState != null && savedState.isEndOfRound){
+    		return;
+    	}
+    	
     	// update our state variable
     	savedState = (GRState)info;
     	
@@ -132,7 +136,7 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     			}
     		} 
     		//DISCARD PHASE
-    		else if (savedState.getPhase() == savedState.DISCARD_PHASE){
+    		else if (savedState.getPhase() == savedState.DISCARD_PHASE && !savedState.isEndOfRound){
     			//delay
         		try {
     				Thread.sleep(500);

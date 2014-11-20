@@ -170,6 +170,10 @@ public class GRLocalGame extends LocalGame implements GRGame {
 				copy.assessMelds(thisPlayerIdx);
 				if(copy.canKnock(copy.getHand(thisPlayerIdx),copy.getMeldsForPlayer(thisPlayerIdx))){
 					state.isEndOfRound = true;
+					state.setPhase(state.DRAW_PHASE);
+					state.setWhoseTurn(0);
+					sendAllUpdatedState();
+					//state.setPhase(state.DRAW_PHASE);
 					state.getHand(thisPlayerIdx).cards.remove(theCard);
 					
 					state.assessMelds(0);
@@ -247,18 +251,18 @@ public class GRLocalGame extends LocalGame implements GRGame {
 							state.setScore(0,20);
 						}
 						state.setScore(0,p1dw - p0dw);	
-						if(thisPlayerIdx != 0){
+						if(thisPlayerIdx == 1){
 							//Give undercut points
-							state.setScore(thisPlayerIdx,10);
+							state.setScore(0,10);
 						}
 					}else if (p0dw > p1dw){
 						if(p1dw == 0){
 							state.setScore(1,20);
 						}
 						state.setScore(1,p0dw - p1dw);	
-						if(thisPlayerIdx != 1){
+						if(thisPlayerIdx == 0){
 							//Give undercut points
-							state.setScore(thisPlayerIdx,10);
+							state.setScore(1,10);
 						}
 					}else{
 						//If both players scores are equal
@@ -276,12 +280,12 @@ public class GRLocalGame extends LocalGame implements GRGame {
 						}
 					}
 					
-					//Whichever player knocked goes first
-					if(thisPlayerIdx == 0){
-						state.setWhoseTurn(0);
-					}else{
-						state.setWhoseTurn(1);
-					}
+//					//Whichever player knocked goes first
+//					if(thisPlayerIdx == 0){
+//						state.setWhoseTurn(0);
+//					}else{
+//						state.setWhoseTurn(1);
+//					}
 			
 					sendAllUpdatedState();
 					//state.initNewRound();
