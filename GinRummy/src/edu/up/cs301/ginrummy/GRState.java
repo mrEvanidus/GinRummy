@@ -431,6 +431,9 @@ public class GRState extends GameState
     	stock.moveAllCardsTo(d);
     	discard.moveAllCardsTo(d);
     	
+    	//reset end of round
+    	isEndOfRound = false;
+    	
     	//Reset phase, shuffle deck
     	turnPhase = DRAW_PHASE;
     	stock.add52();
