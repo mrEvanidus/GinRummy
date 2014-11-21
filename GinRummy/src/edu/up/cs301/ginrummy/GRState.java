@@ -76,8 +76,8 @@ public class GRState extends GameState
     	isEndOfRound = false;
     	
     	// randomly pick the player who starts
-    	//whoseTurn = (int)(2*Math.random());
-    	whoseTurn = 0;
+    	whoseTurn = (int)(2*Math.random());
+    	//whoseTurn = 0;
     	turnPhase = DRAW_PHASE;
     	
     	

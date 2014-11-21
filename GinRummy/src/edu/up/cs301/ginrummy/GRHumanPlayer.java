@@ -280,27 +280,27 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			return;
 
 		GRState stateCopy = new GRState(state);
-
+		if(false){
 		//ERIC: START: IF THE END OF ROUND, SHOW MELDS 
-		if (state.isEndOfRound) {
-			p1Melds = state.getMeldsForPlayer(0);		
-			p1handPos.clear();
-			synchronized (this) {
-				//Iterate through each group of melds
-				//"melds" is a meld in "p1Melds"
-				for (Meld meld : p1Melds) {
-					int indexOfMeld = p1Melds.indexOf(meld);
-					//Iterate through each card in a meld
-					//"meldCard" is a card in "melds"
-					for (Card meldCard : meld.getMeldCards()) {
-
-						int indexOfMeldCard = meld.getMeldCards().indexOf(meldCard);							
-						p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*indexOfMeldCard,
-								0.75f +HAND_CARD_OFFSET*indexOfMeld));
-						meldCard.drawOn(canvas, adjustDimens(p1handPos.get(indexOfMeldCard)));							
-					}						
-				}								
-			}
+//		if (state.isEndOfRound) {
+//			p1Melds = state.getMeldsForPlayer(0);		
+//			p1handPos.clear();
+//			synchronized (this) {
+//				//Iterate through each group of melds
+//				//"melds" is a meld in "p1Melds"
+//				for (Meld meld : p1Melds) {
+//					int indexOfMeld = p1Melds.indexOf(meld);
+//					//Iterate through each card in a meld
+//					//"meldCard" is a card in "melds"
+//					for (Card meldCard : meld.getMeldCards()) {
+//
+//						int indexOfMeldCard = meld.getMeldCards().indexOf(meldCard);							
+//						p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*indexOfMeldCard,
+//								0.75f +HAND_CARD_OFFSET*indexOfMeld));
+//						meldCard.drawOn(canvas, adjustDimens(p1handPos.get(indexOfMeldCard)));							
+//					}						
+//				}								
+//			}
 		}
 		else{
 			// draw the player's hands
