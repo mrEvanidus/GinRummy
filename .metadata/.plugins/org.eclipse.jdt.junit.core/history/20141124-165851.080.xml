@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testrun name="GUIValidation" project="GinRummyTest" tests="1" started="1" failures="0" errors="0" ignored="0">
-  <testsuite name="asus-asus_transformer_pad_tf300t-C7OKCT204872" time="6.761">
-    <testsuite name="edu.up.cs301.game.test.GUIValidation" time="6.761">
-      <testcase name="testSidebar " classname="edu.up.cs301.game.test.GUIValidation" time="6.761"/>
-    </testsuite>
-  </testsuite>
-</testrun>

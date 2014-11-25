@@ -1,3 +1,0 @@
-BUG LOG:
-Major bug: when touching surface, game will occasionally crash
-	and log a ConcurrentModificationException
