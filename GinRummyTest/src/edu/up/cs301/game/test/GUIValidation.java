@@ -1,9 +1,13 @@
 package edu.up.cs301.game.test;
 
+import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.TouchUtils;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import edu.up.cs301.animation.AnimationSurface;
 import edu.up.cs301.ginrummy.GRHumanPlayer;
@@ -23,6 +27,11 @@ public class GUIValidation extends
 	private float discardPosYReference = 0.25f;
 	private AnimationSurface surface;
 	private SurfaceHolder holder;
+	
+	private LinearLayout sidebar;
+	private Button exitButton;
+	private TextView score1,score2,messagePane;
+	private RelativeLayout main;
 	
 	/*
 	 * Constructor
@@ -53,8 +62,8 @@ public class GUIValidation extends
 				.findViewById(R.id.animationSurface);
 		
 		
+		
 	}	
-	
 	/*
 	 * Get past the Main Menu to play Gin Rummy!!!!! 
 	 */
@@ -68,42 +77,65 @@ public class GUIValidation extends
 		sendKeys(KeyEvent.KEYCODE_ENTER);		
 	}
 	
-	
-	
-//	/*
-//	 * Test message pane displays "It's Your Turn Draw a card."
-//	 * 
-//	 */
-//	public void testDrawCardMessage() {
-//		
-//		return;
-//	}
-	
-	
-	/*
-	 * 
-	 * 
+	/**
+	 * tests the width of the sidebar
 	 */
-	public void testDiscardMessage() {
+	public void testSidebar() {
 		StartupScreen();
-//		holder = surface.getHolder();
-//		holder.lockCanvas();
-//		TouchUtils.drag(this, playerCardXPosReference*surface.getWidth(), discardPosXReference*surface.getWidth(),
-//				playerCardYPosReference*surface.getHeight(), discardPosYReference*surface.getHeight(), 10);
-//		assertEquals("Message should indicate it's now the opponent's turn", ""
-//				+ "Your opponent is taking their turn.", "Your opponent is taking their turn.");
 		
-		//sendKeys(KeyEvent.KEYCODE_DPAD_RIGHT);
-		//sendKeys(KeyEvent.KEYCODE_DPAD_RIGHT);
-		sendKeys(KeyEvent.KEYCODE_DPAD_DOWN);
-		sendKeys(KeyEvent.KEYCODE_DPAD_DOWN);
-		//sendKeys(KeyEvent.KEYCODE_DPAD_UP);
-		//sendKeys(KeyEvent.KEYCODE_DPAD_LEFT);
-		//sendKeys(KeyEvent.KEYCODE_DPAD_RIGHT);
+		main = (RelativeLayout)testClass.findViewById(R.id.top_gui_layout);
+		int width = main.getWidth();
+		int height = main.getHeight();
 		
+		sidebar = (LinearLayout)testClass.findViewById(R.id.sidebar);
+		int sbWidth = sidebar.getWidth();
+		int sbHeight = sidebar.getHeight();
+		
+		int[] mainLoc = new int[2];
+		int[] sbLoc = new int[2];
+		
+		main.getLocationOnScreen(mainLoc);
+		sidebar.getLocationOnScreen(sbLoc);
+		
+		assertTrue("not on screen H", mainLoc[0] + width >= sbLoc[0] + sbWidth);
+		assertTrue("On screen V", mainLoc[1] + height >= sbLoc[1] + sbHeight
+				);
 	}
 	
+	public void testMessagePane(){
+		StartupScreen();
+		
+		main = (RelativeLayout)testClass.findViewById(R.id.top_gui_layout);
+		int width = main.getWidth();
+		int height = main.getHeight();
+		
+		sidebar = (LinearLayout)testClass.findViewById(R.id.sidebar);
+		int sbWidth = sidebar.getWidth();
+		int sbHeight = sidebar.getHeight();
+		
+		messagePane = (TextView)testClass.findViewById(R.id.messagePane);
+		int mpWidth = sidebar.getWidth();
+		int mpHeight = sidebar.getHeight();
+		
+		int[] mainLoc = new int[2];
+		int[] sbLoc = new int[2];
+		int[] mpLoc = new int[2];
+		
+		main.getLocationOnScreen(mainLoc);
+		sidebar.getLocationOnScreen(sbLoc);
+		messagePane.getLocationOnScreen(mpLoc);
+		
+		assertTrue("Message pane too wide", mpLoc[0] + mpWidth <= sbLoc[0] + sbWidth);
+		assertTrue("Message pane too tall ", mpHeight <= sbHeight);
+	}
 	
+	public void testMessageText(){
+		StartupScreen();
+		messagePane = (TextView)testClass.findViewById(R.id.messagePane);
+		
+		String msg = messagePane.getText().toString();
+		assertEquals("message1 correct", "It's Your Turn:\nDraw a card.", msg);
+	}
 	
 
 }

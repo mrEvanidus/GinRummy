@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testrun name="GUIValidation" project="GinRummyTest" tests="3" started="2" failures="0" errors="1" ignored="0">
+  <testsuite name="asus-asus_transformer_pad_tf300t-C7OKCT204872" incomplete="true">
+    <testsuite name="edu.up.cs301.game.test.GUIValidation" incomplete="true">
+      <testcase name="testMessagePane " classname="edu.up.cs301.game.test.GUIValidation" time="6.51"/>
+      <testcase name="testMessageText " classname="edu.up.cs301.game.test.GUIValidation" time="27.01">
+        <error>Test failed to run to completion. Reason: 'Instrumentation run failed due to 'Process crashed.''. Check device logcat for details&#13;
+</error>
+      </testcase>
+      <testcase name="testSidebar " classname="edu.up.cs301.game.test.GUIValidation" incomplete="true"/>
+    </testsuite>
+  </testsuite>
+</testrun>
