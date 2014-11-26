@@ -51,17 +51,18 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     
     public Card cardToDiscard(Deck hand){
     	for(Card c : hand.cards){
-    		if(c.getRL() ==  1 && c.getSL() == 1){
+    		if(c.getRL() >= 3 || c.getSL() >= 3){
+    			c.priority = MELD;
+    		}else if(c.getRL() ==  1 && c.getSL() == 1){
     			c.priority = SINGLETON;
     		}else if(c.getRL() == 2 && c.getSL() == 2){
     			c.priority = TWO_HALF_MELD;
     		}else if(c.getRL() == 2 || c.getSL() == 2){
     			c.priority = ONE_HALF_MELD;
-    		}else if(c.getRL() >= 3 || c.getSL() >= 3){
-    			c.priority = MELD;
     		}else{
-    			c.priority = 5000;
+    			c.priority = 20;
     		}
+    		
     		if(c.getRank().value(1) < 10){
     			c.priority *= c.getRank().value(1);
     		}else{
@@ -90,6 +91,10 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     	if (!(info instanceof GRState)) {
     		return;
     	}
+    	
+//    	if(savedState != null && savedState.isEndOfRound){
+//    		return;
+//    	}
     	
     	// update our state variable
     	savedState = (GRState)info;
@@ -131,7 +136,7 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     			}
     		} 
     		//DISCARD PHASE
-    		else if (savedState.getPhase() == savedState.DISCARD_PHASE){
+    		else if (savedState.getPhase() == savedState.DISCARD_PHASE && !savedState.isEndOfRound){
     			//delay
         		try {
     				Thread.sleep(500);
@@ -140,10 +145,14 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     				e.printStackTrace();
     			}
     			synchronized(this){
-    				savedState.assessMelds(THIS_PLAYER);
-    				savedState.canKnock(savedState.getHand(THIS_PLAYER), savedState.getMeldsForPlayer(THIS_PLAYER));
-    				Card c = cardToDiscard(savedState.getHand(THIS_PLAYER));
-    				if(savedState.canKnock(savedState.getHand(THIS_PLAYER), savedState.getMeldsForPlayer(THIS_PLAYER))){
+    				GRState s = new GRState(savedState);
+    				Card c = cardToDiscard(s.getHand(THIS_PLAYER));
+    				s.getHand(THIS_PLAYER).remove(c);
+    				
+    				s.assessMelds(THIS_PLAYER);
+    				s.canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER));
+    				
+    				if(s.canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER))){
     					game.sendAction(new GRKnockAction(this,c));
     				}else{
     					game.sendAction(new GRDiscardAction(this, c));

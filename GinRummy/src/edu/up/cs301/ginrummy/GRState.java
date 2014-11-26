@@ -60,6 +60,7 @@ public class GRState extends GameState
     
     private boolean lastMoveWasDraw;
     
+    public int toGoFirst;
     /**
      * Constructor for objects of class SJState. Initializes for the beginning of the
      * game, with a random player as the first to turn card
@@ -72,10 +73,13 @@ public class GRState extends GameState
     	playerMelds.add(new ArrayList<Meld>());
     	playerMelds.add(new ArrayList<Meld>());
     	
+    	isEndOfRound = false;
+    	
     	// randomly pick the player who starts
-    	//whoseTurn = (int)(2*Math.random());
-    	whoseTurn = 0;
+    	whoseTurn = (int)(2*Math.random());
+    	//whoseTurn = 0;
     	turnPhase = DRAW_PHASE;
+    	
     	
     	playerHands[0] = new Deck();
     	playerHands[1] = new Deck();
@@ -104,10 +108,10 @@ public class GRState extends GameState
 //    	for(int i = 0; i < 10; i++){
 //    		switch (i){
 //    			case 0:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Spade));
+//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Spade));
 //    				break;
 //    			case 1:
-//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Heart));
+//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Club));
 //    				break;
 //    			case 2:
 //    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
@@ -131,12 +135,47 @@ public class GRState extends GameState
 //    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Club));
 //    				break;
 //    			case 9:
-//    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
+//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Diamond));
 //    				break;
 //    			
 //    		}
 //    	}
-    	
+//    	
+//    	for(int i = 0; i < 10; i++){
+//    		switch (i){
+//    			case 0:
+//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Spade));
+//    				break;
+//    			case 1:
+//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Heart));
+//    				break;
+//    			case 2:
+//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
+//    				break;
+//    			case 3:
+//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Heart));
+//    				break;
+//    			case 4:
+//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Spade));
+//    				break;
+//    			case 5:
+//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Club));
+//    				break;
+//    			case 6:
+//    				playerHands[1].cards.set(i, new Card(Rank.KING, Suit.Heart));
+//    				break;
+//    			case 7:
+//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
+//    				break;
+//    			case 8:
+//    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
+//    				break;
+//    			case 9:
+//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Diamond));
+//    				break;
+//    			
+//    		}
+//    	}
     	
     	stock.moveTopCardTo(discard);
     	//discard.add(new Card(Rank.KING,Suit.Heart));
@@ -153,8 +192,18 @@ public class GRState extends GameState
     	playerHands[0] = new Deck(orig.playerHands[0]);
     	playerHands[1] = new Deck(orig.playerHands[1]);
     	playerMelds = new ArrayList<ArrayList<Meld>>();
-    	playerMelds.add(new ArrayList<Meld>(orig.playerMelds.get(0)));
-    	playerMelds.add(new ArrayList<Meld>(orig.playerMelds.get(1)));
+    	
+    	playerMelds.add(new ArrayList<Meld>());
+    	playerMelds.add(new ArrayList<Meld>());
+    	//PROBLEM LIES HERE
+    	for (Meld m : orig.playerMelds.get(0)){
+    		
+    		playerMelds.get(0).add(new Meld(m));
+    	}
+    	for (Meld m :  orig.playerMelds.get(1)){
+    		playerMelds.get(1).add(new Meld(m));
+    	}
+    	
     	stock = new Deck(orig.stock);
     	discard = new Deck(orig.discard);
     	turnPhase = orig.turnPhase;
@@ -162,6 +211,7 @@ public class GRState extends GameState
     	playerScores[0] = orig.playerScores[0];
     	playerScores[1] = orig.playerScores[1];
     	ID = orig.ID;
+    	isEndOfRound = orig.isEndOfRound;
         //TODO add new stuff to copy constructor
     }
     
@@ -286,6 +336,7 @@ public class GRState extends GameState
      * @param pidx the player's hand to assess
      */
     public void assessMelds(int pidx){
+    	(playerMelds.get(pidx)).clear();
     	//Store cards by rank
     	ArrayList<ArrayList<Card>> ranks = new ArrayList<ArrayList<Card>>();
     	for(int i = 0; i < 13; i++){
@@ -320,7 +371,7 @@ public class GRState extends GameState
     				c.setID = ID;
     				val = c.getRank().value(1);
         		}
-				playerMelds.get(pidx).add(new Meld(a, true, val*a.size(), ID));
+				(playerMelds.get(pidx)).add(new Meld(a, true, val*a.size(), ID));
 				ID++;
 			}
     		
@@ -371,7 +422,7 @@ public class GRState extends GameState
     						runCount += c2.getRank().value(1);
         					c2.runID = ID;
         				}
-	    				playerMelds.get(pidx).add(new Meld(temp, false, runCount, ID));
+	    				(playerMelds.get(pidx)).add(new Meld(temp, false, runCount, ID));
 	    				ID++;
 	    				runCount = 0;
 					}
@@ -393,8 +444,14 @@ public class GRState extends GameState
     	stock.moveAllCardsTo(d);
     	discard.moveAllCardsTo(d);
     	
+    	
+    	//reset end of round
+    	isEndOfRound = false;
+    	
     	//Reset phase, shuffle deck
     	turnPhase = DRAW_PHASE;
+    	whoseTurn = toGoFirst;
+    	
     	stock.add52();
     	stock.shuffle();
     	
@@ -517,11 +574,15 @@ public class GRState extends GameState
     
     public void nullCardsFor(int playeridx){
     	if(playeridx == 0){
-    		playerHands[1].nullifyDeck();
+    		if(!isEndOfRound){
+    			playerHands[1].nullifyDeck();
+    		}
     		stock.nullifyDeck();
     		// TODO nullify all but top of discard
     	}else if(playeridx == 1){
-    		playerHands[0].nullifyDeck();
+    		if(!isEndOfRound){
+    			playerHands[0].nullifyDeck();
+    		}
     		stock.nullifyDeck();
     	}
     	

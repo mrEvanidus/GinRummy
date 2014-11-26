@@ -80,6 +80,7 @@ public class GRComputerPlayer extends GameComputerPlayer {
     			int rc = randCard.nextInt(10);
     			Card randomCard = savedState.getHand(THIS_PLAYER).cards.get(rc);
     			
+    			game.sendAction(new GRKnockAction(this,randomCard));
     			try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
