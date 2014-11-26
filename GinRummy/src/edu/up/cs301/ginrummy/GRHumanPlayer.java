@@ -73,11 +73,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	// the positions of the decks
 	protected static PointF stockPos, discardPos, knockPos;
 
-	// protected static PointF playerHandPos[] = new PointF[2];
-
-	// player hand positions
-	protected ArrayList<PointF> p1handPos, p2handPos;
-
+	protected static ArrayList<ArrayList<PointF>> playerHandPos = new ArrayList<ArrayList<PointF>>();
 
 	//ERIC: Player 1's melds
 	private ArrayList<Meld> p1Melds;
@@ -93,10 +89,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public GRHumanPlayer(String name) {
 		super(name);
-		p1handPos = new ArrayList<PointF>();
-		p2handPos = new ArrayList<PointF>();
-		// ERIC
-		// touchedCard = new backCard();
+		
+		//initialize the hand-positions of the players
+		playerHandPos = new ArrayList<ArrayList<PointF>>();
+		playerHandPos.add(new ArrayList<PointF>());
+		playerHandPos.add(new ArrayList<PointF>());
 	}
 
 	/**
@@ -111,7 +108,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				+ ")");
 		if (info instanceof IllegalMoveInfo || info instanceof NotYourTurnInfo) {
 			// if we had an out-of-turn or illegal move, flash the screen
-			surface.flash(Color.RED, 10);
+			surface.flash(LAKE_ERIE, 10);
 		} else if (!(info instanceof GRState)) {
 			// otherwise, if it's not a game-state message, ignore
 			return;
@@ -212,17 +209,13 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		// set the location of the decks
 		knockPos = new PointF(0.1f, 0.25f);
 		stockPos = new PointF(0.3f, 0.25f);
-		discardPos = new PointF(0.5f, 0.25f);
+		discardPos = new PointF(stockPos.x + 0.2f, 0.25f);
 
 		//initially unlock the GUI
 		lockGUI = false;
-
-		// playerHandPos[0] = new PointF(0.0f,0.75f);
-		// playerHandPos[1] = new PointF(0.6f,-0.25f);
-
+		
 		// if the state is not null, simulate having just received the state so
-		// that
-		// any state-related processing is done
+		// that any state-related processing is done
 		if (state != null) {
 			receiveInfo(state);
 		}
@@ -240,7 +233,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @return the animation interval, in milliseconds
 	 */
 	public int interval() {
-		// 1/20 of a second
+		// 1/200 of a second
 		return 5;
 	}
 
@@ -281,101 +274,52 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		GRState stateCopy = new GRState(state);
 		if(false){
-		//ERIC: START: IF THE END OF ROUND, SHOW MELDS 
-//		if (state.isEndOfRound) {
-//			p1Melds = state.getMeldsForPlayer(0);		
-//			p1handPos.clear();
-//			synchronized (this) {
-//				//Iterate through each group of melds
-//				//"melds" is a meld in "p1Melds"
-//				for (Meld meld : p1Melds) {
-//					int indexOfMeld = p1Melds.indexOf(meld);
-//					//Iterate through each card in a meld
-//					//"meldCard" is a card in "melds"
-//					for (Card meldCard : meld.getMeldCards()) {
-//
-//						int indexOfMeldCard = meld.getMeldCards().indexOf(meldCard);							
-//						p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*indexOfMeldCard,
-//								0.75f +HAND_CARD_OFFSET*indexOfMeld));
-//						meldCard.drawOn(canvas, adjustDimens(p1handPos.get(indexOfMeldCard)));							
-//					}						
-//				}								
-//			}
+			//ERIC: START: IF THE END OF ROUND, SHOW MELDS 
+			//		if (state.isEndOfRound) {
+			//			p1Melds = state.getMeldsForPlayer(0);		
+			//			p1handPos.clear();
+			//			synchronized (this) {
+			//				//Iterate through each group of melds
+			//				//"melds" is a meld in "p1Melds"
+			//				for (Meld meld : p1Melds) {
+			//					int indexOfMeld = p1Melds.indexOf(meld);
+			//					//Iterate through each card in a meld
+			//					//"meldCard" is a card in "melds"
+			//					for (Card meldCard : meld.getMeldCards()) {
+			//
+			//						int indexOfMeldCard = meld.getMeldCards().indexOf(meldCard);							
+			//						p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*indexOfMeldCard,
+			//								0.75f +HAND_CARD_OFFSET*indexOfMeld));
+			//						meldCard.drawOn(canvas, adjustDimens(p1handPos.get(indexOfMeldCard)));							
+			//					}						
+			//				}								
+			//			}
 		}
 		else{
-			// draw the player's hands
-			p1handPos.clear();
-			ArrayList<Card> hand = stateCopy.getHand(0).cards;
-			synchronized (this) {
-				for (Card card : hand) {
+			//empty the hand positions for repopulation
+			playerHandPos.get(0).clear();
+			playerHandPos.get(1).clear();
 
-					int n = hand.indexOf(card);
-					p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET * n, 0.75f));
-
-					// draw the card, if it is not being dragged or animated
-					if ((touchedCard != null && touchedCard.equals(card))
-							|| (path != null && path.getCard().equals(card))) {
-						// don't draw the card
-					} else {
-						// draw the card
-						card.drawOn(canvas, adjustDimens(p1handPos.get(n)));
-					}
-				}
+			//set up the position of all the cards in the hands
+			for (int i = 0; i < stateCopy.getHand(0).cards.size(); i++) {
+				playerHandPos.get(0).add(new PointF(0.05f + HAND_CARD_OFFSET*i, 0.75f));
+			}
+			for (int i = 0; i < stateCopy.getHand(1).cards.size(); i++) {
+				playerHandPos.get(1).add(new PointF(0.55f - HAND_CARD_OFFSET*i, -0.25f));
 			}
 
-			p2handPos.clear();
-			// draw the opponent's hand
-			synchronized (this) {
-				Deck copy = stateCopy.getHand(1);
-				ArrayList<PointF> copypos = p2handPos;
-				for (Card card : copy.cards) {
-					int n = copy.cards.indexOf(card);
-					copypos.add(new PointF(0.55f - HAND_CARD_OFFSET * n, -0.25f));
-					// add a few pixels to the position
-
-					// draw the card
-					// TODO thread bug is here
-					card.drawOn(canvas, adjustDimens(copypos.get(n)));
-
-				}
-			}
+			//draw the hands
+			drawHand(canvas, stateCopy.getHand(0).cards, playerHandPos.get(0));
+			drawHand(canvas, stateCopy.getHand(1).cards, playerHandPos.get(1));
 		}
 
-
-		// get the information from the state
-		Deck decks[] = { stateCopy.getStock(), stateCopy.getDiscard() };
-		PointF deckPos[] = { stockPos, discardPos };
-
-		// draw the stock and discard piles
-		for (int idx = decks.length - 1; idx >= 0; idx--) {
-			Deck deck = decks[idx];
-			for (Card card : deck.cards) {
-				int n = deck.cards.indexOf(card);
-
-				// add a few pixels to the position
-				RectF position = adjustDimens(deckPos[idx]);
-				position.set(new RectF(position.left + STACKED_CARD_OFFSET
-						* position.width() * n, position.top
-						- STACKED_CARD_OFFSET * position.height() * n,
-						position.right + STACKED_CARD_OFFSET * position.width()
-						* n, position.bottom - STACKED_CARD_OFFSET
-						* position.height() * n));
-
-				// draw the card
-				card.drawOn(canvas, position);
-			}
-		}
+		//draw the stock and discard piles
+		drawDeck(canvas, stateCopy.getStock(), stockPos);
+		drawDeck(canvas, stateCopy.getDiscard(), discardPos);
 
 		// draw the knocking box
-		Paint p = new Paint();
-		p.setStyle(Paint.Style.STROKE);
-		p.setColor(Color.GREEN);
-		p.setTextSize(24);
-		canvas.drawText("KNOCK", knockPos.x * surface.getWidth()
-				+ getCardDimensions().x / 6, knockPos.y * surface.getHeight()
-				+ getCardDimensions().y / 2, p);
-		canvas.drawRect(adjustDimens(knockPos), p);
-
+		drawKnockBox(canvas, Color.GREEN);
+		
 		if (path != null) {
 			// advance the card along the path
 			PointF newPos = path.advance();
@@ -397,6 +341,75 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}//tick
 
 	/**
+	 * TODO
+	 * @param canvas
+	 * @param col
+	 */
+	private void drawKnockBox(Canvas canvas, int col) {
+		Paint p = new Paint();
+		p.setStyle(Paint.Style.STROKE);
+		p.setColor(col);
+		p.setTextSize(24);
+		canvas.drawText("KNOCK", knockPos.x * surface.getWidth()
+				+ getCardDimensions().x / 6, knockPos.y * surface.getHeight()
+				+ getCardDimensions().y / 2, p);
+		canvas.drawRoundRect(adjustDimens(knockPos), 10F, 10F, p);		
+	}
+
+	/**
+	 * TODO
+	 * @param canvas
+	 * @param deck
+	 * @param pos
+	 */
+	private void drawDeck(Canvas canvas, Deck deck, PointF pos) {
+		// draw the stack of cards
+		for (Card card : deck.cards) {
+			int n = deck.cards.indexOf(card);
+
+			// add a few pixels to the position
+			RectF position = adjustDimens(pos);
+			position.set(new RectF(position.left + STACKED_CARD_OFFSET
+					* position.width() * n, position.top
+					- STACKED_CARD_OFFSET * position.height() * n,
+					position.right + STACKED_CARD_OFFSET * position.width()
+					* n, position.bottom - STACKED_CARD_OFFSET
+					* position.height() * n));
+
+			// draw the card
+			card.drawOn(canvas, position);
+		}
+
+	}
+
+	/**
+	 * Draws the specified arrayList of Cards onto the specified arrayList of positions
+	 * @param canvas
+	 * 			The canvas to draw on
+	 * @param hand
+	 * 			The hand to draw
+	 * @param pos
+	 * 			Where to draw the hand
+	 */
+	private void drawHand(Canvas canvas, ArrayList<Card> hand, ArrayList<PointF> pos) {
+		for (PointF p : pos) {
+			int n = pos.indexOf(p);
+			Card card = hand.get(n);
+
+			// draw the card, if it is not being dragged or animated
+			if ((touchedCard != null && touchedCard.equals(card))
+					|| (path != null && path.getCard().equals(card))) {
+				// don't draw the card
+			} else {
+				// draw the card
+				card.drawOn(canvas, adjustDimens(p));
+			}
+		}
+
+
+	}
+
+	/**
 	 * callback method: we have received a touch on the animation surface
 	 * 
 	 * @param event
@@ -405,32 +418,33 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public void onTouch(MotionEvent event) {
 
+		GRState stateCopy = new GRState(state);
 		//if the GUI is locked, it means we are at the end of the round
 		//and touching the board anywhere should show the round end dialog
 		if (lockGUI) {
 			String msg = String.format("Round Over.\nYour Score: %d\n Your Opponent's Score: %d" , 
-					state.getp1score(), state.getp2score());
+					stateCopy.getp1score(), stateCopy.getp2score());
 
 			if (event.getAction() != MotionEvent.ACTION_DOWN) return;
 			//message box to show at the end of the round
 			//TODO: Get the message from the state;
 			//TODO: get john to put a message in the state
 			synchronized(this){
-			MessageBox.popUpChoice(msg, "Next Round", "View Table",
+				MessageBox.popUpChoice(msg, "Next Round", "View Table",
 
-					//listener for when the "next round" button is pressed
-					new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int which) {
-					// start a new round
-					nextRound();
-				}},
-
-				//listener for when the "View Table" button is pressed 
-				new DialogInterface.OnClickListener(){
+						//listener for when the "next round" button is pressed
+						new DialogInterface.OnClickListener(){
 					public void onClick(DialogInterface dialog, int which) {
-						//do nothing, return to table
+						// start a new round
+						nextRound();
 					}},
-					myActivity); //pop-up choice
+
+					//listener for when the "View Table" button is pressed 
+					new DialogInterface.OnClickListener(){
+						public void onClick(DialogInterface dialog, int which) {
+							//do nothing, return to table
+						}},
+						myActivity); //pop-up choice
 
 			}
 			return;
@@ -443,14 +457,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		// on down touch events:
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-			// check for dragging
-			if (state.getPhase() == GRState.DISCARD_PHASE) {
-
-			}// discard_phase
 
 			// check for draw
-			else if (state.getPhase() == GRState.DRAW_PHASE) {
-
+			if (stateCopy.getPhase() == GRState.DRAW_PHASE) {
 				// draw from the stock pile
 				if (adjustDimens(stockPos).contains(touchX, touchY)) {
 					game.sendAction(new GRDrawAction(this, true));
@@ -460,17 +469,16 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				else if (adjustDimens(discardPos).contains(touchX, touchY)) {
 					game.sendAction(new GRDrawAction(this, false));
 				}
-
 			}// draw_phase
 
 			// check each card hand position to see if it was touched
-			for (PointF p : p1handPos) {
+			for (PointF p : playerHandPos.get(0)) {
 
 				if (adjustDimens(p).contains(touchX, touchY)) {
-					int i = p1handPos.indexOf(p);
+					int i = playerHandPos.get(0).indexOf(p);
 
 					// select the card
-					touchedCard = state.getHand(0).cards.get(i);
+					touchedCard = stateCopy.getHand(0).cards.get(i);
 					touchedPos = new PointF(
 							((float) touchX - getCardDimensions().x / 2)
 							/ (float) surface.getWidth(),
@@ -484,21 +492,19 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			}
 		}// ACTION_DOWN
 
-		// When we release our finger and the card is hovered over the discard
+		// on finger-lift
 		else if (event.getAction() == MotionEvent.ACTION_UP) {
 			if (touchedCard != null && touchedPos != null) {
 
-
-
-				//START: ERIC: Implementing rearranging cards in hand
-				int i = state.getHand(0).cards.indexOf(touchedCard);
-				state.getHand(0).cards.remove(touchedCard);
+				// rearrange cards in hand
+				int i = stateCopy.getHand(0).cards.indexOf(touchedCard);
+				stateCopy.getHand(0).cards.remove(touchedCard);
 				synchronized(this) {
-					for (PointF p : p1handPos) {
+					for (PointF p : playerHandPos.get(0)) {
 
 						if (adjustDimens(p).contains(touchX, touchY)) {
 							//find index of card that we're dragging card to
-							i = p1handPos.indexOf(p);	
+							i = playerHandPos.get(0).indexOf(p);	
 
 							//create new path to new location for card
 							originPos.x = touchX;
@@ -507,7 +513,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					}
 
 					//ERIC: Replace card being hovered over with dragged card				
-					state.getHand(0).cards.add(i, touchedCard);
+					stateCopy.getHand(0).cards.add(i, touchedCard);
 				}
 				//END: ERIC: Implementing rearranging cards in hand
 
