@@ -50,5 +50,9 @@ public abstract class GRMoveAction extends GameAction {
     public boolean isKnock(){
     	return false;
     }
+    
+    public boolean isNextRound(){
+    	return false;
+    }
 
 }
