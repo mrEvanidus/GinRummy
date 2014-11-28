@@ -146,7 +146,7 @@ public abstract class LocalGame implements Game, Tickable {
 	 * @return
 	 * 			the player's ID, or -1 if the player is not a player in this game
 	 */
-	protected final int getPlayerIdx(GamePlayer p) {
+	public final int getPlayerIdx(GamePlayer p) {
 		for (int i = 0; i < players.length; i++) {
 			if (p == players[i]) {
 				return i;

@@ -61,6 +61,7 @@ public class GRState extends GameState
     private boolean lastMoveWasDraw;
     
     public int toGoFirst;
+	public int yourId;
     /**
      * Constructor for objects of class SJState. Initializes for the beginning of the
      * game, with a random player as the first to turn card
@@ -573,6 +574,7 @@ public class GRState extends GameState
     }
     
     public void nullCardsFor(int playeridx){
+    	yourId = playeridx;
     	if(playeridx == 0){
     		if(!isEndOfRound){
     			playerHands[1].nullifyDeck();
