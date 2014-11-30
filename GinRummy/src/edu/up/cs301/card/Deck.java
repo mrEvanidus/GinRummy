@@ -86,8 +86,14 @@ public class Deck implements Serializable {
 	}
 
 	//TODO document this
-	public void remove(Card c){
-		cards.remove(c);
+	public synchronized void remove(Card c){
+		//cards.remove(c);
+		for(Card card : cards){
+			if(card != null && card.getRank() == c.getRank() && card.getSuit() == c.getSuit()){
+				cards.remove(card);
+				break;
+			}
+		}
 	}
 	
 	

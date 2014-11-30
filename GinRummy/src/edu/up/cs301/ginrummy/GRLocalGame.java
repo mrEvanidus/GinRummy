@@ -120,6 +120,16 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			return false;
 		}
 
+		if(grma.isNextRound() && state.isEndOfRound){
+			if (grma instanceof GRNewGameAction) {
+				state.setScore(0, 0);
+				state.setScore(1, 0);
+			}
+			state.initNewRound();
+			sendAllUpdatedState();
+			return true;
+		}
+		
 		if(canMove(thisPlayerIdx)){
 			//DRAW PHASE
 			if (grma.isDraw() && state.getPhase() == GRState.DRAW_PHASE) {
@@ -171,6 +181,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 				if(copy.canKnock(copy.getHand(thisPlayerIdx),copy.getMeldsForPlayer(thisPlayerIdx))){
 					state.toGoFirst = thisPlayerIdx;
 					state.isEndOfRound = true;
+					state.lockGUI = true;
 					state.setPhase(state.DRAW_PHASE);
 					state.setWhoseTurn(0);
 					sendAllUpdatedState();
@@ -182,8 +193,11 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					state.canKnock(state.getHand(0), state.getMeldsForPlayer(0));
 					state.canKnock(state.getHand(1), state.getMeldsForPlayer(1));
 
+					ArrayList<Card> layoffCards = new ArrayList<Card>();
+					int playerWhoLaidOff = 0;
 					//Lay off cards
 					if(thisPlayerIdx == 1){
+						playerWhoLaidOff = 0;
 						for(int i = 0; i<2;i++){
 							ArrayList<Card> tempToAdd = new ArrayList<Card>();
 							ArrayList<Card> tempToRemove = new ArrayList<Card>();
@@ -197,6 +211,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 									int dw2 = s.genHand(-1, s.getHand(1));
 
 									if(dw == dw2){
+										layoffCards.add(c);
 										tempToAdd.add(c);
 										tempToRemove.remove(c);
 									}
@@ -210,6 +225,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 							}
 						}
 					}else{
+						playerWhoLaidOff = 1;
 						for(int i = 0; i<2;i++){
 							ArrayList<Card> tempToAdd = new ArrayList<Card>();
 							ArrayList<Card> tempToRemove = new ArrayList<Card>();
@@ -223,6 +239,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 									int dw2 = s.genHand(-1, s.getHand(0));
 
 									if(dw == dw2){
+										layoffCards.add(c);
 										tempToAdd.add(c);
 										tempToRemove.remove(c);
 									}
@@ -287,7 +304,27 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					//					}else{
 					//						state.setWhoseTurn(1);
 					//					}
-
+					
+					//TODO: Here you go, Jaimiey
+					state.gameMessage = "Player 1 score: " + state.getp1score() 
+							+ "\nPlayer 2 score: "+ state.getp2score() + "\n";
+					
+					String layoffPlayer = "";
+					if(playerWhoLaidOff == 0){
+						layoffPlayer = "Player 1";
+					}else {
+						layoffPlayer = "Player 2";
+					}
+					
+					if(layoffCards.size() > 0){
+						state.gameMessage = state.gameMessage + layoffPlayer + 
+								" laid off:\n";
+						for(Card c : layoffCards){
+							state.gameMessage = state.gameMessage + c.toString()+"\n";
+						}
+					}
+					
+					//state.setWhoseTurn(1);
 					sendAllUpdatedState();
 					//state.initNewRound();
 
@@ -295,18 +332,13 @@ public class GRLocalGame extends LocalGame implements GRGame {
 				else{
 					return false;
 				}
-			}else if(grma.isNextRound() && state.isEndOfRound){
-				if (grma instanceof GRNewGameAction) {
-					state.setScore(0, 0);
-					state.setScore(1, 0);
-				}
-				state.initNewRound();
 			}
 			else {
 				return false;
 			}
 		}
 
+		
 		sendAllUpdatedState();
 		// return true, because the move was successful if we get here
 		return true;
