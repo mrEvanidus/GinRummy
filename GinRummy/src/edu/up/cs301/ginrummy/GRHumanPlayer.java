@@ -33,7 +33,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// how much a card on top of another should be offset by
 	private final static float STACKED_CARD_OFFSET = 0.005F;  	
-	private final static float HAND_CARD_OFFSET = 0.06F;			//ERIC: originally 0.055F
+	private final static float HAND_CARD_OFFSET = 0.06F;	
+	private final static float SPACE_BTN_MELDS = 0.02F;
 
 	// the width and height of the card images
 	private final static PointF CARD_DIMENSIONS = new PointF(500, 726);
@@ -309,30 +310,13 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//find out my id
 		myIdx = state.yourId;
 		otherIdx = (myIdx == 0 ? 1 : 0);
-
-		//		if(false){
-		//			//ERIC: START: IF THE END OF ROUND, SHOW MELDS 
-		//			//		if (state.isEndOfRound) {
-		//			//			p1Melds = state.getMeldsForPlayer(0);		
-		//			//			p1handPos.clear();
-		//			//			synchronized (this) {
-		//			//				//Iterate through each group of melds
-		//			//				//"melds" is a meld in "p1Melds"
-		//			//				for (Meld meld : p1Melds) {
-		//			//					int indexOfMeld = p1Melds.indexOf(meld);
-		//			//					//Iterate through each card in a meld
-		//			//					//"meldCard" is a card in "melds"
-		//			//					for (Card meldCard : meld.getMeldCards()) {
-		//			//
-		//			//						int indexOfMeldCard = meld.getMeldCards().indexOf(meldCard);							
-		//			//						p1handPos.add(new PointF(0.05f + HAND_CARD_OFFSET*indexOfMeldCard,
-		//			//								0.75f +HAND_CARD_OFFSET*indexOfMeld));
-		//			//						meldCard.drawOn(canvas, adjustDimens(p1handPos.get(indexOfMeldCard)));							
-		//			//					}						
-		//			//				}								
-		//			//			}
-		//		}
-
+		
+		//display players' melds if it's the end of a round
+		if (state.isEndOfRound) {
+			displayMelds(0,canvas);
+			displayMelds(1,canvas);
+			return;
+		}
 
 		ArrayList<Card> myHand = state.getHand(myIdx).cards;
 		//if card is not in hand Order, but is supposed to be, add it
@@ -658,6 +642,42 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		return adjustedRect;
 	}
 
+	/**
+	 * Display the melds after a knock
+	 * @param playerIndex
+	 */
+	synchronized private void displayMelds(int playerIndex, Canvas canvas) {
+		ArrayList<Meld> playerMelds = state.getMeldsForPlayer(playerIndex);	
+		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
+		float cardsY;
+		float cardSpacer = 0;
+		
+		//decide which player hand position we need
+		if (playerIndex == 0) cardsY = 0.55f;		
+		else if (playerIndex == 1) cardsY = 0f;
+		else {
+			Log.v("Error", "Invalid Player Specified for displayMelds()");
+			return;
+		}
+		
+		playerHandPos.clear();
+			//Iterate through each group of melds. 
+			for (Meld meld : playerMelds) {
+				int indexOfMeld = playerMelds.indexOf(meld);
+				//Iterate through each card in a meld
+				//"meldCard" is a card in "melds"
+				for (Card meldCard : meld.getMeldCards()) {
+					playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer 
+							,cardsY + SPACE_BTN_MELDS*indexOfMeld));
+					
+					//the last index of playerHandPos is the current meldCard
+					int lastIndex = playerHandPos.size() - 1;
+					meldCard.drawOn(canvas, adjustDimens(playerHandPos.get(lastIndex)));
+					cardSpacer++;
+				}					
+			}	
+	}
+	
 	/**
 	 * requests to move to the next round
 	 */
