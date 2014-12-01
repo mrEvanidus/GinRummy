@@ -268,7 +268,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		super.gameIsOver(msg);
 
 		//cause the game button to be visible
-		newGame.setVisibility(View.VISIBLE);
+		//TODO: fix new game button
+		//newGame.setVisibility(View.VISIBLE);
 	}
 
 	/**
