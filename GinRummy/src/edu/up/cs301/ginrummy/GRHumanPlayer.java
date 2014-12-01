@@ -148,20 +148,21 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				//lock the gui so cards cannot be moved
 				lockGUI = true;
 				messagePane.setText("Round over.\nTouch anywhere to see scores!");
-				return;
+				//return;
 			}
-
-			lockGUI = false;
-			//state messages
-			if (state.whoseTurn() == myIdx){
-				if (state.getPhase() == GRState.DRAW_PHASE) {
-					messagePane.setText("It's Your Turn:\nDraw a card.");
+			else{
+				lockGUI = false;
+				//state messages
+				if (state.whoseTurn() == myIdx){
+					if (state.getPhase() == GRState.DRAW_PHASE) {
+						messagePane.setText("It's Your Turn:\nDraw a card.");
+					}
+					else if (state.getPhase() == GRState.DISCARD_PHASE) {
+						messagePane.setText("It's Your Turn:\nDiscard a Card.");
+					}
+				}else{
+					messagePane.setText("Your opponent is taking their turn.");
 				}
-				else if (state.getPhase() == GRState.DISCARD_PHASE) {
-					messagePane.setText("It's Your Turn:\nDiscard a Card.");
-				}
-			}else{
-				messagePane.setText("Your opponent is taking their turn.");
 			}
 		}
 	}
@@ -300,7 +301,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @param g
 	 *            the canvas on which we are to draw
 	 */
-	public void tick(Canvas canvas) {
+	public synchronized void tick(Canvas canvas) {
 		// ignore if we have not yet received the game state
 		if (state == null)
 			return;
@@ -343,7 +344,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		//draw the hands
 		drawHand(canvas, new ArrayList<Card>(handOrder), playerHandPos.get(myIdx));
-		drawHand(canvas, stateCopy.getHand(1).cards, playerHandPos.get(otherIdx));
+		drawHand(canvas, stateCopy.getHand(otherIdx).cards, playerHandPos.get(otherIdx));
 
 		//draw the stock and discard piles
 		drawDeck(canvas, stateCopy.getStock(), stockPos);
@@ -432,6 +433,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	synchronized private void drawHand(Canvas canvas, ArrayList<Card> hand, ArrayList<PointF> pos) {
 		for (PointF p : pos) {
 			int n = pos.indexOf(p);
+			if(n >= hand.size()){
+				break;
+			}
 			Card card = hand.get(n);
 
 			// draw the card, if it is not being dragged or animated
@@ -458,9 +462,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//if the GUI is locked, it means we are at the end of the round
 		//and touching the board anywhere should show the round end dialog
 		if (lockGUI) {
-			String msg = String.format("Round Over.\nYour Score: %d\n Your Opponent's Score: %d" , 
-					stateCopy.getp1score(), stateCopy.getp2score());
+			/*String msg = String.format("Round Over.\nYour Score: %d\n Your Opponent's Score: %d" , 
+					stateCopy.getp1score(), stateCopy.getp2score());*/
 
+			String msg = state.gameMessage;
 			if (event.getAction() != MotionEvent.ACTION_DOWN) return;
 			//message box to show at the end of the round
 			//TODO: Get the message from the state;
@@ -683,7 +688,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	private void nextRound() {
 		// TODO Auto-generated method stub
+
 		game.sendAction(new GRNextRoundAction(this));
+
 	}
 
 	/**
