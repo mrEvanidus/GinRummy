@@ -164,22 +164,22 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					}
 				}else{
 					messagePane.setText("Your opponent is taking their turn.");
-					PointF org = null;
-					PointF dst = null;
-					if (playerHandPos.get(otherIdx).size() > 0) {
-						if (state.getPhase() == GRState.DRAW_PHASE) {
-							org = stockPos;
-							dst = playerHandPos.get(otherIdx).get(0);
-						}
-						else {
-							dst = discardPos;
-							org = playerHandPos.get(otherIdx).get(0);
-						}
-					}
-
-					CardPath newPath = new CardPath(new backCard(), org, dst);
-					newPath.setAnimationSpeed(5);
-					opponentPath = newPath;
+//					PointF org = null;
+//					PointF dst = null;
+//					if (playerHandPos.get(otherIdx).size() > 0) {
+//						if (state.getPhase() == GRState.DRAW_PHASE) {
+//							org = stockPos;
+//							dst = playerHandPos.get(otherIdx).get(0);
+//						}
+//						else {
+//							dst = discardPos;
+//							org = playerHandPos.get(otherIdx).get(0);
+//						}
+//					}
+//
+//					CardPath newPath = new CardPath(new backCard(), org, dst);
+//					newPath.setAnimationSpeed(5);
+//					opponentPath = newPath;
 				}
 			}
 		}
