@@ -2,7 +2,7 @@ package edu.up.cs301.card;
 
 import android.graphics.*;
 
-public class CardPath {
+public class CardPath /*implements Runnable*/{
 	
 	private float animationDuration = 50; //how long the animation will take, default 50 ticks
 	
@@ -47,6 +47,14 @@ public class CardPath {
 	public void setDestination(PointF desination) {
 		this.destination = desination;
 	}
+	
+	public PointF getPosition() {
+		return location;
+	}
+	
+	public void setPosition(PointF position) {
+		this.location = position; 
+	}
 
 	/**
 	 * advances the animation by one tick
@@ -73,6 +81,23 @@ public class CardPath {
 	 * @return TRUE if the path is complete
 	 */
 	public boolean isComplete() {
-		return progress == animationDuration;
+		return progress >= animationDuration;
 	}
+
+	/**
+	 * TODO
+	 */
+//	public void run() {
+//		while(!isComplete()) {
+//			//advance the animation
+//			this.location = this.advance();
+//			
+//			//wait a bit
+//			try {
+//				Thread.sleep((int)getAnimationSpeed());
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 }

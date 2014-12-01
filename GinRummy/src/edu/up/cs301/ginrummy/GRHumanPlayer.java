@@ -62,8 +62,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	// the score and message pane text fields
 	private TextView oppScore, myScore, messagePane; 
 
-	// moving card information
+	// moving card information for my cards
 	CardPath path;
+
+	// moving card information for opponent's cards
+	CardPath opponentPath;
 
 	// ERIC: card being moved
 	private Card touchedCard;
@@ -75,17 +78,14 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	protected static PointF stockPos, discardPos, knockPos;
 
 	//positions of the players' hands
-	protected static ArrayList<ArrayList<PointF>> playerHandPos = new ArrayList<ArrayList<PointF>>();
+	protected static ArrayList<ArrayList<PointF>> playerHandPos;
 
 	//card order in this player's hand
 	private ArrayList<Card> handOrder;
 
-	//ERIC: Player 1's melds
-	private ArrayList<Meld> p1Melds;
-
 	//whether the GUI is locked or not
 	private boolean lockGUI;
-	
+
 	//what are the player indices
 	private int myIdx, otherIdx;
 
@@ -140,7 +140,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					(otherIdx == 0 ? state.getp1score() : state.getp2score());
 			oppScore.setText("Opponent Score: " + Integer.toString(score2));
 			myScore.setText("Your Score: " + Integer.toString(score1));
-			//make the new game invisible
+
+			//make the new game button invisible
 			newGame.setVisibility(View.INVISIBLE);
 
 			//if hand is over show an appropriate message
@@ -152,6 +153,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			}
 			else{
 				lockGUI = false;
+
 				//state messages
 				if (state.whoseTurn() == myIdx){
 					if (state.getPhase() == GRState.DRAW_PHASE) {
@@ -162,6 +164,22 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					}
 				}else{
 					messagePane.setText("Your opponent is taking their turn.");
+					PointF org = null;
+					PointF dst = null;
+					if (playerHandPos.get(otherIdx).size() > 0) {
+						if (state.getPhase() == GRState.DRAW_PHASE) {
+							org = stockPos;
+							dst = playerHandPos.get(otherIdx).get(0);
+						}
+						else {
+							dst = discardPos;
+							org = playerHandPos.get(otherIdx).get(0);
+						}
+					}
+
+					CardPath newPath = new CardPath(new backCard(), org, dst);
+					newPath.setAnimationSpeed(5);
+					opponentPath = newPath;
 				}
 			}
 		}
@@ -265,8 +283,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @return the animation interval, in milliseconds
 	 */
 	public int interval() {
-		// 1/200 of a second
-		return 5;
+		// 1/1000 of a second
+		return 10;
 	}
 
 	/**
@@ -311,7 +329,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//find out my id
 		myIdx = state.yourId;
 		otherIdx = (myIdx == 0 ? 1 : 0);
-		
+
 		//display players' melds if it's the end of a round
 		if (state.isEndOfRound) {
 			displayMelds(0,canvas);
@@ -319,13 +337,25 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			return;
 		}
 
-		ArrayList<Card> myHand = state.getHand(myIdx).cards;
 		//if card is not in hand Order, but is supposed to be, add it
+		//this should happen at the beginning of a round and after a draw action
+		ArrayList<Card> myHand = state.getHand(myIdx).cards;
 		for (Card c : myHand) { 
-			if (!handOrder.contains(c)) handOrder.add(c);
+			if (!handOrder.contains(c)){
+				handOrder.add(c);
+
+				//if we've just drawn a card, we can drag it
+				if(stateCopy.getPhase() == GRState.DISCARD_PHASE) {
+					touchedCard = c;
+					touchedPos = stockPos;
+					originPos = playerHandPos.get(myIdx).get(
+							playerHandPos.get(myIdx).size()-1);
+				}
+			}
 		}
 
 		//if card is in hand order which is not supposed to be, remove it
+		//this should happen after a discard or knock action.
 		for (Card c : new ArrayList<Card>(handOrder)) {
 			if (!myHand.contains(c)) handOrder.remove(c);
 		}
@@ -357,12 +387,27 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			// advance the card along the path
 			PointF newPos = path.advance();
 
-			// draw the moving card
-			if (newPos != null)
-				path.getCard().drawOn(canvas, adjustDimens(newPos));
-
+			// draw the moving cards
+			if (newPos != null){
+//			PointF newPos = path.getPosition();
+			path.getCard().drawOn(canvas, adjustDimens(newPos));
+			}
+			
 			// if the animation is done, remove the animation
 			if (path != null && path.isComplete()) path = null;
+		}
+		if (opponentPath != null) {
+			// advance the card along the path
+			PointF newPos = opponentPath.advance();
+
+			// draw the moving cards
+			if (newPos != null){
+//			PointF newPos = opponentPath.getPosition();
+			opponentPath.getCard().drawOn(canvas, adjustDimens(newPos));
+			}
+
+			// if the animation is done, remove the animation
+			if (opponentPath != null && opponentPath.isComplete()) opponentPath = null;
 		}
 
 		// draw the card being dragged
@@ -450,6 +495,42 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}
 
 	/**
+	 * Display the melds after a knock
+	 * @param playerIndex
+	 */
+	synchronized private void displayMelds(int playerIndex, Canvas canvas) {
+		ArrayList<Meld> playerMelds = state.getMeldsForPlayer(playerIndex);	
+		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
+		float cardsY;
+		float cardSpacer = 0;
+
+		//decide which player hand position we need
+		if (playerIndex == 0) cardsY = 0.55f;		
+		else if (playerIndex == 1) cardsY = 0f;
+		else {
+			Log.v("Error", "Invalid Player Specified for displayMelds()");
+			return;
+		}
+
+		playerHandPos.clear();
+		//Iterate through each group of melds. 
+		for (Meld meld : playerMelds) {
+			int indexOfMeld = playerMelds.indexOf(meld);
+			//Iterate through each card in a meld
+			//"meldCard" is a card in "melds"
+			for (Card meldCard : meld.getMeldCards()) {
+				playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer 
+						,cardsY + SPACE_BTN_MELDS*indexOfMeld));
+
+				//the last index of playerHandPos is the current meldCard
+				int lastIndex = playerHandPos.size() - 1;
+				meldCard.drawOn(canvas, adjustDimens(playerHandPos.get(lastIndex)));
+				cardSpacer++;
+			}					
+		}	
+	}
+
+	/**
 	 * callback method: we have received a touch on the animation surface
 	 * 
 	 * @param event
@@ -468,8 +549,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			String msg = state.gameMessage;
 			if (event.getAction() != MotionEvent.ACTION_DOWN) return;
 			//message box to show at the end of the round
-			//TODO: Get the message from the state;
-			//TODO: get john to put a message in the state
 			MessageBox.popUpChoice(msg, "Next Round", "Back to Melds",
 
 					//listener for when the "next round" button is pressed
@@ -483,7 +562,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				//listener for when the "Back to Melds" button is pressed 
 				new DialogInterface.OnClickListener(){
 					public void onClick(DialogInterface dialog, int which) {
-						//do nothing, return to table
+						//do nothing, return to game
 					}},
 					myActivity); //pop-up choice
 
@@ -504,7 +583,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			if (touchedCard != null) drop(touchedCard, touchX, touchY);
 		} // ACTION_UP
 
-		else {
+		else if (event.getAction() == MotionEvent.ACTION_MOVE){
 			// when we move a card, move it (from its center)
 			// set screen relative position of the dragged card
 			touchedPos = new PointF(
@@ -512,6 +591,12 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					/ (float) surface.getWidth(),
 					((float) touchY - getCardDimensions().y / 2)
 					/ (float) surface.getHeight());
+		}
+		else {
+			// have the card move back to its origin
+			CardPath newPath = new CardPath(touchedCard, touchedPos, originPos);
+			newPath.setAnimationSpeed(5);
+			path = newPath;
 		}
 	}// onTouch
 
@@ -612,7 +697,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		for (PointF p : posList) {
 			if (adjustDimens(p).contains(x, y)) return true;
 		}
-		
+
 		return false;
 	}
 
@@ -647,42 +732,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		return adjustedRect;
 	}
 
-	/**
-	 * Display the melds after a knock
-	 * @param playerIndex
-	 */
-	synchronized private void displayMelds(int playerIndex, Canvas canvas) {
-		ArrayList<Meld> playerMelds = state.getMeldsForPlayer(playerIndex);	
-		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
-		float cardsY;
-		float cardSpacer = 0;
-		
-		//decide which player hand position we need
-		if (playerIndex == 0) cardsY = 0.55f;		
-		else if (playerIndex == 1) cardsY = 0f;
-		else {
-			Log.v("Error", "Invalid Player Specified for displayMelds()");
-			return;
-		}
-		
-		playerHandPos.clear();
-			//Iterate through each group of melds. 
-			for (Meld meld : playerMelds) {
-				int indexOfMeld = playerMelds.indexOf(meld);
-				//Iterate through each card in a meld
-				//"meldCard" is a card in "melds"
-				for (Card meldCard : meld.getMeldCards()) {
-					playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer 
-							,cardsY + SPACE_BTN_MELDS*indexOfMeld));
-					
-					//the last index of playerHandPos is the current meldCard
-					int lastIndex = playerHandPos.size() - 1;
-					meldCard.drawOn(canvas, adjustDimens(playerHandPos.get(lastIndex)));
-					cardSpacer++;
-				}					
-			}	
-	}
-	
 	/**
 	 * requests to move to the next round
 	 */

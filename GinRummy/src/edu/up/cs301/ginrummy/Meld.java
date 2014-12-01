@@ -1,10 +1,16 @@
 package edu.up.cs301.ginrummy;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import edu.up.cs301.card.Card;
 
-public class Meld {
+public class Meld implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8590155092857173829L;
 	
 	private ArrayList<Card> cards;
 	private boolean isSet;
