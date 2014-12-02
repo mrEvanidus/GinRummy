@@ -2,7 +2,7 @@ package edu.up.cs301.card;
 
 import android.graphics.*;
 
-public class CardPath /*implements Runnable*/{
+public class CardPath {
 	
 	private float animationDuration = 50; //how long the animation will take, default 50 ticks
 	
@@ -84,20 +84,5 @@ public class CardPath /*implements Runnable*/{
 		return progress >= animationDuration;
 	}
 
-	/**
-	 * TODO
-	 */
-//	public void run() {
-//		while(!isComplete()) {
-//			//advance the animation
-//			this.location = this.advance();
-//			
-//			//wait a bit
-//			try {
-//				Thread.sleep((int)getAnimationSpeed());
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
+	
 }

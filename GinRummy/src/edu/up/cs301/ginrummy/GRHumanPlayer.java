@@ -1,6 +1,9 @@
 package edu.up.cs301.ginrummy;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.*;
@@ -62,11 +65,14 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	// the score and message pane text fields
 	private TextView oppScore, myScore, messagePane; 
 
+	//a painter to handle moving cards
+	CardPainter painter;
+	Thread painterThread;
 	// moving card information for my cards
-	CardPath path;
+//	CardPath path;
 
 	// moving card information for opponent's cards
-	CardPath opponentPath;
+//	CardPath opponentPath;
 
 	// ERIC: card being moved
 	private Card touchedCard;
@@ -177,9 +183,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 						}
 					}
 
+					//set up a path animation for the opponent's move
 					CardPath newPath = new CardPath(new backCard(), org, dst);
 					newPath.setAnimationSpeed(5);
-					opponentPath = newPath;
+					if (painter != null) painter.addCardPath(newPath);
 				}
 			}
 		}
@@ -336,6 +343,27 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			displayMelds(1,canvas);
 			return;
 		}
+		
+		//setup parallel animations (first-time)
+		if (painter == null) painter = new CardPainter(this, canvas);
+		
+//		//start or resume animations in a new thread
+//		if (painterThread == null) {
+//			painterThread = new Thread(painter);
+//			painterThread.start();
+//		}
+		
+		//re-draw animations every ___ ms.
+		Timer t = new Timer("animationTimer");
+		t.schedule(new TimerTask(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				painter.run();
+			}
+			
+		}, 100,1000);
 
 		//if card is not in hand Order, but is supposed to be, add it
 		//this should happen at the beginning of a round and after a draw action
@@ -383,32 +411,28 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		// draw the knocking box
 		drawKnockBox(canvas, Color.GREEN);
 
-		if (path != null) {
-			// advance the card along the path
-			PointF newPos = path.advance();
-
-			// draw the moving cards
-			if (newPos != null){
-//			PointF newPos = path.getPosition();
-			path.getCard().drawOn(canvas, adjustDimens(newPos));
-			}
-			
-			// if the animation is done, remove the animation
-			if (path != null && path.isComplete()) path = null;
-		}
-		if (opponentPath != null) {
-			// advance the card along the path
-			PointF newPos = opponentPath.advance();
-
-			// draw the moving cards
-			if (newPos != null){
-//			PointF newPos = opponentPath.getPosition();
-			opponentPath.getCard().drawOn(canvas, adjustDimens(newPos));
-			}
-
-			// if the animation is done, remove the animation
-			if (opponentPath != null && opponentPath.isComplete()) opponentPath = null;
-		}
+//		if (path != null) {
+//			// advance the card along the path
+//			PointF newPos = path.advance();
+//
+//			// draw the moving cards
+//			if (newPos != null)
+//				path.getCard().drawOn(canvas, adjustDimens(newPos));
+//
+//			// if the animation is done, remove the animation
+//			if (path != null && path.isComplete()) path = null;
+//		}
+//		if (opponentPath != null) {
+//			// advance the card along the path
+////			PointF newPos = opponentPath.advance();
+//
+//			// draw the moving cards
+////			if (newPos != null)
+////				opponentPath.getCard().drawOn(canvas, adjustDimens(newPos));
+//
+//			// if the animation is done, remove the animation
+//			if (opponentPath != null && opponentPath.isComplete()) opponentPath = null;
+//		}
 
 		// draw the card being dragged
 		if (touchedCard != null && touchedPos != null) {
@@ -485,7 +509,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 			// draw the card, if it is not being dragged or animated
 			if (card != null && (touchedCard != null && touchedCard.equals(card))
-					|| (path != null && path.getCard().equals(card))) {
+					|| painter.isPainting(card)) {
 				// don't draw the card
 			} else {
 				// draw the card
@@ -562,7 +586,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				//listener for when the "Back to Melds" button is pressed 
 				new DialogInterface.OnClickListener(){
 					public void onClick(DialogInterface dialog, int which) {
-						//do nothing, return to game
+						//do nothing, return to table
 					}},
 					myActivity); //pop-up choice
 
@@ -596,7 +620,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			// have the card move back to its origin
 			CardPath newPath = new CardPath(touchedCard, touchedPos, originPos);
 			newPath.setAnimationSpeed(5);
-			path = newPath;
+			painter.addCardPath(newPath);
 		}
 	}// onTouch
 
@@ -642,7 +666,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				// have the card move back to its origin
 				CardPath newPath = new CardPath(card, touchedPos, originPos);
 				newPath.setAnimationSpeed(5);
-				path = newPath;
+				painter.addCardPath(newPath);
 			}
 
 			//nullify the touched card so we don't draw it
@@ -712,13 +736,13 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}
 
 	/**
-	 * 
+	 * method which produces a rectangle based on a point
 	 * @param location
 	 *            a PointF which describes the location(in screen percent) where
 	 *            the card will be drawn
 	 * @return a RectF describing the boundary where the card will be drawn
 	 */
-	private RectF adjustDimens(PointF location) {
+	public RectF adjustDimens(PointF location) {
 
 		// get the relative position of the card
 		float x = location.x * surface.getWidth();
