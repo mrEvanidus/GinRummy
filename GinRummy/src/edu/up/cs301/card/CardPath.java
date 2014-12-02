@@ -10,7 +10,7 @@ public class CardPath {
 	private Card card;
 	private PointF origin;
 	private PointF destination;
-	private PointF location;
+	private PointF location, last;
 	private int progress; //the number of ticks that have elapsed
 	
 	public CardPath(Card card, PointF origin, PointF destination) {
@@ -52,6 +52,10 @@ public class CardPath {
 		return location;
 	}
 	
+	public PointF getLast() {
+		return last;
+	}
+	
 	public void setPosition(PointF position) {
 		this.location = position; 
 	}
@@ -69,6 +73,10 @@ public class CardPath {
 		
 		progress++;
 		
+		if (location != null) {
+			//record the previous location
+			last = new PointF(location.x, location.y);
+		}
 		//set the new location of the card
 		location = new PointF(dx,dy);
 		
