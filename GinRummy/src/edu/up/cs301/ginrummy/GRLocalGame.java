@@ -21,46 +21,46 @@ import edu.up.cs301.game.config.GameConfig;
 
 public class GRLocalGame extends LocalGame implements GRGame {
 
-    // the game's state
-    GRState state;
+	// the game's state
+	GRState state;
 
-    /**
-     * Constructor for the SJLocalGame.
-     */
-    public GRLocalGame() {
-        Log.i("SJLocalGame", "creating game");
-        // create the state for the beginning of the game
-        state = new GRState();
-    }
+	/**
+	 * Constructor for the SJLocalGame.
+	 */
+	public GRLocalGame() {
+		Log.i("SJLocalGame", "creating game");
+		// create the state for the beginning of the game
+		state = new GRState();
+	}
 
 
-    /**
-     * checks whether the game is over; if so, returns a string giving the result
-     * 
-     * @result
-     * 		the end-of-game message, or null if the game is not over
-     */
-    @Override
-    protected String checkIfGameOver() {
-    	if( state.getp1score() >= 100){
-    		// TODO If display wrong player name, your bug is here
-    		return this.playerNames[0] + " is the winner";
-    	}
-    	
-    	if( state.getp2score() >= 100){
-    		return this.playerNames[1] + " is the winner";
-    	}
-    	return null;
-    }
+	/**
+	 * checks whether the game is over; if so, returns a string giving the result
+	 * 
+	 * @result
+	 * 		the end-of-game message, or null if the game is not over
+	 */
+	@Override
+	protected String checkIfGameOver() {
+		if( state.getp1score() >= 100){
+			// TODO If display wrong player name, your bug is here
+			return this.playerNames[0] + " is the winner";
+		}
 
-    /**
-     * sends the updated state to the given player. In our case, we need to
-     * make a copy of the Deck, and null out all the cards except the top card
-     * in the middle deck, since that's the only one they can "see"
-     * 
-     * @param p
-     * 		the player to which the state is to be sent
-     */
+		if( state.getp2score() >= 100){
+			return this.playerNames[1] + " is the winner";
+		}
+		return null;
+	}
+
+	/**
+	 * sends the updated state to the given player. In our case, we need to
+	 * make a copy of the Deck, and null out all the cards except the top card
+	 * in the middle deck, since that's the only one they can "see"
+	 * 
+	 * @param p
+	 * 		the player to which the state is to be sent
+	 */
 	@Override
 	protected void sendUpdatedStateTo(GamePlayer p) {
 		// if there is no state to send, ignore
@@ -72,12 +72,12 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		// top card in the middle deck
 		GRState stateForPlayer = new GRState(state); // copy of state
 		stateForPlayer.nullCardsFor(getPlayerIdx(p)); // put nulls except for visible card
-		
+
 		// send the modified copy of the state to the player
 		p.sendInfo(stateForPlayer);
 		//p.sendInfo(state);
 	}
-	
+
 	/**
 	 * whether a player is allowed to move
 	 * 
@@ -106,18 +106,28 @@ public class GRLocalGame extends LocalGame implements GRGame {
 	 */
 	@Override
 	protected boolean makeMove(GameAction action) {
-		
+
 		// check that we have gin rummy action; if so cast it
 		if (!(action instanceof GRMoveAction)) {
 			return false;
 		} 
 		GRMoveAction grma = (GRMoveAction) action;
-		
+
 		// get the index of the player making the move; return false
 		int thisPlayerIdx = getPlayerIdx(grma.getPlayer());
-		
+
 		if (thisPlayerIdx < 0) { // illegal player
 			return false;
+		}
+
+		if(grma.isNextRound() && state.isEndOfRound){
+			if (grma instanceof GRNewGameAction) {
+				state.setScore(0, 0);
+				state.setScore(1, 0);
+			}
+			state.initNewRound();
+			sendAllUpdatedState();
+			return true;
 		}
 		
 		if(canMove(thisPlayerIdx)){
@@ -127,14 +137,14 @@ public class GRLocalGame extends LocalGame implements GRGame {
 				if(state.getStock().size() <= 3){
 					state.initNewRound();
 				}
-				
+
 				GRDrawAction da = (GRDrawAction) action;
 				state.drawFrom(da.fromStock(), thisPlayerIdx);
 				state.setPhase(state.DISCARD_PHASE);
 			}
 			//DISCARD PHASE
 			else if (grma.isDiscard() && state.getPhase() == GRState.DISCARD_PHASE) {
-				
+
 				GRDiscardAction da = (GRDiscardAction) action;
 				if(!(state.isFromDiscard() && state.getLastPicked().equals(da.discardCard()))){
 					// Remove the requested card from the player's hand and place it atop the discard pile
@@ -160,30 +170,34 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			}
 			//KNOCK PHASE
 			else if (grma.isKnock() && state.getPhase() == GRState.DISCARD_PHASE){
-			
+
 				GRState copy = new GRState(state);
 				//(GRKnockAction)grma.knockCard();
 				GRKnockAction copy_grma = (GRKnockAction)grma;
 				Card theCard = copy_grma.knockCard();
 				copy.getHand(thisPlayerIdx).cards.remove(theCard);
-				
+
 				copy.assessMelds(thisPlayerIdx);
 				if(copy.canKnock(copy.getHand(thisPlayerIdx),copy.getMeldsForPlayer(thisPlayerIdx))){
 					state.toGoFirst = thisPlayerIdx;
 					state.isEndOfRound = true;
+					state.lockGUI = true;
 					state.setPhase(state.DRAW_PHASE);
 					state.setWhoseTurn(0);
 					sendAllUpdatedState();
 					//state.setPhase(state.DRAW_PHASE);
 					state.getHand(thisPlayerIdx).cards.remove(theCard);
-					
+
 					state.assessMelds(0);
 					state.assessMelds(1);
 					state.canKnock(state.getHand(0), state.getMeldsForPlayer(0));
 					state.canKnock(state.getHand(1), state.getMeldsForPlayer(1));
-					
+
+					ArrayList<Card> layoffCards = new ArrayList<Card>();
+					int playerWhoLaidOff = 0;
 					//Lay off cards
 					if(thisPlayerIdx == 1){
+						playerWhoLaidOff = 0;
 						for(int i = 0; i<2;i++){
 							ArrayList<Card> tempToAdd = new ArrayList<Card>();
 							ArrayList<Card> tempToRemove = new ArrayList<Card>();
@@ -197,6 +211,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 									int dw2 = s.genHand(-1, s.getHand(1));
 
 									if(dw == dw2){
+										layoffCards.add(c);
 										tempToAdd.add(c);
 										tempToRemove.remove(c);
 									}
@@ -210,6 +225,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 							}
 						}
 					}else{
+						playerWhoLaidOff = 1;
 						for(int i = 0; i<2;i++){
 							ArrayList<Card> tempToAdd = new ArrayList<Card>();
 							ArrayList<Card> tempToRemove = new ArrayList<Card>();
@@ -223,11 +239,12 @@ public class GRLocalGame extends LocalGame implements GRGame {
 									int dw2 = s.genHand(-1, s.getHand(0));
 
 									if(dw == dw2){
+										layoffCards.add(c);
 										tempToAdd.add(c);
 										tempToRemove.remove(c);
 									}
 								}
-								
+
 							}
 							for(Card c : tempToAdd){
 								state.getHand(0).cards.add(c);
@@ -237,16 +254,16 @@ public class GRLocalGame extends LocalGame implements GRGame {
 							}
 						}
 					}
-					
+
 					state.assessMelds(0);
 					state.assessMelds(1);
 					state.canKnock(state.getHand(0), state.getMeldsForPlayer(0));
 					state.canKnock(state.getHand(1), state.getMeldsForPlayer(1));
-//					
+					//					
 					//Get the deadwood
 					int p0dw = state.genHand(-1,state.getHand(0));
 					int p1dw = state.genHand(-1,state.getHand(1));
-					
+
 					if(p0dw < p1dw){
 						if(p0dw == 0){
 							state.setScore(0,20);
@@ -280,28 +297,47 @@ public class GRLocalGame extends LocalGame implements GRGame {
 							}
 						}
 					}
+
+					//					//Whichever player knocked goes first
+					//					if(thisPlayerIdx == 0){
+					//						state.setWhoseTurn(0);
+					//					}else{
+					//						state.setWhoseTurn(1);
+					//					}
 					
-//					//Whichever player knocked goes first
-//					if(thisPlayerIdx == 0){
-//						state.setWhoseTurn(0);
-//					}else{
-//						state.setWhoseTurn(1);
-//					}
-			
+					//TODO: Here you go, Jaimiey
+					state.gameMessage = "Player 1 score: " + state.getp1score() 
+							+ "\nPlayer 2 score: "+ state.getp2score() + "\n";
+					
+					String layoffPlayer = "";
+					if(playerWhoLaidOff == 0){
+						layoffPlayer = "Player 1";
+					}else {
+						layoffPlayer = "Player 2";
+					}
+					
+					if(layoffCards.size() > 0){
+						state.gameMessage = state.gameMessage + layoffPlayer + 
+								" laid off:\n";
+						for(Card c : layoffCards){
+							state.gameMessage = state.gameMessage + c.toString()+"\n";
+						}
+					}
+					
+					//state.setWhoseTurn(1);
 					sendAllUpdatedState();
 					//state.initNewRound();
-					
+
 				}
 				else{
 					return false;
 				}
-			}else if(grma.isNextRound() && state.isEndOfRound){
-				state.initNewRound();
 			}
 			else {
 				return false;
 			}
 		}
+
 		
 		sendAllUpdatedState();
 		// return true, because the move was successful if we get here

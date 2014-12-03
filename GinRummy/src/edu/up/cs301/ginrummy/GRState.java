@@ -51,7 +51,8 @@ public class GRState extends GameState
     public boolean isEndOfRound;
     private int ID;
     
-    private String gameMessage;
+    public String gameMessage;
+    public String hello;
     
     //mystery variable!!
     private boolean fromDiscard;
@@ -61,6 +62,9 @@ public class GRState extends GameState
     private boolean lastMoveWasDraw;
     
     public int toGoFirst;
+	public int yourId;
+	
+	public boolean lockGUI;
     /**
      * Constructor for objects of class SJState. Initializes for the beginning of the
      * game, with a random player as the first to turn card
@@ -108,10 +112,10 @@ public class GRState extends GameState
 //    	for(int i = 0; i < 10; i++){
 //    		switch (i){
 //    			case 0:
-//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Spade));
+//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Spade));
 //    				break;
 //    			case 1:
-//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Club));
+//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Diamond));
 //    				break;
 //    			case 2:
 //    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
@@ -123,19 +127,19 @@ public class GRState extends GameState
 //    				playerHands[0].cards.set(i, new Card(Rank.NINE, Suit.Heart));
 //    				break;
 //    			case 5:
-//    				playerHands[0].cards.set(i, new Card(Rank.TEN, Suit.Heart));
+//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
 //    				break;
 //    			case 6:
-//    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Heart));
+//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Diamond));
 //    				break;
 //    			case 7:
-//    				playerHands[0].cards.set(i, new Card(Rank.QUEEN, Suit.Heart));
+//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Spade));
 //    				break;
 //    			case 8:
-//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Club));
+//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
 //    				break;
 //    			case 9:
-//    				playerHands[0].cards.set(i, new Card(Rank.FOUR, Suit.Diamond));
+//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
 //    				break;
 //    			
 //    		}
@@ -204,6 +208,7 @@ public class GRState extends GameState
     		playerMelds.get(1).add(new Meld(m));
     	}
     	
+    	gameMessage = orig.gameMessage;
     	stock = new Deck(orig.stock);
     	discard = new Deck(orig.discard);
     	turnPhase = orig.turnPhase;
@@ -311,6 +316,7 @@ public class GRState extends GameState
     			}
     		}
     	}
+    	
     	//Count the deadwood
     	int dc = 0;
     	for(Card c : handcopy.cards){
@@ -444,7 +450,7 @@ public class GRState extends GameState
     	stock.moveAllCardsTo(d);
     	discard.moveAllCardsTo(d);
     	
-    	
+    	lockGUI = false;
     	//reset end of round
     	isEndOfRound = false;
     	
@@ -573,6 +579,7 @@ public class GRState extends GameState
     }
     
     public void nullCardsFor(int playeridx){
+    	yourId = playeridx;
     	if(playeridx == 0){
     		if(!isEndOfRound){
     			playerHands[1].nullifyDeck();
