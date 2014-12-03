@@ -13,7 +13,7 @@ public class Meld implements Serializable{
 	private static final long serialVersionUID = -8590155092857173829L;
 	
 	private ArrayList<Card> cards;
-	private boolean isSet;
+	public boolean isSet;
 	private int val;
 	private int id;
 	

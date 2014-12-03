@@ -520,6 +520,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			//Iterate through each card in a meld
 			//"meldCard" is a card in "melds"
 			for (Card meldCard : meld.getMeldCards()) {
+				
 				if((meld.isSet && meldCard.setID != 0) || (!meld.isSet && meldCard.runID != 0)){
 					playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer 
 							,cardsY + SPACE_BTN_MELDS*indexOfMeld));

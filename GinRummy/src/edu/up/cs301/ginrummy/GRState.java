@@ -49,7 +49,7 @@ public class GRState extends GameState
 
     // TODO make private and make getter/setters
     public boolean isEndOfRound;
-    private int ID;
+    public int ID;
     
     public String gameMessage;
     public String hello;
@@ -65,6 +65,7 @@ public class GRState extends GameState
 	public int yourId;
 	
 	public boolean lockGUI;
+	public int meldCount;
     /**
      * Constructor for objects of class SJState. Initializes for the beginning of the
      * game, with a random player as the first to turn card
@@ -109,77 +110,77 @@ public class GRState extends GameState
     	}
     	
     	//TEST HAND
-//    	for(int i = 0; i < 10; i++){
-//    		switch (i){
-//    			case 0:
-//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Spade));
-//    				break;
-//    			case 1:
-//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Diamond));
-//    				break;
-//    			case 2:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
-//    				break;
-//    			case 3:
-//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
-//    				break;
-//    			case 4:
-//    				playerHands[0].cards.set(i, new Card(Rank.NINE, Suit.Heart));
-//    				break;
-//    			case 5:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
-//    				break;
-//    			case 6:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Diamond));
-//    				break;
-//    			case 7:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Spade));
-//    				break;
-//    			case 8:
-//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
-//    				break;
-//    			case 9:
-//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
-//    				break;
-//    			
-//    		}
-//    	}
-//    	
-//    	for(int i = 0; i < 10; i++){
-//    		switch (i){
-//    			case 0:
-//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Spade));
-//    				break;
-//    			case 1:
-//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Heart));
-//    				break;
-//    			case 2:
-//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
-//    				break;
-//    			case 3:
-//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Heart));
-//    				break;
-//    			case 4:
-//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Spade));
-//    				break;
-//    			case 5:
-//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Club));
-//    				break;
-//    			case 6:
-//    				playerHands[1].cards.set(i, new Card(Rank.KING, Suit.Heart));
-//    				break;
-//    			case 7:
-//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
-//    				break;
-//    			case 8:
-//    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
-//    				break;
-//    			case 9:
-//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Diamond));
-//    				break;
-//    			
-//    		}
-//    	}
+    	for(int i = 0; i < 10; i++){
+    		switch (i){
+    			case 0:
+    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
+    				break;
+    			case 1:
+    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
+    				break;
+    			case 2:
+    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Heart));
+    				break;
+    			case 3:
+    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Spade));
+    				break;
+    			case 4:
+    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
+    				break;
+    			case 5:
+    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
+    				break;
+    			case 6:
+    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Diamond));
+    				break;
+    			case 7:
+    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Spade));
+    				break;
+    			case 8:
+    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Club));
+    				break;
+    			case 9:
+    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
+    				break;
+    			
+    		}
+    	}
+    	
+    	for(int i = 0; i < 10; i++){
+    		switch (i){
+    			case 0:
+    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Spade));
+    				break;
+    			case 1:
+    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
+    				break;
+    			case 2:
+    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Diamond));
+    				break;
+    			case 3:
+    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Heart));
+    				break;
+    			case 4:
+    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Spade));
+    				break;
+    			case 5:
+    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Club));
+    				break;
+    			case 6:
+    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Spade));
+    				break;
+    			case 7:
+    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
+    				break;
+    			case 8:
+    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
+    				break;
+    			case 9:
+    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Diamond));
+    				break;
+    			
+    		}
+    	}
     	
     	stock.moveTopCardTo(discard);
     	//discard.add(new Card(Rank.KING,Suit.Heart));
@@ -218,225 +219,6 @@ public class GRState extends GameState
     	ID = orig.ID;
     	isEndOfRound = orig.isEndOfRound;
         //TODO add new stuff to copy constructor
-    }
-    
-    /**
-     * Determines whether or not a player can knock
-     * 
-     * @param hand the player's hand
-     * @param melds the player's melds
-     * 
-     * @return Whether or not the hand is allowed to knock
-     */
-    public boolean canKnock(Deck hand, ArrayList<Meld> melds){
-    	//Problem cards are those that are in both a set and a run
-    	ArrayList<Card> problemCards = new ArrayList<Card>();
-    	Deck handcopy = hand;
-    	
-    	//Get a list of all problem cards 
-    	for(Card c : handcopy.cards){
-    		//if the given card is a problem card...
-    		if(c.getRL() >=3 && c.getSL() >= 3){
-    			c.isProblem = true;
-    			problemCards.add(c);
-    		}
-    	}
-  
-    	ArrayList<Card> pcc = problemCards;
-    	ArrayList<Meld> meldsCopy = melds;
-    	int minScore = 101; //Highest possible deadwood count is 100
-    	int minCombo = -1;  //Lowest deadwood count among permutations. if -1, hand is problem card free
-    	
-    	//Generate all possible permutations
-    	for(int i = 0; i < Math.pow(2,problemCards.size()); i++){
-    		//Generates a hand based on the current permutation
-    		int score = genHand(i,hand);
-    		//If the deadwood count of the permutation is less than the current min,
-    		//update the min
-    		if (score < minScore && score != -1){
-    			minScore = score;
-    		}
-    	}
-    	
-    	//Get the deadwood count for the hand
-    	int deadwoodCount = genHand(minCombo,hand);
-    	
-    	if(deadwoodCount <= 10){
-    		return true;
-    	}
-    	else {
-    		return false;
-    	}
-    }
-    
-    //TODO: THIS IS NOT TOTALLY WORKING
-    /**
-     * Generates a permutation of the given hand based on the given index.
-     * The index is converted to a binary string where each binary digit represents
-     * one of the problem cards in the hand. If the digit is '0', the card stays in its run
-     * and is removed from its set and vice versa for if the digit is '1';
-     * 
-     * @param idx The permutation to generate
-     * @param hand The hand to generate the permutation of
-     * 
-     * @return the deadwood count of the hand
-     */
-    public int genHand(int idx, Deck hand){
-    	
-    	Deck handcopy = hand;
-    	
-    	// If the hand has problem cards...
-    	if(idx != -1){
-    		//Convert the given permutation index to a binarry string
-    		String comb = Integer.toBinaryString(idx);
-    		//Reverse it to make it easier to pop digits off
-    		String reversed = new StringBuilder(comb).reverse().toString();
-    		
-    		for(Card c : handcopy.cards){
-    			//If the card is a problem card...
-    			if(c.getRL() >= 3 && c.getSL() >= 3){
-    				//If the current digit is 0...
-    				if(reversed.equals("") || reversed.charAt(0) == '0'){
-    					//Problem card is removed from its set
-    					c.setSL(0);
-    					c.setID = 0;
-    					if(!reversed.equals("")){
-    						reversed = reversed.substring(1);
-    					}
-    				}
-    				//If the current digit is 1...
-    				else{
-    					//Problem card is removed from its run
-    					c.setRL(0);
-    					c.runID = 0;
-    					if(!reversed.equals("")){
-    						reversed = reversed.substring(1);
-    					}
-    				}
-    			}
-    		}
-    	}
-    	
-    	//Count the deadwood
-    	int dc = 0;
-    	for(Card c : handcopy.cards){
-    		if(c.getRL() >= 3 && c.getSL() >= 3){
-    			return -1;
-    		}
-    		if(c.getRL() >= 3 || c.getSL() >= 3){
-    			
-    		}else{
-    			if(c.getRank().value(1) <= 10){
-    				dc += c.getRank().value(1);
-    			}else{
-    				dc += 10;
-    			}
-    		}
-    	}
-    	return dc;
-    }
-    
-    /**
-     * Look at a player's hand and determine the melds that it contains
-     * 
-     * @param pidx the player's hand to assess
-     */
-    public void assessMelds(int pidx){
-    	(playerMelds.get(pidx)).clear();
-    	//Store cards by rank
-    	ArrayList<ArrayList<Card>> ranks = new ArrayList<ArrayList<Card>>();
-    	for(int i = 0; i < 13; i++){
-    		ranks.add(new ArrayList<Card>());
-    	}
-    	//Store cards by suit
-    	ArrayList<ArrayList<Card>> suits = new ArrayList<ArrayList<Card>>();
-    	for(int i = 0; i < 4; i++){
-    		ArrayList<Card> temp= new ArrayList<Card>();
-    		for(int j = 0; j < 14; j++){
-    			temp.add(null);
-    		}
-    		suits.add(temp);
-    	}
-    	
-    	// SET DETECTION
-    	//put cards cards in arraylists of same rank
-    	for( Card c : playerHands[pidx].cards){
-    		ranks.get(c.getRank().value(1) - 1).add(c);
-    	}
-    	
-    	//for each card of the same rank...
-    	for(ArrayList<Card> a : ranks){
-    		int val = 0;
-    		for(Card c : a){
-    			//for EVERY card, set the "set length" whether or not it's in a meld
-    			c.setSL(a.size());
-    		}
-    		if(a.size() >= 3){
-    			//If the rank is a meld, add a new meld with the cards of this rank
-    			for(Card c : a){
-    				c.setID = ID;
-    				val = c.getRank().value(1);
-        		}
-				(playerMelds.get(pidx)).add(new Meld(a, true, val*a.size(), ID));
-				ID++;
-			}
-    		
-    		
-    	}
-    	
-    	// RUN DETECTION
-    	
-    	// Sort hand into suits
-    	for( Card c : playerHands[pidx].cards){
-    		if(c.getSuit().shortName() == 'C'){
-    			suits.get(0).set(c.getRank().value(1) - 1, c);;
-    		}
-    		else if(c.getSuit().shortName() == 'D'){
-    			suits.get(1).set(c.getRank().value(1) - 1, c);
-    		}
-    		else if(c.getSuit().shortName() == 'H'){
-    			suits.get(2).set(c.getRank().value(1) - 1, c);
-    		}
-    		else if(c.getSuit().shortName() == 'S'){
-    			suits.get(3).set(c.getRank().value(1) - 1, c);
-    		}
-    		else {
-    			//this is a bad
-    		}
-    	}
-    	
-    	//Check a suit to see if it has any runs
-    	for(int i = 0; i < 4; i++){
-    		int runCount = 0;
-    		ArrayList<Card> suit = suits.get(i);
-    		ArrayList<Card> temp = new ArrayList<Card>();
-    		for (Card c : suit){
-    			if(c != null){
-    				//add the card to the array of the current run
-    				temp.add(c);
-    			}else {
-    				//If the current card is null, add the length
-    				//of the run to each card's runLength
-    				int tempLength = temp.size();
-    				for (Card c2 : temp){
-    					c2.setRL(tempLength);
-    				}
-    				if(tempLength >= 3){
-    					//For cards in a meld, store info about the melds they are in
-    					//and add them to a new meld
-    					for (Card c2 : temp){
-    						runCount += c2.getRank().value(1);
-        					c2.runID = ID;
-        				}
-	    				(playerMelds.get(pidx)).add(new Meld(temp, false, runCount, ID));
-	    				ID++;
-	    				runCount = 0;
-					}
-    				
-    				temp.clear();
-    			}
-    		}
-    	}	
     }
     
     /**
