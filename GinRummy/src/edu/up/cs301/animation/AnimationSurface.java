@@ -1,5 +1,6 @@
 package edu.up.cs301.animation;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -20,7 +21,7 @@ import android.view.View.OnTouchListener;
  * 
  * 
  */
-public class AnimationSurface extends SurfaceView implements OnTouchListener {
+public class AnimationSurface extends SurfaceView /*implements OnTouchListener */{
 
 	// instance variables
 	private Animator animator; // our animator
@@ -70,7 +71,7 @@ public class AnimationSurface extends SurfaceView implements OnTouchListener {
 		animator = createAnimator();
 		
 		//Begin listening for touch events
-		this.setOnTouchListener(this);
+//		this.setOnTouchListener(this);
 		
 		if (animator != null) {
 			startAnimation();
@@ -257,9 +258,10 @@ public class AnimationSurface extends SurfaceView implements OnTouchListener {
 	/** 
 	 * if I am touched, pass the touch event to the animator
 	 */
-	public boolean onTouch(View v, MotionEvent event) {
+	@SuppressLint("ClickableViewAccessibility")
+	public boolean onTouchEvent(MotionEvent event) {
 		if (animator != null) {
-			this.animator.onTouch(event);
+			this.animator.onTouchEvent(event);
 		}
 		return true;
 	};// class AnimationThread

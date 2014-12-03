@@ -191,6 +191,7 @@ public class GRState extends GameState
      * @param orig  the state to be copied
      */
     public GRState(GRState orig) {
+    	if (orig == null) return;
     	// set index of player whose turn it is
     	whoseTurn = orig.whoseTurn;
     	playerHands[0] = new Deck(orig.playerHands[0]);

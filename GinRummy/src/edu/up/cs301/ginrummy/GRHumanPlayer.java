@@ -47,6 +47,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	public static final int FELT_GREEN = 0xff277714;
 	public static final int LAKE_ERIE = 0xff6183A6;
 
+	//styles for card drawing
+	private static final int STYLE_TOPLEFT = 0; //default style
+	private static final int STYLE_CENTER = 1;	 //drawn from center
+	private static final int STYLE_FLIP_V = 2;	//drawn upside-down
+
 	// our game state
 	protected GRState state;
 
@@ -88,6 +93,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	//what are the player indices
 	private int myIdx, otherIdx;
+
+	//keeps track of what action we just performed
+	private boolean drewFromStock, justDrew;
 
 	/**
 	 * constructor
@@ -164,22 +172,22 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					}
 				}else{
 					messagePane.setText("Your opponent is taking their turn.");
-//					PointF org = null;
-//					PointF dst = null;
-//					if (playerHandPos.get(otherIdx).size() > 0) {
-//						if (state.getPhase() == GRState.DRAW_PHASE) {
-//							org = stockPos;
-//							dst = playerHandPos.get(otherIdx).get(0);
-//						}
-//						else {
-//							dst = discardPos;
-//							org = playerHandPos.get(otherIdx).get(0);
-//						}
-//					}
-//
-//					CardPath newPath = new CardPath(new backCard(), org, dst);
-//					newPath.setAnimationSpeed(5);
-//					opponentPath = newPath;
+					//					PointF org = null;
+					//					PointF dst = null;
+					//					if (playerHandPos.get(otherIdx).size() > 0) {
+					//						if (state.getPhase() == GRState.DRAW_PHASE) {
+					//							org = stockPos;
+					//							dst = playerHandPos.get(otherIdx).get(0);
+					//						}
+					//						else {
+					//							dst = discardPos;
+					//							org = playerHandPos.get(otherIdx).get(0);
+					//						}
+					//					}
+					//
+					//					CardPath newPath = new CardPath(new backCard(), org, dst);
+					//					newPath.setAnimationSpeed(5);
+					//					opponentPath = newPath;
 				}
 			}
 		}
@@ -263,15 +271,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		}
 	}
 
-	@Override
-	protected void gameIsOver(String msg) {
-		super.gameIsOver(msg);
-
-		//cause the game button to be visible
-		//TODO: fix new game button
-		//newGame.setVisibility(View.VISIBLE);
-	}
-
 	/**
 	 * @return the top GUI view
 	 */
@@ -322,8 +321,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public synchronized void tick(Canvas canvas) {
 		// ignore if we have not yet received the game state
-		if (state == null)
-			return;
+		if (state == null) return;
 
 		GRState stateCopy = new GRState(state);
 
@@ -348,7 +346,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				//if we've just drawn a card, we can drag it
 				if(stateCopy.getPhase() == GRState.DISCARD_PHASE) {
 					touchedCard = c;
-					touchedPos = stockPos;
+					touchedPos = (drewFromStock ? stockPos: discardPos);
 					originPos = playerHandPos.get(myIdx).get(
 							playerHandPos.get(myIdx).size()-1);
 				}
@@ -377,12 +375,13 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		drawHand(canvas, new ArrayList<Card>(handOrder), playerHandPos.get(myIdx));
 		drawHand(canvas, stateCopy.getHand(otherIdx).cards, playerHandPos.get(otherIdx));
 
+		// draw the knocking box and discard box
+		drawBoundBox(canvas, "KNOCK", knockPos);
+		drawBoundBox(canvas, "DISCARD", discardPos);
+
 		//draw the stock and discard piles
 		drawDeck(canvas, stateCopy.getStock(), stockPos);
 		drawDeck(canvas, stateCopy.getDiscard(), discardPos);
-
-		// draw the knocking box
-		drawKnockBox(canvas, Color.GREEN);
 
 		if (path != null) {
 			// advance the card along the path
@@ -390,12 +389,12 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 			// draw the moving cards
 			if (newPos != null){
-//			PointF newPos = path.getPosition();
-			path.getCard().drawOn(canvas, adjustDimens(newPos));
+				path.getCard().drawOn(canvas, adjustDimens(newPos));
 			}
-			
+
 			// if the animation is done, remove the animation
 			if (path != null && path.isComplete()) path = null;
+
 		}
 		if (opponentPath != null) {
 			// advance the card along the path
@@ -403,8 +402,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 			// draw the moving cards
 			if (newPos != null){
-//			PointF newPos = opponentPath.getPosition();
-			opponentPath.getCard().drawOn(canvas, adjustDimens(newPos));
+				//			PointF newPos = opponentPath.getPosition();
+				opponentPath.getCard().drawOn(canvas, adjustDimens(newPos));
 			}
 
 			// if the animation is done, remove the animation
@@ -425,17 +424,17 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @param col
 	 * 			the integer color the box should be
 	 */
-	private void drawKnockBox(Canvas canvas, int col) {
+	private void drawBoundBox(Canvas canvas, String name, PointF where) {
 		Paint p = new Paint();
 		p.setStyle(Paint.Style.STROKE);
-		p.setColor(col);
+		p.setColor(Color.GREEN);
 		p.setTextSize(24);
 
-		canvas.drawText("KNOCK", knockPos.x * surface.getWidth()
-				+ getCardDimensions().x / 6, knockPos.y * surface.getHeight()
+		canvas.drawText(name, where.x * surface.getWidth()
+				+ getCardDimensions().x / 6, where.y * surface.getHeight()
 				+ getCardDimensions().y / 2, p);
 
-		canvas.drawRoundRect(adjustDimens(knockPos), 10F, 10F, p);		
+		canvas.drawRoundRect(adjustDimens(where), 10F, 10F, p);		
 	}
 
 	/**
@@ -540,35 +539,18 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 *            the motion-event
 	 * @return
 	 */
-	public void onTouch(MotionEvent event) {
+	public void onTouchEvent(MotionEvent event) {
+		if (state == null) return;
 
-		GRState stateCopy = new GRState(state);
 		//if the GUI is locked, it means we are at the end of the round
 		//and touching the board anywhere should show the round end dialog
 		if (lockGUI) {
-			/*String msg = String.format("Round Over.\nYour Score: %d\n Your Opponent's Score: %d" , 
-					stateCopy.getp1score(), stateCopy.getp2score());*/
-
-			String msg = state.gameMessage;
 			if (event.getAction() != MotionEvent.ACTION_DOWN) return;
-			//message box to show at the end of the round
-			MessageBox.popUpChoice(msg, "Next Round", "Back to Melds",
 
-					//listener for when the "next round" button is pressed
-					new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int which) {
-					// start a new round
-					nextRound();
-					handOrder.clear();
-				}},
+			//pop up the message
+			showEndGameMessage(state.gameMessage);
 
-				//listener for when the "Back to Melds" button is pressed 
-				new DialogInterface.OnClickListener(){
-					public void onClick(DialogInterface dialog, int which) {
-						//do nothing, return to game
-					}},
-					myActivity); //pop-up choice
-
+			//don't allow other interaction with the game
 			return;
 		}
 
@@ -586,6 +568,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			if (touchedCard != null) drop(touchedCard, touchX, touchY);
 		} // ACTION_UP
 
+		//on dragging events
 		else if (event.getAction() == MotionEvent.ACTION_MOVE){
 			// when we move a card, move it (from its center)
 			// set screen relative position of the dragged card
@@ -594,14 +577,33 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					/ (float) surface.getWidth(),
 					((float) touchY - getCardDimensions().y / 2)
 					/ (float) surface.getHeight());
-		}
-		else {
-			// have the card move back to its origin
-			CardPath newPath = new CardPath(touchedCard, touchedPos, originPos);
-			newPath.setAnimationSpeed(5);
-			path = newPath;
-		}
+		}// ACTION_MOVE
 	}// onTouch
+
+	/**
+	 * TODO
+	 * @param msg
+	 * 			the message to display
+	 */
+	private void showEndGameMessage(String msg) {
+		//message box to show at the end of the round
+		MessageBox.popUpChoice(msg, "Next Round", "Back to Melds",
+
+				//listener for when the "next round" button is pressed
+				new DialogInterface.OnClickListener(){
+			public void onClick(DialogInterface dialog, int which) {
+				// start a new round
+				nextRound();
+				handOrder.clear();
+			}},
+
+			//listener for when the "Back to Melds" button is pressed 
+			new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int which) {
+					//do nothing, return to game
+				}},
+				myActivity); //pop-up choice
+	}
 
 	/**
 	 * Handles dropping a card onto the specified location
@@ -613,45 +615,49 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 			the integer y-coordinate of the drop
 	 */
 	synchronized private void drop(Card card, int x, int y) {
-		if (card != null) {
-			//dropped on discard pile
-			if (adjustDimens(discardPos).contains(x, y)) {
-				//discard the card
-				game.sendAction(new GRDiscardAction(this, card));
-			}
+		//null check
+		if (card == null) return;
 
-			//dropped on knock box
-			else if (adjustDimens(knockPos).contains(x, y)) {
-				game.sendAction(new GRKnockAction(this, card));
-			}
-
-			//dropped on hand
-			else if (handContains(playerHandPos.get(myIdx), x, y)){
-				//rearrange cards in hand
-				int dest = playerHandPos.get(myIdx).indexOf(card);
-				for (PointF p : playerHandPos.get(myIdx)) {
-					//if this card was touched
-					if (adjustDimens(p).contains(x, y))
-						dest = playerHandPos.get(myIdx).indexOf(p);
-				}
-
-				//move the card
-				handOrder.remove(card);
-				handOrder.add(dest, card);
-			}
-
-			//dropped somewhere else
-			else{
-				// have the card move back to its origin
-				CardPath newPath = new CardPath(card, touchedPos, originPos);
-				newPath.setAnimationSpeed(5);
-				path = newPath;
-			}
-
-			//nullify the touched card so we don't draw it
-			touchedCard = null;
-			touchedPos = null;
+		//dropped on discard pile
+		if (adjustDimens(discardPos).contains(x, y) && !justDrew) {
+			//discard the card
+			game.sendAction(new GRDiscardAction(this, card));
 		}
+
+		//dropped on knock box
+		else if (adjustDimens(knockPos).contains(x, y)) {
+			game.sendAction(new GRKnockAction(this, card));
+		}
+
+		//dropped on hand
+		else if (handContains(playerHandPos.get(myIdx), x, y)){
+			//rearrange cards in hand
+			int dest = playerHandPos.get(myIdx).indexOf(card);
+			for (PointF p : playerHandPos.get(myIdx)) {
+				//if this card was touched
+				if (adjustDimens(p).contains(x, y))
+					dest = playerHandPos.get(myIdx).indexOf(p);
+			}
+
+			//move the card
+			handOrder.remove(card);
+			handOrder.add(dest, card);
+		}
+
+		//dropped somewhere else
+		else{
+			// have the card move back to its origin
+			CardPath newPath = new CardPath(card, touchedPos, originPos);
+			newPath.setAnimationSpeed(5);
+			path = newPath;
+		}
+
+		//nullify the touched card so we don't draw it
+		touchedCard = null;
+		touchedPos = null;
+		
+		//we did not just draw
+		justDrew = false;
 	}
 
 	/**
@@ -663,14 +669,20 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		//stock poked
 		if (adjustDimens(stockPos).contains(x, y)) {
-			if (state.getPhase() == GRState.DRAW_PHASE)
-				game.sendAction(new GRDrawAction(this, true));
+			if (state.getPhase() == GRState.DRAW_PHASE){
+				drewFromStock = true;
+				justDrew = true;
+				game.sendAction(new GRDrawAction(this, drewFromStock));
+			}
 		}
 
-		//discard poked
+		//discard poked: send draw from discard action
 		else if (adjustDimens(discardPos).contains(x, y)){
-			if (state.getPhase() == GRState.DRAW_PHASE)
-				game.sendAction(new GRDrawAction(this, false));
+			if (state.getPhase() == GRState.DRAW_PHASE){
+				drewFromStock = false;
+				justDrew = true;
+				game.sendAction(new GRDrawAction(this, drewFromStock));
+			}
 		}
 
 		//hand poked
@@ -735,18 +747,18 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		return adjustedRect;
 	}
 
+
 	/**
 	 * requests to move to the next round
+	 * so that we can send the action from inside an onclick method
 	 */
 	private void nextRound() {
-		// TODO Auto-generated method stub
-
 		game.sendAction(new GRNextRoundAction(this));
-
 	}
 
 	/**
 	 * requests to start a new game
+	 * so that we can send the action from inside an onclick method
 	 */
 	private void newGame() {
 		game.sendAction(new GRNewGameAction(this));

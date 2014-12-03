@@ -68,5 +68,5 @@ public interface Animator {
 	 * 
 	 * @param event a MotionEvent describing the touch
 	 */
-	public void onTouch(MotionEvent event); 
+	public void onTouchEvent(MotionEvent event); 
 }

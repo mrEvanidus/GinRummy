@@ -17,8 +17,10 @@ public class CardPath /*implements Runnable*/{
 		this.card = card;
 		this.origin = origin;
 		this.destination = destination;
+		this.location = origin;
 		progress = 0;
 	}
+
 
 	public Card getCard() {
 		return card;
