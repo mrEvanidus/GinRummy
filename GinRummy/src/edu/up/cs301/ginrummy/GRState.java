@@ -16,6 +16,10 @@ import edu.up.cs301.game.infoMsg.GameState;
  */
 public class GRState extends GameState
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3480922944715960270L;
 	public static final int DRAW_PHASE = 0;
 	public static final int DISCARD_PHASE = 1;
     ///////////////////////////////////////////////////
