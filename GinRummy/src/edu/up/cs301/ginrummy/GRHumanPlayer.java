@@ -40,8 +40,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	// the width and height of the card images
 	private final static PointF CARD_DIMENSIONS = new PointF(500, 726);
 	// the size a card should be grown or shrunk by
-	// TODO: for device cross-compatibility, make this change based on canvas
-	// size
+	// TODO: for betterdevice cross-compatibility,
+	//	make this change based on canvas size
 	private static float CARD_DIMENSION_MODIFIER = 0.4f;
 
 	// colors used
@@ -57,7 +57,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	// the animation surface
 	private AnimationSurface surface;
 
-	// the buttons. TODO: figure out a way to implemet "new game"
+	// the buttons. 
+	//	TODO: figure out a way to implemet "new game"
 	Button exitButton, newGame;
 
 	// the score and message pane text fields
@@ -161,12 +162,12 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 						messagePane.setText("It's Your Turn:\nDraw a card.");
 
 						if (playerHandPos.get(otherIdx).size() == 0) return;
-						
+
 						//animate opponent's discard
 						//from hand to discard pile
 						PointF dst = discardPos;
 						PointF org = playerHandPos.get(otherIdx).get(0);
-						
+
 						// start moving the card
 						CardPath newPath = new CardPath(new backCard(), org, dst);
 						newPath.setAnimationSpeed(5);
@@ -189,7 +190,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					// animate opponent's moves as they happen
 					if (state.getPhase() == GRState.DRAW_PHASE) {
 						//from stockpile to hand
-						//TODO change this to discard pile when the opponent discards
+						//TODO change this to discard pile when the opponent
+						//								draws from discard
 						PointF org = stockPos;
 						PointF dst = playerHandPos.get(otherIdx).get(0);
 
@@ -259,8 +261,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//set up new game button listener
 		newGame.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				newGame();
+				newGame(); 
 			}
 		});
 
@@ -514,7 +515,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	/**
 	 * Display the melds after a knock
+	 * 
 	 * @param playerIndex
+	 * 			The index of the player
 	 */
 	synchronized private void displayMelds(int playerIndex, Canvas canvas) {
 		ArrayList<Meld> playerMelds = state.getMeldsForPlayer(playerIndex);	
@@ -557,21 +560,28 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}
 
 	/**
-	 * 
+	 * TODO
 	 * displays deadwood of respective player
 	 * 
 	 * @param playerIdx
-	 * @param startPos
-	 * @param cardPosY
+	 * 			The index of the player
+	 * @param startPosX
+	 * 			the X-coordinate of the place to start drawing the deadwood
+	 * @param startPosY
+	 * 			the Y-coordinate of the place to start drawing the deadwood
 	 * @param canvas
+	 * 			the canvas to draw on
 	 */
 	synchronized private void displayDeadwood(int playerIdx, float startPosX, 
 			float startPosY, Canvas canvas) {
 		ArrayList<Card> playerDeadwood = state.getDeadwoodForPlayer(playerIdx);	
 		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
+		
+		//set up the paint with which we will cover the deadwood cards 
 		Paint grayShade = new Paint();
 		grayShade.setColor(0xccd3d3d3);
 
+		//TODO: streamline this. playerHandPos is also used on the top GRHuman level
 		playerHandPos.clear();
 		//Iterate through each group of melds. 
 		for (Card c : playerDeadwood) {
@@ -593,7 +603,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 
 	 * @param event
 	 *            the motion-event
-	 * @return
 	 */
 	public void onTouchEvent(MotionEvent event) {
 		if (state == null) return;
@@ -604,7 +613,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			if (event.getAction() != MotionEvent.ACTION_DOWN) return;
 
 			//pop up the message
-			showEndGameMessage(state.gameMessage);
+			//TODO only the local human player should
+			//be able to advance the round
+			showEndRoundChoice(state.gameMessage);
 
 			//don't allow other interaction with the game
 			return;
@@ -692,7 +703,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}
 
 	/**
-	 *TODO
+	 * The checks to perform on the Me
 	 * @param touchX
 	 * @param touchY
 	 */
@@ -733,11 +744,12 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}//poke
 
 	/**
-	 * TODO
+	 * Shows a pop-up message asking the player if they want
+	 * to continue to a new round or return to look at their cards. 
 	 * @param msg
-	 * 			the message to display
+	 * 			the message to display in the pop-up window
 	 */
-	private void showEndGameMessage(String msg) {
+	private void showEndRoundChoice(String msg) {
 		//message box to show at the end of the round
 		MessageBox.popUpChoice(msg, "Next Round", "Back to Melds",
 
@@ -758,11 +770,27 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}
 
 	/**
-	 * TODO
+	 * Shows a pop-up message letting the player know that the round is over. 
+	 * @param msg
+	 * 			the message to display in the pop-up window
+	 */
+	private void showEndRoundMessage(String msg) {
+		//message box to show at the end of the round
+		MessageBox.popUpMessage(msg 
+				+ "\n, Waiting for host to begin next round", 
+				myActivity); //pop-up choice
+	}
+
+	/**
+	 * Checks if a hand contains the given point
 	 * @param posList
+	 * 			the list of positions to check inside
 	 * @param x
+	 * 			the x-coordnate of the point
 	 * @param y
+	 * 			the y-coordinate of the point
 	 * @return
+	 * 		TRUE: if the position list contains the point
 	 */
 	synchronized private boolean handContains(ArrayList<PointF> posList, int x, int y) {
 		for (PointF p : posList) {
@@ -816,6 +844,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * so that we can send the action from inside an onclick method
 	 */
 	private void newGame() {
+		//TODO: implement NEW GAME action
 		game.sendAction(new GRNewGameAction(this));
 	}
 }
