@@ -533,6 +533,13 @@ public class GRState extends GameState
     	}
     	return null;
     }
+    public ArrayList<Card> getDeadwoodForPlayer(int pidx) {    	
+    	ArrayList<Card> deadwoodCards = new ArrayList<Card>();
+    	for (Card c : playerHands[pidx].cards) {
+    		if (c.getRL() < 3 && c.getSL() < 3) deadwoodCards.add(c);
+    	}
+    	return deadwoodCards;
+    }
     public boolean drawFrom(boolean fromStock, int playeridx){
     	if(fromStock){
     		setLastPicked(stock.peekAtTopCard());
