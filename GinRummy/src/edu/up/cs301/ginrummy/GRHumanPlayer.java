@@ -1,6 +1,7 @@
 package edu.up.cs301.ginrummy;
 
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.*;
@@ -651,6 +652,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
 		float cardsY;
 		float cardSpacer = 0;
+		float yPosOfCard;
+		float startOfDeadwoodX;
 		
 		//decide which player hand position we need
 		if (playerIndex == 0) cardsY = 0.55f;		
@@ -660,22 +663,58 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			return;
 		}
 		
+		yPosOfCard = cardsY;
+		playerHandPos.clear();		
+		//Iterate through each group of melds. 
+		for (Meld meld : playerMelds) {
+			int indexOfMeld = playerMelds.indexOf(meld);
+			//Iterate through each card in a meld
+			//"meldCard" is a card in "melds"
+			for (Card meldCard : meld.getMeldCards()) {
+				yPosOfCard = cardsY + SPACE_BTN_MELDS*indexOfMeld;
+				playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer, yPosOfCard));
+				
+			//the last index of playerHandPos is the current meldCard
+				int lastIndex = playerHandPos.size() - 1;
+				meldCard.drawOn(canvas, adjustDimens(playerHandPos.get(lastIndex)));
+				cardSpacer++;
+			}					
+		}	
+		
+		
+		startOfDeadwoodX = 0.02f + HAND_CARD_OFFSET*cardSpacer;		
+		displayDeadwood(playerIndex, startOfDeadwoodX, yPosOfCard + SPACE_BTN_MELDS, canvas);
+			
+	}
+	
+	/**
+	 * 
+	 * displays deadwood of respective player
+	 * 
+	 * @param playerIdx
+	 * @param startPos
+	 * @param cardPosY
+	 * @param canvas
+	 */
+	synchronized private void displayDeadwood(int playerIdx, float startPosX, 
+			float startPosY, Canvas canvas) {
+		ArrayList<Card> playerDeadwood = state.getDeadwoodForPlayer(playerIdx);	
+		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
+		Paint grayShade = new Paint();
+		grayShade.setColor(0xccd3d3d3);
+		
 		playerHandPos.clear();
-			//Iterate through each group of melds. 
-			for (Meld meld : playerMelds) {
-				int indexOfMeld = playerMelds.indexOf(meld);
-				//Iterate through each card in a meld
-				//"meldCard" is a card in "melds"
-				for (Card meldCard : meld.getMeldCards()) {
-					playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer 
-							,cardsY + SPACE_BTN_MELDS*indexOfMeld));
-					
-					//the last index of playerHandPos is the current meldCard
-					int lastIndex = playerHandPos.size() - 1;
-					meldCard.drawOn(canvas, adjustDimens(playerHandPos.get(lastIndex)));
-					cardSpacer++;
-				}					
-			}	
+		//Iterate through each group of melds. 
+		for (Card c : playerDeadwood) {
+			int indexOfCard = playerDeadwood.indexOf(c);
+			playerHandPos.add(new PointF(startPosX + HAND_CARD_OFFSET*indexOfCard, startPosY));
+				
+			//the last index of playerHandPos is the current meldCard
+			int lastIndex = playerHandPos.size() - 1;
+			PointF cardPos = playerHandPos.get(lastIndex);
+			c.drawOn(canvas, adjustDimens(cardPos));
+			canvas.drawRoundRect(adjustDimens(cardPos), 10, 10, grayShade);
+		}	
 	}
 	
 	/**
