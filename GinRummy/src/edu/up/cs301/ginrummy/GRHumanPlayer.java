@@ -1,6 +1,8 @@
 package edu.up.cs301.ginrummy;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.*;
@@ -500,7 +502,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @param playerIndex
 	 */
 	synchronized private void displayMelds(int playerIndex, Canvas canvas) {
-		ArrayList<Meld> playerMelds = state.getMeldsForPlayer(playerIndex);	
+		Hashtable<Integer, Meld> playerMelds = state.getMeldsForPlayer(playerIndex);	
 		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
 		float cardsY;
 		float cardSpacer = 0;
@@ -515,12 +517,12 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		playerHandPos.clear();
 		//Iterate through each group of melds. 
-		for (Meld meld : playerMelds) {
-			int indexOfMeld = playerMelds.indexOf(meld);
+		int indexOfMeld = 0;
+		for (Meld meld : playerMelds.values()) {
+			//int indexOfMeld = playerMelds.values().indexOf(meld);
 			//Iterate through each card in a meld
 			//"meldCard" is a card in "melds"
-			for (Card meldCard : meld.getMeldCards()) {
-				
+			for (Card meldCard : meld.getMeldCards()) {			
 				if((meld.isSet && meldCard.setID != 0) || (!meld.isSet && meldCard.runID != 0)){
 					playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer 
 							,cardsY + SPACE_BTN_MELDS*indexOfMeld));
@@ -530,7 +532,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					meldCard.drawOn(canvas, adjustDimens(playerHandPos.get(lastIndex)));
 					cardSpacer++;
 				}
-			}					
+			}	
+			indexOfMeld++;
 		}	
 	}
 

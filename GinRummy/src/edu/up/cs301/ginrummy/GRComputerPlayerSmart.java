@@ -1,6 +1,7 @@
 package edu.up.cs301.ginrummy;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Random;
 
 import android.util.Log;
@@ -89,8 +90,8 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
      * 
      * @return Whether or not the hand is allowed to knock
      */
-    public boolean canKnock(Deck hand, ArrayList<Meld> melds){
-    	removeDuplicates(hand);
+    public boolean canKnock(Deck hand, Hashtable<Integer, Meld> melds, int pidx){
+    	removeDuplicates(hand,pidx);
     	
     	if(countDeadwood(hand) <= 10){
     		return true;
@@ -104,7 +105,7 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
      * 
      * @param hand
      */
-    public void removeDuplicates(Deck hand){
+    public void removeDuplicates(Deck hand, int pidx){
     	//Problem cards are those that are in both a set and a run
     	ArrayList<Card> problemCards = new ArrayList<Card>();
     	Deck handcopy = hand;
@@ -249,7 +250,8 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     				c.setID = opState.ID;
     				val = c.getRank().value(1);
         		}
-    			(opState.getMeldsForPlayer(pidx)).add(new Meld(a, true, val*a.size(), opState.ID));
+    			(opState.getMeldsForPlayer(pidx)).put(savedState.ID, new Meld(a, true, val*a.size(), opState.ID));
+    			savedState.meldCount++;
 				opState.ID++;
 			}
     		
@@ -300,8 +302,9 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     						runCount += c2.getRank().value(1);
         					c2.runID = opState.ID;
         				}
-    					(opState.getMeldsForPlayer(pidx)).add(new Meld(temp, false, runCount, opState.ID));
+    					(opState.getMeldsForPlayer(pidx)).put(savedState.ID, new Meld(temp, false, runCount, opState.ID));
 	    				opState.ID++;
+	    				savedState.meldCount++;
 	    				runCount = 0;
 					}
     				
@@ -344,14 +347,14 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     			}
     			synchronized(this){
     				assessMelds(savedState, THIS_PLAYER);
-    				canKnock(savedState.getHand(THIS_PLAYER), savedState.getMeldsForPlayer(THIS_PLAYER));
+    				canKnock(savedState.getHand(THIS_PLAYER), savedState.getMeldsForPlayer(THIS_PLAYER),THIS_PLAYER);
 
     				Card topOfDiscard = savedState.getDiscard().peekAtTopCard();
     				GRState copy = savedState;
 
     				copy.getHand(THIS_PLAYER).add(topOfDiscard);
     				assessMelds(copy, THIS_PLAYER);
-    				canKnock(copy.getHand(THIS_PLAYER), copy.getMeldsForPlayer(THIS_PLAYER));
+    				canKnock(copy.getHand(THIS_PLAYER), copy.getMeldsForPlayer(THIS_PLAYER),THIS_PLAYER);
 
     				Card dc = cardToDiscard(copy.getHand(THIS_PLAYER));
 
@@ -380,9 +383,9 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     				s.getHand(THIS_PLAYER).remove(c);
     				
     				assessMelds(s, THIS_PLAYER);
-    				canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER));
+    				canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER),THIS_PLAYER);
     				
-    				if(canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER))){
+    				if(canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER), THIS_PLAYER)){
     					game.sendAction(new GRKnockAction(this,c));
     				}else{
     					game.sendAction(new GRDiscardAction(this, c));

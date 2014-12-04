@@ -34,7 +34,7 @@ public class GRState extends GameState
     
 	private Deck[] playerHands = new Deck[2];
 	private int[] playerScores = new int[2];
-	private ArrayList<ArrayList<Meld>> playerMelds;
+	private ArrayList<Hashtable<Integer, Meld>> playerMelds;
 	
     // whose turn is it to turn a card?
     private int whoseTurn;
@@ -74,9 +74,9 @@ public class GRState extends GameState
     public GRState() {
     	
     	//initialize the meld lists
-    	playerMelds = new ArrayList<ArrayList<Meld>>();
-    	playerMelds.add(new ArrayList<Meld>());
-    	playerMelds.add(new ArrayList<Meld>());
+    	playerMelds = new ArrayList<Hashtable<Integer, Meld>>();
+    	playerMelds.add(new Hashtable<Integer, Meld>());
+    	playerMelds.add(new Hashtable<Integer, Meld>());
     	
     	isEndOfRound = false;
     	
@@ -196,17 +196,16 @@ public class GRState extends GameState
     	whoseTurn = orig.whoseTurn;
     	playerHands[0] = new Deck(orig.playerHands[0]);
     	playerHands[1] = new Deck(orig.playerHands[1]);
-    	playerMelds = new ArrayList<ArrayList<Meld>>();
+    	playerMelds = new ArrayList<Hashtable<Integer, Meld>>();
     	
-    	playerMelds.add(new ArrayList<Meld>());
-    	playerMelds.add(new ArrayList<Meld>());
+    	playerMelds.add(new Hashtable<Integer, Meld>());
+    	playerMelds.add(new Hashtable<Integer, Meld>());
     	//PROBLEM LIES HERE
-    	for (Meld m : orig.playerMelds.get(0)){
-    		
-    		playerMelds.get(0).add(new Meld(m));
+    	for (Meld m : orig.playerMelds.get(0).values()){
+    		playerMelds.get(0).put(m.id, new Meld(m));
     	}
-    	for (Meld m :  orig.playerMelds.get(1)){
-    		playerMelds.get(1).add(new Meld(m));
+    	for (Meld m :  orig.playerMelds.get(1).values()){
+    		playerMelds.get(1).put(m.id, new Meld(m));
     	}
     	
     	gameMessage = orig.gameMessage;
@@ -295,6 +294,14 @@ public class GRState extends GameState
     	return playerHands[playeridx];
     }
     
+    public void setHand(int pidx, Deck d){
+    	playerHands[pidx] = new Deck(d);
+    }
+    
+    public void setMelds(int pidx, Hashtable<Integer, Meld> m){
+    	playerMelds.set(pidx, new Hashtable<Integer, Meld>(m));
+    }
+    
     public int getp1score(){
     	return playerScores[0];
     }
@@ -306,7 +313,7 @@ public class GRState extends GameState
     public void setScore(int pidx, int addedScore){
     	playerScores[pidx] += addedScore;
     }
-    public ArrayList<Meld> getMeldsForPlayer(int pidx){
+    public Hashtable<Integer, Meld> getMeldsForPlayer(int pidx){
     	if(pidx == 0){
     		return playerMelds.get(0);
     	}else if(pidx == 1){

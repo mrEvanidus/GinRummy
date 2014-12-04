@@ -12,10 +12,10 @@ public class Meld implements Serializable{
 	 */
 	private static final long serialVersionUID = -8590155092857173829L;
 	
-	private ArrayList<Card> cards;
+	public ArrayList<Card> cards;
 	public boolean isSet;
 	private int val;
-	private int id;
+	public int id;
 	
 	public Meld(ArrayList<Card> meldCards, boolean set, int meldVal, int meldID){
 		cards = new ArrayList<Card>(meldCards);
@@ -25,7 +25,10 @@ public class Meld implements Serializable{
 	}
 	
 	public Meld(Meld orig){
-		cards = new ArrayList<Card>(orig.cards);
+		cards = new ArrayList<Card>();
+		for(Card c : orig.cards){
+			cards.add(new Card(c));
+		}
 		isSet = orig.isSet;
 		val = orig.val;
 		id = orig.id;
