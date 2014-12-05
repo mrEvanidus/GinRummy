@@ -58,6 +58,15 @@ public class Card implements Serializable {
         priority = 0;
     }
 
+    public Card(Card orig){
+    	rank = orig.rank;
+    	suit = orig.suit;
+    	runLength = orig.runLength;
+    	setLength = orig.setLength;
+    	runID = orig.runID;
+        setID = orig.setID;
+        priority = orig.priority;
+    }
     /**
      * Creates a Card from a String.  (Can be used instead of the
      * constructor.)

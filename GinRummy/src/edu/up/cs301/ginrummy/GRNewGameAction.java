@@ -7,5 +7,9 @@ public class GRNewGameAction extends GRNextRoundAction {
 	public GRNewGameAction(GamePlayer player) {
 		super(player);
 	}
-
+	
+	@Override
+	public boolean isNewGame(){
+		return true;
+	}
 }

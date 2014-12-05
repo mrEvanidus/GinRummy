@@ -46,6 +46,23 @@ public class Deck implements Serializable {
 		}
 	}
 	
+	/** copy constructor, making an exact copy of a deck
+	 * 
+	 * @param orig
+	 * 		the deck from which the copy should be made
+	 */
+	public Deck(Deck orig, int i) {
+		// synchronize to ensure that original is not being modified as we
+		// iterate over it
+		synchronized(orig.cards) {
+			// create a new arrayList for our new deck; add each card in it
+			cards = new ArrayList<Card>();
+			for (Card c: orig.cards) {
+				cards.add(new Card(c));
+			}
+		}
+	}
+	
 	/**
 	 * adds one of each card, increasing the size of the deck by 52. Cards are added
 	 * spades first (King to Ace), then similarly with hearts, diamonds and clubs.

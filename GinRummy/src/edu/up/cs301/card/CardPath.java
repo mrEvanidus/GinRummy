@@ -66,8 +66,15 @@ public class CardPath /*implements Runnable*/{
 		if (isComplete()) return null;
 		//advance the card linearly along the path
 		//find the change amount
-		float dx = origin.x + (destination.x - origin.x)/animationDuration*(float)progress;
-		float dy = origin.y + (destination.y - origin.y)/animationDuration*progress;
+		float dx = 0;
+		float dy = 0;
+		try{
+			dx = origin.x + (destination.x - origin.x)/animationDuration*(float)progress;
+			dy = origin.y + (destination.y - origin.y)/animationDuration*progress;
+		}
+		catch(NullPointerException e){
+
+		}
 		
 		progress++;
 		
