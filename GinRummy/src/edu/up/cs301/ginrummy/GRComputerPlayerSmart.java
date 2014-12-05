@@ -20,7 +20,7 @@ import edu.up.cs301.game.infoMsg.TimerInfo;
  * @version July 2013 
  */
 public class GRComputerPlayerSmart extends GameComputerPlayer {	
-	public static final int THIS_PLAYER = 1;
+	//public static final int THIS_PLAYER = 1;
 	public static final int MELD = 0;
 	public static final int ONE_HALF_MELD = 10;
 	public static final int TWO_HALF_MELD = 5;
@@ -30,6 +30,8 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
 	private GRState savedState;
 	private Random randDeck;
 	private Random randCard;
+	
+	private int thisPlayer;
 	
 	
     /**
@@ -332,8 +334,10 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     	// update our state variable
     	savedState = (GRState)info;
     	
+    	thisPlayer = savedState.yourId;
+    	
     	//Check if it's this players turn
-    	if(savedState.whoseTurn() == THIS_PLAYER){
+    	if(savedState.whoseTurn() == thisPlayer){
     		
     		
     		//DRAW PHASE
@@ -346,17 +350,17 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     				e.printStackTrace();
     			}
     			synchronized(this){
-    				assessMelds(savedState, THIS_PLAYER);
-    				canKnock(savedState.getHand(THIS_PLAYER), savedState.getMeldsForPlayer(THIS_PLAYER),THIS_PLAYER);
+    				assessMelds(savedState, thisPlayer);
+    				canKnock(savedState.getHand(thisPlayer), savedState.getMeldsForPlayer(thisPlayer),thisPlayer);
 
     				Card topOfDiscard = savedState.getDiscard().peekAtTopCard();
     				GRState copy = savedState;
 
-    				copy.getHand(THIS_PLAYER).add(topOfDiscard);
-    				assessMelds(copy, THIS_PLAYER);
-    				canKnock(copy.getHand(THIS_PLAYER), copy.getMeldsForPlayer(THIS_PLAYER),THIS_PLAYER);
+    				copy.getHand(thisPlayer).add(topOfDiscard);
+    				assessMelds(copy, thisPlayer);
+    				canKnock(copy.getHand(thisPlayer), copy.getMeldsForPlayer(thisPlayer),thisPlayer);
 
-    				Card dc = cardToDiscard(copy.getHand(THIS_PLAYER));
+    				Card dc = cardToDiscard(copy.getHand(thisPlayer));
 
     				boolean drawFromStock;
     				if(dc.equals(topOfDiscard)){
@@ -379,13 +383,13 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     			}
     			synchronized(this){
     				GRState s = new GRState(savedState);
-    				Card c = cardToDiscard(s.getHand(THIS_PLAYER));
-    				s.getHand(THIS_PLAYER).remove(c);
+    				Card c = cardToDiscard(s.getHand(thisPlayer));
+    				s.getHand(thisPlayer).remove(c);
     				
-    				assessMelds(s, THIS_PLAYER);
-    				canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER),THIS_PLAYER);
+    				assessMelds(s, thisPlayer);
+    				canKnock(s.getHand(thisPlayer), s.getMeldsForPlayer(thisPlayer),thisPlayer);
     				
-    				if(canKnock(s.getHand(THIS_PLAYER), s.getMeldsForPlayer(THIS_PLAYER), THIS_PLAYER)){
+    				if(canKnock(s.getHand(thisPlayer), s.getMeldsForPlayer(thisPlayer), thisPlayer)){
     					game.sendAction(new GRKnockAction(this,c));
     				}else{
     					game.sendAction(new GRDiscardAction(this, c));

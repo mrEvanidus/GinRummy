@@ -23,6 +23,7 @@ public class GRComputerPlayer extends GameComputerPlayer {
 	private Random randDeck;
 	private Random randCard;
 	
+	private int thisPlayer;
 	
     /**
      * Constructor for the SJComputerPlayer class; creates an "average"
@@ -57,8 +58,10 @@ public class GRComputerPlayer extends GameComputerPlayer {
     	// update our state variable
     	savedState = (GRState)info;
     	
+    	thisPlayer = savedState.yourId;
+    	
     	//Check if it's this players turn
-    	if(savedState.whoseTurn() == THIS_PLAYER){
+    	if(savedState.whoseTurn() == thisPlayer){
     		//DRAW PHASE
     		if(savedState.getPhase() == savedState.DRAW_PHASE){
     			
@@ -78,7 +81,7 @@ public class GRComputerPlayer extends GameComputerPlayer {
     		else if (savedState.getPhase() == savedState.DISCARD_PHASE){
     			// Discard a random card
     			int rc = randCard.nextInt(10);
-    			Card randomCard = savedState.getHand(THIS_PLAYER).cards.get(rc);
+    			Card randomCard = savedState.getHand(thisPlayer).cards.get(rc);
     			
     			game.sendAction(new GRKnockAction(this,randomCard));
     			try {

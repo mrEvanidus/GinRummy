@@ -476,10 +476,10 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		}
 
 		if(grma.isNextRound() && state.isEndOfRound){
-			if (grma instanceof GRNewGameAction) {
-				state.setScore(0, 0);
-				state.setScore(1, 0);
-			}
+//			if (grma instanceof GRNewGameAction) {
+//				state.setScore(0, 0);
+//				state.setScore(1, 0);
+//			}
 			state.initNewRound();
 			sendAllUpdatedState();
 			return true;
@@ -538,7 +538,18 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					state.toGoFirst = thisPlayerIdx;
 					state.isEndOfRound = true;
 					state.setPhase(state.DRAW_PHASE);
-					state.setWhoseTurn(0);
+					
+					//TODO: Comment this
+					if(grma.getPlayer() instanceof GRHumanPlayer && thisPlayerIdx == 0){
+						state.setWhoseTurn(0);
+					}else if(grma.getPlayer() instanceof GRHumanPlayer && thisPlayerIdx == 1){
+						state.setWhoseTurn(1);
+					}else if(!(grma.getPlayer() instanceof GRHumanPlayer) && thisPlayerIdx == 0){
+						state.setWhoseTurn(1);
+					}else if(!(grma.getPlayer() instanceof GRHumanPlayer) && thisPlayerIdx == 1){
+						state.setWhoseTurn(0);
+					}
+					
 					sendAllUpdatedState();
 					//state.setPhase(state.DRAW_PHASE);
 					state.getHand(thisPlayerIdx).remove(theCard);
