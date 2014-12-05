@@ -147,12 +147,12 @@ public class GRLocalGame extends LocalGame implements GRGame {
   
     	ArrayList<Card> pcc = problemCards;
     	int minScore = 101; //Highest possible deadwood count is 100
-    	int minCombo = -1;  //Lowest deadwood count among permutations. if -1, hand is problem card free
-    	Deck bestHand = new Deck();
+    	//int minCombo = -1;  //Lowest deadwood count among permutations. if -1, hand is problem card free
+    	Deck bestHand = new Deck(hand,1);
     	Deck handCopy = new Deck(hand,1);
     	Hashtable<Integer,Meld> melds = statecopy.getMeldsForPlayer(pidx);
     	Hashtable<Integer,Meld> meldsCopy = htcopy(melds);
-    	Hashtable<Integer,Meld> bestMelds = new Hashtable<Integer,Meld>();
+    	Hashtable<Integer,Meld> bestMelds = new Hashtable<Integer,Meld>(melds);
     	//Generate all possible permutations
     	for(int i = 0; i < Math.pow(2,problemCards.size()); i++){
     		//Generates a hand based on the current permutation
@@ -418,7 +418,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 						meldcount1++;
 					}
 					//Create a temporary state before attempting to lay off
-					GRState s = new GRState(state);
+					GRState s = new GRState(state,1);
 
 					//Hypothetically add the card to the hand, calculate deadwood
 					s.getHand(knocker).cards.add(c);
@@ -432,7 +432,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					}
 					//If card doesn't add any additional deadwood, the card may be 
 					//added to a list of cards to be laid off
-					if(dw == dw2 && meldcount1 == meldcount2){
+					if(dw == dw2 && (dw != -1 || dw2 != -1)){
 						layoffCards.add(c);
 						tempToAdd.add(c);
 						tempToRemove.remove(c);
@@ -550,10 +550,10 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					
 					if(thisPlayerIdx == PLAYER_1){
 						playerWhoLaidOff = PLAYER_1;
-						//layoff(PLAYER_1,PLAYER_2);
+						layoff(PLAYER_1,PLAYER_2);
 					}else{
 						playerWhoLaidOff = PLAYER_2;
-						//layoff(PLAYER_2,PLAYER_1);
+						layoff(PLAYER_2,PLAYER_1);
 					}
 
 					normalizeHands();

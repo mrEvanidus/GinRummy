@@ -110,77 +110,77 @@ public class GRState extends GameState
     	}
     	
     	//TEST HAND
-    	for(int i = 0; i < 10; i++){
-    		switch (i){
-    			case 0:
-    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
-    				break;
-    			case 1:
-    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
-    				break;
-    			case 2:
-    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Heart));
-    				break;
-    			case 3:
-    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Spade));
-    				break;
-    			case 4:
-    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
-    				break;
-    			case 5:
-    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
-    				break;
-    			case 6:
-    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Diamond));
-    				break;
-    			case 7:
-    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Spade));
-    				break;
-    			case 8:
-    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Club));
-    				break;
-    			case 9:
-    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
-    				break;
-    			
-    		}
-    	}
-    	
-    	for(int i = 0; i < 10; i++){
-    		switch (i){
-    			case 0:
-    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Spade));
-    				break;
-    			case 1:
-    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
-    				break;
-    			case 2:
-    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Diamond));
-    				break;
-    			case 3:
-    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Heart));
-    				break;
-    			case 4:
-    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Spade));
-    				break;
-    			case 5:
-    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Club));
-    				break;
-    			case 6:
-    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Spade));
-    				break;
-    			case 7:
-    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
-    				break;
-    			case 8:
-    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
-    				break;
-    			case 9:
-    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Diamond));
-    				break;
-    			
-    		}
-    	}
+//    	for(int i = 0; i < 10; i++){
+//    		switch (i){
+//    			case 0:
+//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
+//    				break;
+//    			case 1:
+//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
+//    				break;
+//    			case 2:
+//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Heart));
+//    				break;
+//    			case 3:
+//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Spade));
+//    				break;
+//    			case 4:
+//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
+//    				break;
+//    			case 5:
+//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
+//    				break;
+//    			case 6:
+//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Diamond));
+//    				break;
+//    			case 7:
+//    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Spade));
+//    				break;
+//    			case 8:
+//    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Club));
+//    				break;
+//    			case 9:
+//    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
+//    				break;
+//    			
+//    		}
+//    	}
+//    	
+//    	for(int i = 0; i < 10; i++){
+//    		switch (i){
+//    			case 0:
+//    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Spade));
+//    				break;
+//    			case 1:
+//    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
+//    				break;
+//    			case 2:
+//    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Diamond));
+//    				break;
+//    			case 3:
+//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Heart));
+//    				break;
+//    			case 4:
+//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Spade));
+//    				break;
+//    			case 5:
+//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Club));
+//    				break;
+//    			case 6:
+//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Spade));
+//    				break;
+//    			case 7:
+//    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
+//    				break;
+//    			case 8:
+//    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
+//    				break;
+//    			case 9:
+//    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Diamond));
+//    				break;
+//    			
+//    		}
+//    	}
     	
     	stock.moveTopCardTo(discard);
     	//discard.add(new Card(Rank.KING,Suit.Heart));
@@ -196,6 +196,40 @@ public class GRState extends GameState
     	whoseTurn = orig.whoseTurn;
     	playerHands[0] = new Deck(orig.playerHands[0]);
     	playerHands[1] = new Deck(orig.playerHands[1]);
+    	playerMelds = new ArrayList<Hashtable<Integer, Meld>>();
+    	
+    	playerMelds.add(new Hashtable<Integer, Meld>());
+    	playerMelds.add(new Hashtable<Integer, Meld>());
+    	//PROBLEM LIES HERE
+    	for (Meld m : orig.playerMelds.get(0).values()){
+    		playerMelds.get(0).put(m.id, new Meld(m));
+    	}
+    	for (Meld m :  orig.playerMelds.get(1).values()){
+    		playerMelds.get(1).put(m.id, new Meld(m));
+    	}
+    	
+    	gameMessage = orig.gameMessage;
+    	stock = new Deck(orig.stock);
+    	discard = new Deck(orig.discard);
+    	turnPhase = orig.turnPhase;
+    	rounds = orig.rounds;
+    	playerScores[0] = orig.playerScores[0];
+    	playerScores[1] = orig.playerScores[1];
+    	ID = orig.ID;
+    	isEndOfRound = orig.isEndOfRound;
+        //TODO add new stuff to copy constructor
+    }
+    
+    /**
+     * Copy constructor for objects of class SJState. Makes a copy of the given state
+     *  
+     * @param orig  the state to be copied
+     */
+    public GRState(GRState orig, int blah) {
+    	// set index of player whose turn it is
+    	whoseTurn = orig.whoseTurn;
+    	playerHands[0] = new Deck(orig.playerHands[0],1);
+    	playerHands[1] = new Deck(orig.playerHands[1],1);
     	playerMelds = new ArrayList<Hashtable<Integer, Meld>>();
     	
     	playerMelds.add(new Hashtable<Integer, Meld>());
