@@ -40,7 +40,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	// the width and height of the card images
 	private final static PointF CARD_DIMENSIONS = new PointF(500, 726);
 	// the size a card should be grown or shrunk by
-	// TODO: for betterdevice cross-compatibility,
+	// TODO: for better device cross-compatibility,
 	//	make this change based on canvas size
 	private static float CARD_DIMENSION_MODIFIER = 0.4f;
 
@@ -200,8 +200,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 						newPath.setAnimationSpeed(5);
 						opponentPath = newPath;
 					}
-
-
 				}
 			}
 		}
