@@ -365,12 +365,18 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				playerHandPos.get(myIdx).add(new PointF(0.05f + HAND_CARD_OFFSET*i, 0.65f));
 			}
 			for (int i = 0; i < numOpponentRoundEndCards; i++) {
-				playerHandPos.get(otherIdx).add(new PointF(0.55f - HAND_CARD_OFFSET*i, -0.15f));
+				playerHandPos.get(otherIdx).add(new PointF(0.65f - HAND_CARD_OFFSET*i, -0.15f));
 			}
 			
-			//draw the melds
-			displayMelds(myIdx, canvas);
-			displayMelds(otherIdx, canvas);
+			//display the melds and deadwood
+			displayMelds(stateCopy.getMeldsForPlayer(myIdx), playerHandPos.get(myIdx), canvas);
+			displayDeadwood(stateCopy.getDeadwoodForPlayer(myIdx), (int)sizeOf(stateCopy.getMeldsForPlayer(myIdx)),
+					playerHandPos.get(myIdx), canvas);
+			
+			displayMelds(stateCopy.getMeldsForPlayer(otherIdx), playerHandPos.get(otherIdx), canvas);
+			displayDeadwood(stateCopy.getDeadwoodForPlayer(otherIdx), (int)sizeOf(stateCopy.getMeldsForPlayer(otherIdx)),
+					playerHandPos.get(otherIdx), canvas);
+			
 			return;
 		}
 
@@ -565,13 +571,13 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @param playerIndex
 	 * 			The index of the player
 	 */
-	synchronized private void displayMelds(int playerIndex, Canvas canvas) {
-		Hashtable<Integer, Meld> playerMelds = state.getMeldsForPlayer(playerIndex);	
-		ArrayList<PointF> positions = playerHandPos.get(playerIndex);
+	synchronized private void displayMelds(Hashtable<Integer, Meld> playerMelds, ArrayList<PointF> positions, Canvas canvas) {
+//		Hashtable<Integer, Meld> playerMelds = state.getMeldsForPlayer(playerIndex);	
+//		ArrayList<PointF> positions = playerHandPos.get(playerIndex);
 //		float cardsY;
 		int cardIndex = 0;
 		//		float yPosOfCard;
-		float startOfDeadwoodX;
+//		float startOfDeadwoodX;
 
 		//decide which player hand position we need
 //		if (playerIndex == myIdx) {
@@ -614,21 +620,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		//show the deadwood cards
 //		startOfDeadwoodX = 0.02f + HAND_CARD_OFFSET*cardIndex;
-		displayDeadwood(playerIndex, cardIndex, positions, canvas);
-	}
-
-	/**
-	 * TODO
-	 * @param playerMelds
-	 * @return
-	 */
-	synchronized private float sizeOf(Hashtable<Integer, Meld> playerMelds) {
-		// TODO Auto-generated method stub
-		float count = 0f;
-		for (Meld m : playerMelds.values()) {
-			count += m.cards.size();
-		}
-		return count;
+//		displayDeadwood(state.getDeadwoodForPlayer(playerIndex), cardIndex, positions, canvas);
 	}
 
 	/**
@@ -644,8 +636,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @param canvas
 	 * 			the canvas to draw on
 	 */
-	synchronized private void displayDeadwood(int playerIdx, int startIndex, ArrayList<PointF> positions, Canvas canvas) {
-		ArrayList<Card> playerDeadwood = state.getDeadwoodForPlayer(playerIdx);	
+	synchronized private void displayDeadwood(ArrayList<Card> playerDeadwood,
+			int startIndex, ArrayList<PointF> positions, Canvas canvas) {
+//		ArrayList<Card> playerDeadwood = state.getDeadwoodForPlayer(playerIdx);	
 //		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
 
 		//set up the paint with which we will cover the deadwood cards 
@@ -658,7 +651,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 //		playerHandPos.clear();
 		//Iterate through each group of melds. 
 		for (Card c : playerDeadwood) {
-			int indexOfCard = playerDeadwood.indexOf(c);
+//			int indexOfCard = playerDeadwood.indexOf(c);
 //			playerHandPos.add(new PointF(startPosX + HAND_CARD_OFFSET*indexOfCard, startPosY));
 
 			//the last index of playerHandPos is the current meldCard
@@ -676,6 +669,20 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			
 			index++;
 		}	
+	}
+
+	/**
+	 * TODO
+	 * @param playerMelds
+	 * @return
+	 */
+	synchronized private float sizeOf(Hashtable<Integer, Meld> playerMelds) {
+		// TODO Auto-generated method stub
+		float count = 0f;
+		for (Meld m : playerMelds.values()) {
+			count += m.cards.size();
+		}
+		return count;
 	}
 
 	/**
