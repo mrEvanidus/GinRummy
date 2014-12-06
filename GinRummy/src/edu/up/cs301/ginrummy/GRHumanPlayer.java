@@ -19,9 +19,8 @@ import edu.up.cs301.game.infoMsg.*;
 import edu.up.cs301.game.util.MessageBox;
 
 /**
- * A GUI that allows a human to play Gin Rummy. Moves are made by clicking
- * regions on a surface. Presently, it is laid out for landscape orientation. If
- * the device is held in portrait mode, the cards will be very long and skinny.
+ * A GUI that allows a human to play Gin Rummy.
+ * Moves are made by dragging cards around the screen.
  * 
  * @author Steven R. Vegdahl
  * @version July 2013
@@ -332,34 +331,34 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * the two players' decks, with all cards face-down - a red bar to indicate
 	 * whose turn it is
 	 * 
-	 * @param g
+	 * @param canvas
 	 *            the canvas on which we are to draw
 	 */
 	public synchronized void tick(Canvas canvas) {
 		// ignore if we have not yet received the game state
 		if (state == null) return;
 
+		//make a copy to avoid threading errors
 		GRState stateCopy = new GRState(state);
 
 		//find out my id
 		myIdx = state.yourId;
 		otherIdx = (myIdx == 0 ? 1 : 0);
 
+		//empty the hand positions for repopulation
+		playerHandPos.get(myIdx).clear();
+		playerHandPos.get(otherIdx).clear();
+
 		//display players' melds if it's the end of a round
 		if (state.isEndOfRound) {
-			//TODO make displaymelds work like the other methods
-			
-			//empty the hand positions for repopulation
-			playerHandPos.get(myIdx).clear();
-			playerHandPos.get(otherIdx).clear();
-
-//			if (stateCopy.getMeldsForPlayer(myIdx).isEmpty() || stateCopy.getMeldsForPlayer(otherIdx).isEmpty()) return;
-			//how many cards do we have to display?
+			//how many cards do we have to display on each side?
+			//my side
 			float numMyRoundEndCards = sizeOf(stateCopy.getMeldsForPlayer(myIdx))
 					+ stateCopy.getDeadwoodForPlayer(myIdx).size();
+			//the opponent's side
 			float numOpponentRoundEndCards = sizeOf(stateCopy.getMeldsForPlayer(otherIdx))
 					+ stateCopy.getDeadwoodForPlayer(otherIdx).size();
-			
+
 			//set up the position of all the cards in the hands
 			for (int i = 0; i < numMyRoundEndCards; i++) {
 				playerHandPos.get(myIdx).add(new PointF(0.05f + HAND_CARD_OFFSET*i, 0.65f));
@@ -367,16 +366,18 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			for (int i = 0; i < numOpponentRoundEndCards; i++) {
 				playerHandPos.get(otherIdx).add(new PointF(0.65f - HAND_CARD_OFFSET*i, -0.15f));
 			}
-			
-			//display the melds and deadwood
+
+			//display the melds
 			displayMelds(stateCopy.getMeldsForPlayer(myIdx), playerHandPos.get(myIdx), canvas);
+			displayMelds(stateCopy.getMeldsForPlayer(otherIdx), playerHandPos.get(otherIdx), canvas);
+			
+			//display the deadwood left in the hands
 			displayDeadwood(stateCopy.getDeadwoodForPlayer(myIdx), (int)sizeOf(stateCopy.getMeldsForPlayer(myIdx)),
 					playerHandPos.get(myIdx), canvas);
-			
-			displayMelds(stateCopy.getMeldsForPlayer(otherIdx), playerHandPos.get(otherIdx), canvas);
 			displayDeadwood(stateCopy.getDeadwoodForPlayer(otherIdx), (int)sizeOf(stateCopy.getMeldsForPlayer(otherIdx)),
 					playerHandPos.get(otherIdx), canvas);
-			
+
+			//return so we don't show any more cards
 			return;
 		}
 
@@ -403,11 +404,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			if (!myHand.contains(c)) handOrder.remove(c);
 		}
 
-		//empty the hand positions for repopulation
-		playerHandPos.get(myIdx).clear();
-		playerHandPos.get(otherIdx).clear();
-
 		//set up the position of all the cards in the hands
+		// we emptied them earlier in tick
 		for (int i = 0; i < handOrder.size(); i++) {
 			playerHandPos.get(myIdx).add(new PointF(0.05f + HAND_CARD_OFFSET*i, 0.75f));
 		}
@@ -427,6 +425,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		drawDeck(canvas, stateCopy.getStock(), stockPos);
 		drawDeck(canvas, stateCopy.getDiscard(), discardPos);
 
+		//this is where we animate cards moving on their own
 		if (path != null) {
 			// advance the card along the path
 			PointF newPos = path.advance();
@@ -438,21 +437,22 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 			// if the animation is done, remove the animation
 			if (path != null && path.isComplete()) path = null;
-
 		}
-		if (opponentPath != null) {
-			// advance the card along the path
-			PointF newPos = opponentPath.advance();
-
-			// draw the moving cards
-			if (newPos != null){
-				//			PointF newPos = opponentPath.getPosition();
-				opponentPath.getCard().drawOn(canvas, adjustDimens(newPos));
-			}
-
-			// if the animation is done, remove the animation
-			if (opponentPath != null && opponentPath.isComplete()) opponentPath = null;
-		}
+		
+		//we'll need this if we re-introduce animation of opponent moves 
+//		if (opponentPath != null) {
+//			// advance the card along the path
+//			PointF newPos = opponentPath.advance();
+//
+//			// draw the moving cards
+//			if (newPos != null){
+//				//			PointF newPos = opponentPath.getPosition();
+//				opponentPath.getCard().drawOn(canvas, adjustDimens(newPos));
+//			}
+//
+//			// if the animation is done, remove the animation
+//			if (opponentPath != null && opponentPath.isComplete()) opponentPath = null;
+//		}
 
 		// draw the card being dragged
 		if (touchedCard != null && touchedPos != null) {
@@ -518,6 +518,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 			a PointF of the location to draw the deck
 	 */
 	synchronized private void drawDeck(Canvas canvas, Deck deck, PointF pos) {
+				
 		// draw the stack of cards
 		for (Card card : deck.cards) {
 			int n = deck.cards.indexOf(card);
@@ -547,6 +548,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 			Where to draw the hand
 	 */
 	synchronized private void drawHand(Canvas canvas, ArrayList<Card> hand, ArrayList<PointF> pos) {
+		
+		//avoid index out of bounds exceptions
+		if (hand.size() != pos.size()) return;
+		
 		for (PointF p : pos) {
 			int n = pos.indexOf(p);
 			//avoid out of bounds exceptions
@@ -565,120 +570,88 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}
 
 	/**
-	 * TODO
-	 * Display the melds after a knock
+	 * displays the specified melds on the screen, for use at end of game
 	 * 
-	 * @param playerIndex
-	 * 			The index of the player
+	 * @param playerMelds
+	 * 			the melds we want to paint
+	 * @param positions
+	 * 			the list of positions at which we should paint
+	 * @param canvas
+	 * 			the canvas on which to paint
 	 */
 	synchronized private void displayMelds(Hashtable<Integer, Meld> playerMelds, ArrayList<PointF> positions, Canvas canvas) {
-//		Hashtable<Integer, Meld> playerMelds = state.getMeldsForPlayer(playerIndex);	
-//		ArrayList<PointF> positions = playerHandPos.get(playerIndex);
-//		float cardsY;
+
+		//avoid index out of bounds exceptions
+		if (sizeOf(playerMelds) >= positions.size()) return;
+
+		//counter for how many cards we've drawn
 		int cardIndex = 0;
-		//		float yPosOfCard;
-//		float startOfDeadwoodX;
 
-		//decide which player hand position we need
-//		if (playerIndex == myIdx) {
-//			cardsY = 0.7f;
-//			cardSpacer = 0;
-//		}
-//		else if (playerIndex == otherIdx){
-//			cardsY = -.2f;
-//			cardSpacer = sizeOf(playerMelds)-1;
-//		}
-//		else {
-//			Log.v("Error", "Invalid Player Specified for displayMelds()");
-//			return;
-//		}
-
-		//		yPosOfCard = cardsY;
-//		playerHandPos.clear();		
 		//Iterate through each group of melds. 
 		int indexOfMeld = 0;
 		for (Meld meld : playerMelds.values()) {
-			//int indexOfMeld = playerMelds.values().indexOf(meld);
 			//Iterate through each card in a meld
 			//"meldCard" is a card in "melds"
-
 			for (Card meldCard : meld.getMeldCards()) {			
-				//if((meld.isSet && meldCard.setID != 0) || (!meld.isSet && meldCard.runID != 0)){
-//				playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer,
-//						cardsY+ MELD_OFFSET*indexOfMeld));
-
 				//the last index of playerHandPos is the current meldCard
-//				int lastIndex = playerHandPos.size() - 1;
 				positions.get(cardIndex).offset(0, indexOfMeld*MELD_OFFSET);
 				meldCard.drawOn(canvas, adjustDimens(positions.get(cardIndex)));
-//				if (playerIndex == otherIdx)cardSpacer--;
 				cardIndex++;
-				//}
 			}	
 			indexOfMeld++;
 		}	
-
-		//show the deadwood cards
-//		startOfDeadwoodX = 0.02f + HAND_CARD_OFFSET*cardIndex;
-//		displayDeadwood(state.getDeadwoodForPlayer(playerIndex), cardIndex, positions, canvas);
 	}
 
 	/**
-	 * TODO
-	 * displays deadwood of respective player
-	 * 
-	 * @param playerIdx
-	 * 			The index of the player
-	 * @param startPosX
-	 * 			the X-coordinate of the place to start drawing the deadwood
-	 * @param startPosY
-	 * 			the Y-coordinate of the place to start drawing the deadwood
+	 * Paint a group of cards as deadwood
+	 * @param playerDeadwood
+	 * 			the cards to paint
+	 * @param startIndex
+	 * 			the index where we should start drawing
+	 * 			(usually deadwood will be drawn after melds)
+	 * @param positions
+	 * 			the list of positions to paint at
 	 * @param canvas
-	 * 			the canvas to draw on
+	 * 			the canvas to paint onto
 	 */
 	synchronized private void displayDeadwood(ArrayList<Card> playerDeadwood,
 			int startIndex, ArrayList<PointF> positions, Canvas canvas) {
-//		ArrayList<Card> playerDeadwood = state.getDeadwoodForPlayer(playerIdx);	
-//		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
+
+		//avoid index out of bounds exceptions
+		if (playerDeadwood.size() >= positions.size() + startIndex) return;
 
 		//set up the paint with which we will cover the deadwood cards 
 		Paint grayShade = new Paint();
 		grayShade.setColor(GRAYISH);
 		grayShade.setTextSize(getCardDimensions().y);
 
+		// index where we start drawing the deadwood cards
 		int index = startIndex;
-		//TODO: streamline this. playerHandPos is also used on the top GRHuman level
-//		playerHandPos.clear();
-		//Iterate through each group of melds. 
-		for (Card c : playerDeadwood) {
-//			int indexOfCard = playerDeadwood.indexOf(c);
-//			playerHandPos.add(new PointF(startPosX + HAND_CARD_OFFSET*indexOfCard, startPosY));
 
-			//the last index of playerHandPos is the current meldCard
-//			int lastIndex = playerHandPos.size() - 1;
-//			PointF cardPos = playerHandPos.get(lastIndex);
-			
+		//Iterate through all the cards 
+		for (Card c : playerDeadwood) {
 			//get out the position we want
 			PointF cardPos = positions.get(index);
-			
+
 			//draw the card
 			c.drawOn(canvas, adjustDimens(cardPos));
 
 			//gray out deadwood
 			drawBoundBox(canvas, "X", cardPos, grayShade);
-			
+
 			index++;
 		}	
 	}
 
 	/**
-	 * TODO
+	 * Find out how many cards are in all the melds in a hashtable
 	 * @param playerMelds
+	 * 			the meld list to count
 	 * @return
+	 *  	the number of cards we've counted
 	 */
-	synchronized private float sizeOf(Hashtable<Integer, Meld> playerMelds) {
-		// TODO Auto-generated method stub
-		float count = 0f;
+	synchronized private int sizeOf(Hashtable<Integer, Meld> playerMelds) {
+		int count = 0;
 		for (Meld m : playerMelds.values()) {
 			count += m.cards.size();
 		}
