@@ -14,10 +14,15 @@ import android.graphics.Color;
  * this is the primary activity for Gin Rummy
  * 
  * @author Steven R. Vegdahl
- * @version July 2013
+ * @version December 2014
+ * 
+ * @author John Allen
+ * @author Matthew Wellnitz
+ * @author Eric Tsai
+ * @author Jaimiey Sears
  */
 public class GRMainActivity extends GameMainActivity {
-	
+
 	public static final int PORT_NUMBER = 4752;
 
 	/** a gin rummy game for two players. The default is human vs. computer */
@@ -26,7 +31,7 @@ public class GRMainActivity extends GameMainActivity {
 
 		// Define the allowed player types
 		ArrayList<GamePlayerType> playerTypes = new ArrayList<GamePlayerType>();
-		
+
 		playerTypes.add(new GamePlayerType("human player") {
 			public GamePlayer createPlayer(String name) {
 				return new GRHumanPlayer(name);
@@ -48,10 +53,10 @@ public class GRMainActivity extends GameMainActivity {
 		// Add the default players
 		defaultConfig.addPlayer("Human", 0);
 		defaultConfig.addPlayer("Computer", 1);
-		
+
 		// Set the initial information for the remote player
 		defaultConfig.setRemoteData("Guest", "", 1);
-		
+
 		//done!
 		return defaultConfig;
 	}//createDefaultConfig

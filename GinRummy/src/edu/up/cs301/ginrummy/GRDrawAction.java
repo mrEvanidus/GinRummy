@@ -1,11 +1,19 @@
 package edu.up.cs301.ginrummy;
 
 import edu.up.cs301.game.GamePlayer;
-
+/**
+ * 
+ * @version December 2014
+ * 
+ * @author John Allen
+ * @author Matthew Wellnitz
+ * @author Eric Tsai
+ * @author Jaimiey Sears
+ */
 public class GRDrawAction extends GRMoveAction {
 
 	private boolean fromStock;
-	
+
 	/**
 	 * 
 	 */
@@ -15,7 +23,7 @@ public class GRDrawAction extends GRMoveAction {
 		super(player);
 		fromStock = fs;
 	}
-	
+
 	@Override
 	public boolean isDraw(){
 		return true;

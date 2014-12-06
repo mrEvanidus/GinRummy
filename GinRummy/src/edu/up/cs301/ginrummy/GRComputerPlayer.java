@@ -14,7 +14,12 @@ import edu.up.cs301.game.infoMsg.TimerInfo;
  * by the constructor parameter.
  * 
  * @author Steven R. Vegdahl
- * @version July 2013 
+ * @version December 2014
+ * 
+ * @author John Allen
+ * @author Matthew Wellnitz
+ * @author Eric Tsai
+ * @author Jaimiey Sears
  */
 public class GRComputerPlayer extends GameComputerPlayer {	
 	public static final int THIS_PLAYER = 1;

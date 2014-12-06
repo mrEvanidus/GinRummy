@@ -8,7 +8,12 @@ import edu.up.cs301.game.actionMsg.GameAction;
  * a move.
  * 
  * @author Steven R. Vegdahl
- * @version 2 July 2001
+ * @version December 2014
+ * 
+ * @author John Allen
+ * @author Matthew Wellnitz
+ * @author Eric Tsai
+ * @author Jaimiey Sears
  */
 public abstract class GRMoveAction extends GameAction {
 	
