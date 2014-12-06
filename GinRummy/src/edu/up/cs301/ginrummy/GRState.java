@@ -119,6 +119,78 @@ public class GRState extends GameState
 			drawFrom(true,1);
 		}
 
+		//TEST HAND
+    	for(int i = 0; i < 10; i++){
+    		switch (i){
+    			case 0:
+    				playerHands[0].cards.set(i, new Card(Rank.TEN, Suit.Club));
+    				break;
+    			case 1:
+    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Heart));
+    				break;
+    			case 2:
+    				playerHands[0].cards.set(i, new Card(Rank.KING, Suit.Heart));
+    				break;
+    			case 3:
+    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Spade));
+    				break;
+    			case 4:
+    				playerHands[0].cards.set(i, new Card(Rank.THREE, Suit.Diamond));
+    				break;
+    			case 5:
+    				playerHands[0].cards.set(i, new Card(Rank.THREE, Suit.Club));
+    				break;
+    			case 6:
+    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Diamond));
+    				break;
+    			case 7:
+    				playerHands[0].cards.set(i, new Card(Rank.QUEEN, Suit.Diamond));
+    				break;
+    			case 8:
+    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
+    				break;
+    			case 9:
+    				playerHands[0].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
+    				break;
+    			
+    			
+    		}
+    	}
+    	
+    	for(int i = 0; i < 10; i++){
+		switch (i){
+			case 0:
+				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Spade));
+				break;
+			case 1:
+				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
+				break;
+			case 2:
+				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
+				break;
+			case 3:
+				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
+				break;
+			case 4:
+				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Diamond));
+				break;
+			case 5:
+				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Spade));
+				break;
+			case 6:
+				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Club));
+				break;
+			case 7:
+				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
+				break;
+			case 8:
+				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Spade));
+				break;
+		case 9:
+			playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Club));
+				break;
+		}
+    	}
 		//    	//TEST HAND
 //		    	for(int i = 0; i < 10; i++){
 //		    		switch (i){
