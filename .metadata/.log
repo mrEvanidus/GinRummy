@@ -1331,3 +1331,6 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY org.eclipse.ui 2 2 2014-12-05 18:12:34.596
 !MESSAGE Invalid property category path: ValidationPropertiesPage (bundle: org.eclipse.wst.xml.ui, propertyPage: org.eclipse.wst.xml.ui.propertyPage.project.validation)
+
+!ENTRY org.eclipse.ui 4 4 2014-12-05 20:00:28.626
+!MESSAGE Unable to find Action Set: com.mountainminds.eclemma.ui.CoverageActionSet
