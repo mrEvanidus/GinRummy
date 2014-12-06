@@ -581,6 +581,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	synchronized private void displayMelds(Hashtable<Integer, Meld> playerMelds, ArrayList<PointF> positions, Canvas canvas) {
 
+		Paint p = new Paint();
+		p.setColor(LAKE_ERIE);
+		
 		//avoid index out of bounds exceptions
 		if (sizeOf(playerMelds) >= positions.size()) return;
 
@@ -593,9 +596,16 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			//Iterate through each card in a meld
 			//"meldCard" is a card in "melds"
 			for (Card meldCard : meld.getMeldCards()) {			
-				//the last index of playerHandPos is the current meldCard
+				
+				//move the card down a bit
 				positions.get(cardIndex).offset(0, indexOfMeld*MELD_OFFSET);
+				
+				//draw the card
 				meldCard.drawOn(canvas, adjustDimens(positions.get(cardIndex)));
+				
+				//show a blue overlay if the card is a layoff card
+//				if (meldCard.isLayoff) drawBoundBox(canvas, "", positions.get(cardIndex), p);
+				
 				cardIndex++;
 			}	
 			indexOfMeld++;
