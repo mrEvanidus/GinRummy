@@ -34,6 +34,15 @@ public class Meld implements Serializable{
 		val = orig.val;
 		id = orig.id;
 	}
+	
+	public synchronized void remove(Card c){
+		for(Card card : cards){
+			if(card != null && card.getRank() == c.getRank() && card.getSuit() == c.getSuit()){
+				cards.remove(card);
+				break;
+			}
+		}
+	}
 	//ERIC: Need to retrieve the melds
 	public ArrayList<Card> getMeldCards() {
 		return cards;

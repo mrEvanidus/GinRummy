@@ -114,12 +114,12 @@ public class GRLocalGame extends LocalGame implements GRGame {
      * 
      * @return Whether or not the hand is allowed to knock
      */
-    public boolean canKnock(GRState statecopy, Deck hand,int pidx){
+    public boolean canKnock(GRState statecopy, Deck hand, int pidx){
     	//Resolve any problem cards in more than one meld
     	removeDuplicates(statecopy, hand, pidx);
     	
     	//If the player's deadwood is less than 10, the player may knock
-    	if(countDeadwood(hand) <= 10){
+    	if(countDeadwood(statecopy.getHand(pidx)) <= 10){
     		return true;
     	}
     	else {
@@ -146,6 +146,8 @@ public class GRLocalGame extends LocalGame implements GRGame {
     	}
   
     	ArrayList<Card> pcc = problemCards;
+    	
+    	
     	int minScore = 101; //Highest possible deadwood count is 100
     	//int minCombo = -1;  //Lowest deadwood count among permutations. if -1, hand is problem card free
     	Deck bestHand = new Deck(hand,1);
@@ -156,18 +158,19 @@ public class GRLocalGame extends LocalGame implements GRGame {
     	//Generate all possible permutations
     	for(int i = 0; i < Math.pow(2,problemCards.size()); i++){
     		//Generates a hand based on the current permutation
-    		int score = genHand(i,handCopy,meldsCopy,pidx);
+    		int score = genHand(i,handCopy,meldsCopy, statecopy, pidx);
     		//If the deadwood count of the permutation is less than the current min,
     		//update the min
     		if (score < minScore && score != -1){
     			minScore = score;
     			bestHand = new Deck(handCopy,1);
-    			bestMelds = new Hashtable<Integer, Meld>(meldsCopy);
+    			bestMelds = htcopy(meldsCopy);
     		}
     		handCopy = new Deck(hand,1);
     		meldsCopy = htcopy(melds);
     	}
     	
+    	hand = bestHand;
     	statecopy.setHand(pidx, bestHand);
     	statecopy.setMelds(pidx, bestMelds);
     }
@@ -194,7 +197,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
      * 
      * @return the deadwood count of the hand
      */
-    public int genHand(int idx, Deck handcopy, Hashtable<Integer,Meld> pMelds, int pidx){
+    public int genHand(int idx, Deck handcopy, Hashtable<Integer,Meld> pMelds, GRState opState, int pidx){
     	
     	//Hashtable<Integer, Meld> pMelds = state.getMeldsForPlayer(pidx);
     	
@@ -212,17 +215,43 @@ public class GRLocalGame extends LocalGame implements GRGame {
     				if(reversed.equals("") || reversed.charAt(0) == '0'){
     					//Problem card is removed from its set
     					if(pMelds.get(c.setID) != null){
-    						for(Card card : pMelds.get(c.setID).cards){
-    							for(Card card1 : handcopy.cards){
-    								if(card.equals(card1)){
-    									card1.setSL(0);
-    	    							card1.setID = 0;
-    	    							card.setSL(0);
-    	    							card.setID = 0;
+    						for(Card c1 : pMelds.get(c.setID).cards){
+    							for(Card c2 : handcopy.cards){
+    								if(c1.equals(c2)){
+    									c2.setSL(c2.getSL() - 1);
     								}
     							}
     						}
-    						pMelds.remove(c.setID);
+    						if( c.getSL() < 3){
+    							int a = c.setID;
+    							for(Card card : pMelds.get(c.setID).cards){
+        							for(Card card1 : handcopy.cards){
+        								if(card.equals(card1)){
+        									card1.setSL(0);
+        	    							card1.setID = 0;
+        	    							card.setSL(0);
+        	    							card.setID = 0;
+        								}
+        							}
+        						}
+    							pMelds.remove(a);
+    						}else {
+    							
+    							pMelds.get(c.setID).remove(c);
+    							c.setID = 0;
+    							c.setSL(0);
+    						}
+//    						for(Card card : pMelds.get(c.setID).cards){
+//    							for(Card card1 : handcopy.cards){
+//    								if(card.equals(card1)){
+//    									card1.setSL(0);
+//    	    							card1.setID = 0;
+//    	    							card.setSL(0);
+//    	    							card.setID = 0;
+//    								}
+//    							}
+//    						}
+//    						pMelds.remove(c.setID);
 
     						if(!reversed.equals("")){
     							reversed = reversed.substring(1);
@@ -233,20 +262,103 @@ public class GRLocalGame extends LocalGame implements GRGame {
     				else{
     					//Problem card is removed from its run
     					if(pMelds.get(c.runID) != null){
-	    					for(Card card : pMelds.get(c.runID).cards){
-	    						for(Card card1 : handcopy.cards){
-    								if(card.equals(card1)){
-    									card1.setRL(0);
-    	    							card1.runID = 0;
-    	    							card.setRL(0);
-    	    							card.runID = 0;
-    								}
-    							}
-	    					}
-	    					pMelds.remove(c.runID);
-	    		
-	    					if(!reversed.equals("")){
-	    						reversed = reversed.substring(1);
+    						c.setRL(c.getRL() -1);
+    						int a = c.runID;
+    						if(c.getRL() < 3){
+    							for(Card card : pMelds.get(c.runID).cards){
+    	    						for(Card card1 : handcopy.cards){
+        								if(card.equals(card1)){
+        									card1.setRL(0);
+        	    							card1.runID = 0;
+        	    							card.setRL(0);
+        	    							card.runID = 0;
+        								}
+        							}
+    	    					}
+    							pMelds.remove(a);
+    						}
+    						else{
+    							
+    							pMelds.get(c.runID).remove(c);
+    							int useThis = c.runID;
+    							c.runID = 0;
+    							c.setRL(0);
+    							
+    							for(Card card : pMelds.get(useThis).cards){
+    	    						for(Card card1 : handcopy.cards){
+        								if(card.equals(card1)){
+        									card1.setRL(0);
+        	    							card1.runID = 0;
+        	    							card.setRL(0);
+        	    							card.runID = 0;
+        								}
+        							}
+    	    					}
+    							
+    							
+	    						ArrayList<Card> thisMeld = new ArrayList<Card>();
+	    			    		for(int j = 0; j < 14; j++){
+	    			    			thisMeld.add(null);
+	    			    		}
+	    			    		
+	    			    		for(Card c1 : pMelds.get(useThis).cards){
+	    			    			thisMeld.set(c1.getRank().value(1) - 1, c1);
+	    			    		}
+	    			    		
+	    			    		pMelds.remove(useThis);
+	    			    		
+	    			    		int runCount = 0;
+	    						ArrayList<Card> temp = new ArrayList<Card>();
+	    			    		for (Card c1 : thisMeld){
+	    			    			if(c1 != null){
+	    			    				//add the card to the array of the current run
+	    			    				temp.add(c1);
+	    			    			}else {
+	    			    				//If the current card is null, add the length
+	    			    				//of the run to each card's runLength
+	    			    				int tempLength = temp.size();
+	    			    				for (Card c2 : temp){
+	    			    					for(Card c3 : handcopy.cards){
+	    			    						if(c2.equals(c3)){
+	    			    							c3.setRL(tempLength);
+	    			    						}
+	    			    					}
+	    			    				}
+	    			    				if(tempLength >= 3){
+	    			    					//For cards in a meld, store info about the melds they are in
+	    			    					//and add them to a new meld
+	    			    					for (Card c2 : temp){
+	    			    						runCount += c2.getRank().value(1);
+	    			    						for(Card c3 : handcopy.cards){
+	    			    							if(c2.equals(c3)){
+	    			    								c3.runID = opState.ID;
+	    			    							}
+	    			    						}
+	    			        				}
+	    			    					pMelds.put(opState.ID, new Meld(temp, false, runCount, opState.ID));
+	    				    				opState.ID++;
+	    				    				opState.meldCount++;
+	    				    				runCount = 0;
+	    								}
+	    			    				
+	    			    				temp.clear();
+	    			    			}
+	    			    		}
+	//	    					for(Card card : pMelds.get(c.runID).cards){
+	//	    						for(Card card1 : handcopy.cards){
+	//    								if(card.equals(card1)){
+	//    									card1.setRL(0);
+	//    	    							card1.runID = 0;
+	//    	    							card.setRL(0);
+	//    	    							card.runID = 0;
+	//    								}
+	//    							}
+	//	    					}
+	//	    					pMelds.remove(c.runID);
+		    		
+		    					if(!reversed.equals("")){
+		    						reversed = reversed.substring(1);
+		    					}
 	    					}
     					}
     				}
@@ -254,6 +366,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
     		}
     	}
     	
+    	opState.setMelds(pidx, pMelds);
     	return countDeadwood(handcopy);
     }
     
@@ -265,10 +378,10 @@ public class GRLocalGame extends LocalGame implements GRGame {
     	//Count the deadwood
     	int dc = 0;
     	for(Card c : hand.cards){
-    		if(c.runID != 0 && c.setID != 0){
+    		if(c.getRL() >= 3 && c.getSL() >= 3){
     			return -1;
     		}
-    		if(c.runID != 0 || c.setID != 0){
+    		if(c.getRL() >= 3 || c.getSL() >= 3){
     			
     		}else{
     			if(c.getRank().value(1) <= 10){
@@ -322,7 +435,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
     				c.setID = opState.ID;
     				val = c.getRank().value(1);
         		}
-    			(opState.getMeldsForPlayer(pidx)).put(state.ID, new Meld(a, true, val*a.size(), opState.ID));
+    			(opState.getMeldsForPlayer(pidx)).put(opState.ID, new Meld(a, true, val*a.size(), opState.ID));
     			opState.meldCount++;
 				opState.ID++;
 			}
@@ -374,7 +487,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
     						runCount += c2.getRank().value(1);
         					c2.runID = opState.ID;
         				}
-    					(opState.getMeldsForPlayer(pidx)).put(state.ID, new Meld(temp, false, runCount, opState.ID));
+    					(opState.getMeldsForPlayer(pidx)).put(opState.ID, new Meld(temp, false, runCount, opState.ID));
 	    				opState.ID++;
 	    				opState.meldCount++;
 	    				runCount = 0;
@@ -526,7 +639,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			//KNOCK PHASE 
 			else if (grma.isKnock() && state.getPhase() == GRState.DISCARD_PHASE){
 
-				GRState copy = new GRState(state);
+				GRState copy = new GRState(state,1);
 				//(GRKnockAction)grma.knockCard();
 				GRKnockAction copy_grma = (GRKnockAction)grma;
 				Card theCard = copy_grma.knockCard();
@@ -561,10 +674,10 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					
 					if(thisPlayerIdx == PLAYER_1){
 						playerWhoLaidOff = PLAYER_1;
-						layoff(PLAYER_1,PLAYER_2);
+						//layoff(PLAYER_1,PLAYER_2);
 					}else{
 						playerWhoLaidOff = PLAYER_2;
-						layoff(PLAYER_2,PLAYER_1);
+						//layoff(PLAYER_2,PLAYER_1);
 					}
 
 					normalizeHands();

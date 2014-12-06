@@ -382,7 +382,7 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     				e.printStackTrace();
     			}
     			synchronized(this){
-    				GRState s = new GRState(savedState);
+    				GRState s = new GRState(savedState,1);
     				Card c = cardToDiscard(s.getHand(thisPlayer));
     				s.getHand(thisPlayer).remove(c);
     				

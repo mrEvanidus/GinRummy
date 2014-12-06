@@ -543,15 +543,15 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			//"meldCard" is a card in "melds"
 
 			for (Card meldCard : meld.getMeldCards()) {			
-				if((meld.isSet && meldCard.setID != 0) || (!meld.isSet && meldCard.runID != 0)){
+				//if((meld.isSet && meldCard.setID != 0) || (!meld.isSet && meldCard.runID != 0)){
 					playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer 
-							,cardsY + SPACE_BTN_MELDS*indexOfMeld));
+							,cardsY + MELD_OFFSET*indexOfMeld));
 
 					//the last index of playerHandPos is the current meldCard
 					int lastIndex = playerHandPos.size() - 1;
 					meldCard.drawOn(canvas, adjustDimens(playerHandPos.get(lastIndex)));
 					cardSpacer++;
-				}
+				//}
 			}	
 			indexOfMeld++;
 		}	
