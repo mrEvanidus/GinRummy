@@ -347,8 +347,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		drawHand(canvas, stateCopy.getHand(1).cards, playerHandPos.get(otherIdx));
 
 		//draw the stock and discard piles
-		drawDeck(canvas, stateCopy.getStock(), stockPos);
-		drawDeck(canvas, stateCopy.getDiscard(), discardPos);
+		drawDeck(canvas, stateCopy.getStock(), stockPos, true);
+		drawDeck(canvas, stateCopy.getDiscard(), discardPos, false);
 
 		// draw the knocking box
 		drawKnockBox(canvas, Color.GREEN);
@@ -359,7 +359,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 			// draw the moving card
 			if (newPos != null)
-				path.getCard().drawOn(canvas, adjustDimens(newPos));
+				path.getCard().drawOn(canvas, adjustDimens(newPos), false);
 
 			// if the animation is done, remove the animation
 			if (path != null && path.isComplete()) path = null;
@@ -367,7 +367,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		// draw the card being dragged
 		if (touchedCard != null && touchedPos != null) {
-			touchedCard.drawOn(canvas, adjustDimens(touchedPos));
+			touchedCard.drawOn(canvas, adjustDimens(touchedPos),false);
 		}
 
 	}//tick
@@ -401,7 +401,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * @param pos
 	 * 			a PointF of the location to draw the deck
 	 */
-	synchronized private void drawDeck(Canvas canvas, Deck deck, PointF pos) {
+	synchronized private void drawDeck(Canvas canvas, Deck deck, PointF pos, boolean cardType) {
 		// draw the stack of cards
 		for (Card card : deck.cards) {
 			int n = deck.cards.indexOf(card);
@@ -416,7 +416,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					* position.height() * n));
 
 			// draw the card
-			card.drawOn(canvas, position);
+			card.drawOn(canvas, position, cardType);
 		}
 
 	}
@@ -441,7 +441,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				// don't draw the card
 			} else {
 				// draw the card
-				card.drawOn(canvas, adjustDimens(p));
+				card.drawOn(canvas, adjustDimens(p), false);
 			}
 		}
 	}
@@ -676,7 +676,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				
 			//the last index of playerHandPos is the current meldCard
 				int lastIndex = playerHandPos.size() - 1;
-				meldCard.drawOn(canvas, adjustDimens(playerHandPos.get(lastIndex)));
+				meldCard.drawOn(canvas, adjustDimens(playerHandPos.get(lastIndex)), false);
 				cardSpacer++;
 			}					
 		}	
@@ -701,7 +701,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		ArrayList<Card> playerDeadwood = state.getDeadwoodForPlayer(playerIdx);	
 		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
 		Paint grayShade = new Paint();
-		grayShade.setColor(0xccd3d3d3);
+		grayShade.setColor(0xccc9421f);
 		
 		playerHandPos.clear();
 		//Iterate through each group of melds. 
@@ -712,7 +712,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			//the last index of playerHandPos is the current meldCard
 			int lastIndex = playerHandPos.size() - 1;
 			PointF cardPos = playerHandPos.get(lastIndex);
-			c.drawOn(canvas, adjustDimens(cardPos));
+			c.drawOn(canvas, adjustDimens(cardPos), false);
 			canvas.drawRoundRect(adjustDimens(cardPos), 10, 10, grayShade);
 		}	
 	}

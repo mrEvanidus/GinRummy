@@ -26,31 +26,46 @@ public class backCard extends Card{
      * image provided. 
      * @param g  the graphics object on which to draw
      * @param where  a rectangle that tells where the card should be drawn
+     * @param cardType tells whether the card to draw is for the stock pile
      */
 	@Override
-	public void drawOn(Canvas g, RectF where) {		
+	public void drawOn(Canvas g, RectF where, boolean cardType) {		
 		// create the paint object
     	Paint p = new Paint();
     	p.setColor(Color.BLACK);
     	
+    	//draw appropriate orientation for card based on specified player
+    	Bitmap imageToDraw;
+    	if (cardType) imageToDraw = cardImage1;
+    	else imageToDraw = cardImage2;
+    	
     	// create the source rectangle
-		Rect r = new Rect(0,0,cardImage.getWidth(),cardImage.getHeight());
+		Rect r = new Rect(0,0,imageToDraw.getWidth(),imageToDraw.getHeight());
 		
 		// draw the bitmap into the target rectangle
-		g.drawBitmap(cardImage, r, where, p);
+		g.drawBitmap(imageToDraw, r, where, p);
 		
 	}
 	
-	private static Bitmap cardImage = null;
 	
+	
+	private static Bitmap cardImage1 = null;
+	private static Bitmap cardImage2 = null;
+	
+	/**
+	 * initialize the back card images for second player and stock pile
+	 * @param activity - the current activity
+	 */
 	public static void initImages(Activity activity) {
 		
 		// if it's already initialized, then ignore
-		//TODO: Do we need this? Took it from Card.java to be safe
-    	if (cardImage != null) return;
+    	if (cardImage1 != null) return;
 		
-		int cardBackImage = R.drawable.vegdahlback;
-		cardImage = BitmapFactory.decodeResource(activity.getResources(),cardBackImage);
+		int stockBackImage = R.drawable.vegdahlback;
+		int player2BackImage = R.drawable.vegdahlback2;
+		
+		cardImage1 = BitmapFactory.decodeResource(activity.getResources(),stockBackImage);
+		cardImage2 = BitmapFactory.decodeResource(activity.getResources(),player2BackImage);
 		
 	}
 

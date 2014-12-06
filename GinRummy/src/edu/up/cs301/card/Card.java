@@ -137,7 +137,7 @@ public class Card implements Serializable {
      * @param g  the graphics object on which to draw
      * @param where  a rectangle that tells where the card should be drawn
      */
-    public void drawOn(Canvas g, RectF where) {
+    public void drawOn(Canvas g, RectF where, boolean cardType) {
     	// create the paint object
     	Paint p = new Paint();
     	p.setColor(Color.BLACK);
