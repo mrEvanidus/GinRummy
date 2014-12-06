@@ -86,7 +86,7 @@ public class GRState extends GameState
     	
     	// randomly pick the player who starts
     	whoseTurn = (int)(2*Math.random());
-    	whoseTurn = 1;
+    	//whoseTurn = 1;
     	turnPhase = DRAW_PHASE;
     	
     	
@@ -135,7 +135,7 @@ public class GRState extends GameState
 //    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
 //    				break;
 //    			case 6:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Diamond));
+//    				playerHands[0].cards.set(i, new Card(Rank.NINE, Suit.Club));
 //    				break;
 //    			case 7:
 //    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Spade));
@@ -149,6 +149,42 @@ public class GRState extends GameState
 //    			
 //    		}
 //    	}
+    	
+//    	for(int i = 0; i < 10; i++){
+//		switch (i){
+//			case 0:
+//				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Club));
+//				break;
+//			case 1:
+//				playerHands[1].cards.set(i, new Card(Rank.TEN, Suit.Club));
+//				break;
+//			case 2:
+//				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Diamond));
+//				break;
+//			case 3:
+//				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Diamond));
+//				break;
+//			case 4:
+//				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Spade));
+//				break;
+//			case 5:
+//				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Spade));
+//				break;
+//			case 6:
+//				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Club));
+//				break;
+//			case 7:
+//				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Heart));
+//				break;
+//			case 8:
+//				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Heart));
+//				break;
+//			case 9:
+//				playerHands[1].cards.set(i, new Card(Rank.JACK, Suit.Club));
+//				break;
+//			
+//		}
+//	}
     	//PENULTIMATE CASE
 //    	for(int i = 0; i < 10; i++){
 //    		switch (i){

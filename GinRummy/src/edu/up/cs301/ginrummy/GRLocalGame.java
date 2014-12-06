@@ -531,32 +531,38 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			
 			for(Card c : state.getHand(defender).cards){
 				if(c.runID == 0 && c.setID == 0){
+					
+					for(Meld m : state.getMeldsForPlayer(knocker).values()){
+						if(addCardToMeld(c, m)){
+							tempToRemove.add(c);
+						}
+					}
 					//Get the deadwood for the knocking player
-					int dw = countDeadwood(state.getHand(knocker));
-					int meldcount1 = 0;
-					for(Meld m: state.getMeldsForPlayer(knocker).values()){
-						meldcount1++;
-					}
-					//Create a temporary state before attempting to lay off
-					GRState s = new GRState(state,1);
-
-					//Hypothetically add the card to the hand, calculate deadwood
-					s.getHand(knocker).cards.add(c);
-					assessMelds(s, knocker);
-					removeDuplicates(s, s.getHand(knocker),knocker);
-					int dw2 = countDeadwood(s.getHand(knocker));
-
-					int meldcount2 = 0;
-					for(Meld m: s.getMeldsForPlayer(knocker).values()){
-						meldcount2++;
-					}
-					//If card doesn't add any additional deadwood, the card may be 
-					//added to a list of cards to be laid off
-					if(dw == dw2 && (dw != -1 || dw2 != -1)){
-						layoffCards.add(c);
-						tempToAdd.add(c);
-						tempToRemove.remove(c);
-					}
+//					int dw = countDeadwood(state.getHand(knocker));
+//					int meldcount1 = 0;
+//					for(Meld m: state.getMeldsForPlayer(knocker).values()){
+//						meldcount1++;
+//					}
+//					//Create a temporary state before attempting to lay off
+//					GRState s = new GRState(state,1);
+//
+//					//Hypothetically add the card to the hand, calculate deadwood
+//					s.getHand(knocker).cards.add(c);
+//					assessMelds(s, knocker);
+//					removeDuplicates(s, s.getHand(knocker),knocker);
+//					int dw2 = countDeadwood(s.getHand(knocker));
+//
+//					int meldcount2 = 0;
+//					for(Meld m: s.getMeldsForPlayer(knocker).values()){
+//						meldcount2++;
+//					}
+//					//If card doesn't add any additional deadwood, the card may be 
+//					//added to a list of cards to be laid off
+//					if(dw == dw2 && (dw != -1 || dw2 != -1)){
+//						layoffCards.add(c);
+//						tempToAdd.add(c);
+//						tempToRemove.remove(c);
+//					}
 				}
 			}
 
@@ -571,6 +577,39 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		}
     }
     
+    public boolean addCardToMeld(Card c, Meld m){
+    	
+    	if(m.isSet){
+    		if(m.getMeldCards().get(0).getRank() == c.getRank()){
+    			c.layoffCard = true;
+    			m.cards.add(new Card(c));
+    			layoffCards.add(c);
+    			return true;
+    		}
+    	}else{
+    		int minrank = 14;
+			int maxrank = 0;
+    		for(Card card : m.cards){
+    			
+    			if( card.getRank().value(1) < minrank){
+    				minrank = card.getRank().value(1);
+    			}
+    			
+    			if(card.getRank().value(1) >maxrank){
+    				maxrank = card.getRank().value(1);
+    			}
+    		}
+    		
+    		if(c.getRank().value(1) == minrank - 1 || c.getRank().value(1) == maxrank + 1){
+    			c.layoffCard = true;
+    			m.cards.add(new Card(c));
+    			layoffCards.add(c);
+    			return true;
+    		}
+    		
+    	}
+    	return false;
+    }
 	/**
 	 * makes a move on behalf of a player
 	 * 
@@ -683,13 +722,13 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					
 					if(thisPlayerIdx == PLAYER_1){
 						playerWhoLaidOff = PLAYER_1;
-						//layoff(PLAYER_1,PLAYER_2);
+						layoff(PLAYER_1,PLAYER_2);
 					}else{
 						playerWhoLaidOff = PLAYER_2;
-						//layoff(PLAYER_2,PLAYER_1);
+						layoff(PLAYER_2,PLAYER_1);
 					}
 
-					normalizeHands();
+					//normalizeHands();
 					//					
 					//Get the deadwood
 					int p0dw = countDeadwood(state.getHand(0));

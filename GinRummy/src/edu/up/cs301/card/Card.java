@@ -41,6 +41,7 @@ public class Card implements Serializable {
     public int setID;
     public boolean isProblem;
     public int priority;
+    public boolean layoffCard;
     
     /**
      * Constructor for class card
@@ -56,6 +57,7 @@ public class Card implements Serializable {
         runID = 0;
         setID = 0;
         priority = 0;
+        layoffCard = false;
     }
 
     public Card(Card orig){
@@ -66,6 +68,7 @@ public class Card implements Serializable {
     	runID = orig.runID;
         setID = orig.setID;
         priority = orig.priority;
+        layoffCard = orig.layoffCard;
     }
     /**
      * Creates a Card from a String.  (Can be used instead of the
