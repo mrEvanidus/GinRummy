@@ -128,35 +128,35 @@ public class GRLocalGame extends LocalGame implements GRGame {
     }
     
     /**
+     * Resolves any cards that are in both a run and a set at once
      * 
-     * @param hand
+     * @param statecopy the state to perform the changes on
+     * @param hand the hand to resolve
+     * @param pidx the index of the player to check
      */
     public void removeDuplicates(GRState statecopy, Deck hand, int pidx){
     	//Problem cards are those that are in both a set and a run
-    	ArrayList<Card> problemCards = new ArrayList<Card>();
-    	Deck handcopy = hand;
+    	int numProblemCards = 0;
     	
     	//Get a list of all problem cards 
-    	for(Card c : handcopy.cards){
+    	for(Card c : hand.cards){
     		//if the given card is a problem card...
     		if(c.getRL() >=3 && c.getSL() >= 3){
-    			c.isProblem = true;
-    			problemCards.add(c);
+    			numProblemCards++;
     		}
     	}
-  
-    	ArrayList<Card> pcc = problemCards;
-    	
     	
     	int minScore = 101; //Highest possible deadwood count is 100
-    	//int minCombo = -1;  //Lowest deadwood count among permutations. if -1, hand is problem card free
     	Deck bestHand = new Deck(hand,1);
     	Deck handCopy = new Deck(hand,1);
+    	
+    	//Make copies of the melds and hand so we can make hypothetical changes
     	Hashtable<Integer,Meld> melds = statecopy.getMeldsForPlayer(pidx);
     	Hashtable<Integer,Meld> meldsCopy = htcopy(melds);
     	Hashtable<Integer,Meld> bestMelds = new Hashtable<Integer,Meld>(melds);
+    	
     	//Generate all possible permutations
-    	for(int i = 0; i < Math.pow(2,problemCards.size()); i++){
+    	for(int i = 0; i < Math.pow(2,numProblemCards); i++){
     		//Generates a hand based on the current permutation
     		int score = genHand(i,handCopy,meldsCopy, statecopy, pidx);
     		//If the deadwood count of the permutation is less than the current min,
@@ -166,18 +166,28 @@ public class GRLocalGame extends LocalGame implements GRGame {
     			bestHand = new Deck(handCopy,1);
     			bestMelds = htcopy(meldsCopy);
     		}
+    		//Reset hypothetical hand and melds
     		handCopy = new Deck(hand,1);
     		meldsCopy = htcopy(melds);
     	}
-    	
+    	//Set the hand and melds to the optimal combinations
     	hand = bestHand;
     	statecopy.setHand(pidx, bestHand);
     	statecopy.setMelds(pidx, bestMelds);
     }
 
+    /**
+     * Just another consequence of putting attributes in the Card. Since by default the Hashtable
+     * just keeps references to the original melds instead of making copies, we have to make our 
+     * own function that copies a hashtable the way we want it to... :(
+     * 
+     * @param h the hashtable we want to copy
+     * @return a copy of the hashtable
+     */
     public Hashtable<Integer, Meld> htcopy(Hashtable<Integer,Meld> h){
     	Hashtable<Integer,Meld> newHash = new Hashtable<Integer, Meld>();
     	
+    	//Makes actual copies of the melds and puts them in a new hashtable
     	for(Meld m : h.values()){
     		Meld meld = new Meld(m);
     		newHash.put(m.id,meld);
@@ -186,6 +196,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
     	return newHash;
     	
     }
+    
     /**
      * Generates a permutation of the given hand based on the given index.
      * The index is converted to a binary string where each binary digit represents
@@ -199,7 +210,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
      */
     public int genHand(int idx, Deck handcopy, Hashtable<Integer,Meld> pMelds, GRState opState, int pidx){
     	
-    	//Hashtable<Integer, Meld> pMelds = state.getMeldsForPlayer(pidx);
+    	//WARNING: This method is pretty hairy. Proceed at your own risk. 
     	
     	// If the hand has problem cards...
     	if(idx != -1){
@@ -215,6 +226,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
     				if(reversed.equals("") || reversed.charAt(0) == '0'){
     					//Problem card is removed from its set
     					if(pMelds.get(c.setID) != null){
+    						//Decrement the length of the set by one
     						for(Card c1 : pMelds.get(c.setID).cards){
     							for(Card c2 : handcopy.cards){
     								if(c1.equals(c2)){
@@ -222,6 +234,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
     								}
     							}
     						}
+    						//If the length of a set is less than 3, dissolve the set
     						if( c.getSL() < 3){
     							int a = c.setID;
     							for(Card card : pMelds.get(c.setID).cards){
@@ -236,22 +249,12 @@ public class GRLocalGame extends LocalGame implements GRGame {
         						}
     							pMelds.remove(a);
     						}else {
-    							
+    							//Otherwise if the length of the set is still greater than
+    							//or equal to 3, a set still exists so we keep it
     							pMelds.get(c.setID).remove(c);
     							c.setID = 0;
     							c.setSL(0);
     						}
-//    						for(Card card : pMelds.get(c.setID).cards){
-//    							for(Card card1 : handcopy.cards){
-//    								if(card.equals(card1)){
-//    									card1.setSL(0);
-//    	    							card1.setID = 0;
-//    	    							card.setSL(0);
-//    	    							card.setID = 0;
-//    								}
-//    							}
-//    						}
-//    						pMelds.remove(c.setID);
 
     						if(!reversed.equals("")){
     							reversed = reversed.substring(1);
@@ -262,8 +265,11 @@ public class GRLocalGame extends LocalGame implements GRGame {
     				else{
     					//Problem card is removed from its run
     					if(pMelds.get(c.runID) != null){
+    						//Decrement the run length
     						c.setRL(c.getRL() -1);
     						int a = c.runID;
+    						
+    						//If the run length becomes less than 3, dissolve the run
     						if(c.getRL() < 3){
     							for(Card card : pMelds.get(c.runID).cards){
     	    						for(Card card1 : handcopy.cards){
@@ -279,11 +285,18 @@ public class GRLocalGame extends LocalGame implements GRGame {
     						}
     						else{
     							
+    							//OTHERWISE, this is where it gets a bit messy:
+    							//We have to account for the possibility that the run is now split.
+    							//Essentially, we have to take the what's left of the run and see if 
+    							//any runs can be made from it. Not pretty.
+    							
+    							//Remove the problem card from the run
     							pMelds.get(c.runID).remove(c);
     							int useThis = c.runID;
     							c.runID = 0;
     							c.setRL(0);
     							
+    							//Reset all run lengths and IDs
     							for(Card card : pMelds.get(useThis).cards){
     	    						for(Card card1 : handcopy.cards){
         								if(card.equals(card1)){
@@ -295,16 +308,16 @@ public class GRLocalGame extends LocalGame implements GRGame {
         							}
     	    					}
     							
-    							
+    							//Create a list of all possible ranks in the suit
 	    						ArrayList<Card> thisMeld = new ArrayList<Card>();
 	    			    		for(int j = 0; j < 14; j++){
 	    			    			thisMeld.add(null);
 	    			    		}
-	    			    		
+	    			    		//Add each leftover card in the meld to the list
 	    			    		for(Card c1 : pMelds.get(useThis).cards){
 	    			    			thisMeld.set(c1.getRank().value(1) - 1, c1);
 	    			    		}
-	    			    		
+	    			    		//Remove the old meld from the list of melds
 	    			    		pMelds.remove(useThis);
 	    			    		
 	    			    		int runCount = 0;
@@ -344,17 +357,6 @@ public class GRLocalGame extends LocalGame implements GRGame {
 	    			    				temp.clear();
 	    			    			}
 	    			    		}
-	//	    					for(Card card : pMelds.get(c.runID).cards){
-	//	    						for(Card card1 : handcopy.cards){
-	//    								if(card.equals(card1)){
-	//    									card1.setRL(0);
-	//    	    							card1.runID = 0;
-	//    	    							card.setRL(0);
-	//    	    							card.runID = 0;
-	//    								}
-	//    							}
-	//	    					}
-	//	    					pMelds.remove(c.runID);
 		    		
 		    					if(!reversed.equals("")){
 		    						reversed = reversed.substring(1);
@@ -366,6 +368,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
     		}
     	}
     	
+    	//Sorry you had to see that^^^
     	opState.setMelds(pidx, pMelds);
     	return countDeadwood(handcopy);
     }
@@ -489,7 +492,6 @@ public class GRLocalGame extends LocalGame implements GRGame {
         				}
 
     					(opState.getMeldsForPlayer(pidx)).put(opState.ID, new Meld(temp, false, runCount, opState.ID));
-    					
 	    				opState.ID++;
 	    				opState.meldCount++;
 	    				runCount = 0;
@@ -520,56 +522,34 @@ public class GRLocalGame extends LocalGame implements GRGame {
     public void layoff(int knocker, int defender){
     	playerWhoLaidOff = defender;
     	
+    	//Reset layoff cards
+    	for(Card c: state.getHand(knocker).cards){
+    		c.layoffCard = false;
+    	}
+    	for(Card c: state.getHand(defender).cards){
+    		c.layoffCard = false;
+    	}
+    	
     	//This loop ensures that all possible deadwood is laid off
     	//If a player has a partial run of two card, both of which 
     	//can be added to the knocker's hand, the first iteration will
     	//lay off the first card and the second one will lay off the second
 		for(int i = 0; i < 2; i++){
-			
-			ArrayList<Card> tempToAdd = new ArrayList<Card>();
 			ArrayList<Card> tempToRemove = new ArrayList<Card>();
 			
 			for(Card c : state.getHand(defender).cards){
 				if(c.runID == 0 && c.setID == 0){
 					
+					//For each meld in the knocker's hand, see if a deadwood card 
+					//from the defender's hand can be added to a meld
 					for(Meld m : state.getMeldsForPlayer(knocker).values()){
 						if(addCardToMeld(c, m)){
 							tempToRemove.add(c);
 						}
 					}
-					//Get the deadwood for the knocking player
-//					int dw = countDeadwood(state.getHand(knocker));
-//					int meldcount1 = 0;
-//					for(Meld m: state.getMeldsForPlayer(knocker).values()){
-//						meldcount1++;
-//					}
-//					//Create a temporary state before attempting to lay off
-//					GRState s = new GRState(state,1);
-//
-//					//Hypothetically add the card to the hand, calculate deadwood
-//					s.getHand(knocker).cards.add(c);
-//					assessMelds(s, knocker);
-//					removeDuplicates(s, s.getHand(knocker),knocker);
-//					int dw2 = countDeadwood(s.getHand(knocker));
-//
-//					int meldcount2 = 0;
-//					for(Meld m: s.getMeldsForPlayer(knocker).values()){
-//						meldcount2++;
-//					}
-//					//If card doesn't add any additional deadwood, the card may be 
-//					//added to a list of cards to be laid off
-//					if(dw == dw2 && (dw != -1 || dw2 != -1)){
-//						layoffCards.add(c);
-//						tempToAdd.add(c);
-//						tempToRemove.remove(c);
-//					}
 				}
 			}
-
-			//Add deadwood cards to knocker's hand
-			for(Card c : tempToAdd){
-				state.getHand(knocker).cards.add(c);
-			}
+			
 			//Remove deadwood cards from defender's hand
 			for(Card c : tempToRemove){
 				state.getHand(defender).remove(c);
@@ -577,8 +557,18 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		}
     }
     
+    /**
+     * Helper function for layoff. Allows us to add a specified card to a 
+     * specified meld.
+     * 
+     * @param c the card to add
+     * @param m the meld to add to
+     * @return
+     */
     public boolean addCardToMeld(Card c, Meld m){
     	
+    	//If the meld is a set and the card is of the same rank as those cards,
+    	//add it to the meld and flag it as being laid off
     	if(m.isSet){
     		if(m.getMeldCards().get(0).getRank() == c.getRank()){
     			c.layoffCard = true;
@@ -586,11 +576,13 @@ public class GRLocalGame extends LocalGame implements GRGame {
     			layoffCards.add(c);
     			return true;
     		}
-    	}else{
+    	}
+    	//If the meld is a run...
+    	else{
+    		//Determine the min and max ranks for the meld
     		int minrank = 14;
 			int maxrank = 0;
     		for(Card card : m.cards){
-    			
     			if( card.getRank().value(1) < minrank){
     				minrank = card.getRank().value(1);
     			}
@@ -600,6 +592,8 @@ public class GRLocalGame extends LocalGame implements GRGame {
     			}
     		}
     		
+    		//If the card is of the same suit as the run and it is adjacent,
+    		//add it to the meld and flag it as being laid off
     		if((c.getSuit() == m.getMeldCards().get(0).getSuit()) 
     				&& (c.getRank().value(1) == minrank - 1 
     				|| c.getRank().value(1) == maxrank + 1)){
@@ -637,10 +631,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		}
 
 		if(grma.isNextRound() && state.isEndOfRound){
-//			if (grma instanceof GRNewGameAction) {
-//				state.setScore(0, 0);
-//				state.setScore(1, 0);
-//			}
+			//Begin a new round when a player is ready
 			state.initNewRound();
 			sendAllUpdatedState();
 			return true;
@@ -666,10 +657,6 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					// Remove the requested card from the player's hand and place it atop the discard pile
 					state.discard(da.discardCard(), thisPlayerIdx);
 
-					//state.assessMelds(thisPlayerIdx);
-					//state.canKnock(state.getHand(thisPlayerIdx),state.getMeldsForPlayer(thisPlayerIdx));
-
-
 					//Set the turn to the other player and set phase to draw phase
 					state.setPhase(state.DRAW_PHASE);
 					if(state.whoseTurn() == PLAYER_1){
@@ -687,22 +674,25 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			//KNOCK PHASE 
 			else if (grma.isKnock() && state.getPhase() == GRState.DISCARD_PHASE){
 
-
+				//see if removing the desired card from the player's hand will allow
+				//them to knock
 				GRState copy = new GRState(state, 1);
-
-				//(GRKnockAction)grma.knockCard();
 				GRKnockAction copy_grma = (GRKnockAction)grma;
 				Card theCard = copy_grma.knockCard();
 				copy.getHand(thisPlayerIdx).remove(theCard);
-
 				assessMelds(copy, thisPlayerIdx);
+				
+				//If indeed they CAN knock...
 				if(canKnock(copy, copy.getHand(thisPlayerIdx), thisPlayerIdx)){
 
+					//Player who knocked gets to go first
 					state.toGoFirst = thisPlayerIdx;
+					
 					state.isEndOfRound = true;
 					state.setPhase(GRState.DRAW_PHASE);
 					
-					//TODO: Comment this
+					//At the end of, round we must set to human player's turn or else computer player
+					//will continually make moves
 					if(grma.getPlayer() instanceof GRHumanPlayer && thisPlayerIdx == 0){
 						state.setWhoseTurn(0);
 					}else if(grma.getPlayer() instanceof GRHumanPlayer && thisPlayerIdx == 1){
@@ -717,10 +707,58 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					//state.setPhase(state.DRAW_PHASE);
 					state.getHand(thisPlayerIdx).remove(theCard);
 
+					//Get the hands in a state with optimal melds and duplicates removed
 					normalizeHands();
+			
+					//Get the deadwood
+					int p0dw = countDeadwood(state.getHand(0));
+					int p1dw = countDeadwood(state.getHand(1));
 
-					//ArrayList<Card> layoffCards = new ArrayList<Card>();
-					//int playerWhoLaidOff = 0;
+					//Scoring
+					if(p0dw < p1dw){
+						if(p0dw == 0){
+							//player 0 goes gin
+							state.setScore(0,20);
+							scoresForRound[0] += 20;
+						}
+						state.setScore(0,p1dw - p0dw);
+						scoresForRound[0] += (p1dw - p0dw);
+						if(thisPlayerIdx == 1){
+							//Give undercut points
+							state.setScore(0,10);
+							scoresForRound[0] += 10;
+						}
+					}else if (p0dw > p1dw){
+						if(p1dw == 0){
+							//player 1 goes gin
+							state.setScore(1,20);
+							scoresForRound[1] += 20;
+						}
+						state.setScore(1,p0dw - p1dw);	
+						scoresForRound[1] += (p0dw - p1dw);
+						if(thisPlayerIdx == 0){
+							//Give undercut points
+							state.setScore(1,10);
+							scoresForRound[1] += 10;
+						}
+					}else{
+						//If both players scores are equal
+						if(p0dw == 0 && p1dw == 0){
+							//If both players have gin
+							//Give the player who knocks 20 pts
+							state.setScore(thisPlayerIdx, 20);
+							scoresForRound[thisPlayerIdx] += 20;
+						}
+						else{
+							if(thisPlayerIdx == 0){
+								state.setScore(1,10);
+								scoresForRound[1] += 10;
+							}else{
+								state.setScore(0,10);
+								scoresForRound[1] -= 10;
+							}
+						}
+					}
 					
 					if(thisPlayerIdx == PLAYER_1){
 						playerWhoLaidOff = PLAYER_1;
@@ -730,56 +768,15 @@ public class GRLocalGame extends LocalGame implements GRGame {
 						layoff(PLAYER_2,PLAYER_1);
 					}
 
-					//normalizeHands();
-					//					
-					//Get the deadwood
-					int p0dw = countDeadwood(state.getHand(0));
-					int p1dw = countDeadwood(state.getHand(1));
-
-					//TODO: MAKE SEPARATE FUNCTION
-					if(p0dw < p1dw){
-						if(p0dw == 0){
-							state.setScore(0,20);
-						}
-						state.setScore(0,p1dw - p0dw);	
-						if(thisPlayerIdx == 1){
-							//Give undercut points
-							state.setScore(0,10);
-						}
-					}else if (p0dw > p1dw){
-						if(p1dw == 0){
-							state.setScore(1,20);
-						}
-						state.setScore(1,p0dw - p1dw);	
-						if(thisPlayerIdx == 0){
-							//Give undercut points
-							state.setScore(1,10);
-						}
-					}else{
-						//If both players scores are equal
-						if(p0dw == 0 && p1dw == 0){
-							//If both players have gin
-							//Give the player who knocks 20 pts
-							state.setScore(thisPlayerIdx, 20);
-						}
-						else{
-							if(thisPlayerIdx == 0){
-								state.setScore(1,10);
-							}else{
-								state.setScore(0,10);
-							}
-						}
-					}
-					
 					//TODO: Here you go, Jaimiey
-					state.gameMessage = "Player 1 score: " + state.getp1score() 
-							+ "\nPlayer 2 score: "+ state.getp2score() + "\n";
+					state.gameMessage = this.playerNames[0] + " score for round: " + state.getp1score() 
+							+ "\n" + this.playerNames[1]+ " score for round: "+ state.getp2score() + "\n";
 					
 					String layoffPlayer = "";
 					if(playerWhoLaidOff == 0){
-						layoffPlayer = "Player 1";
+						layoffPlayer = this.playerNames[0];
 					}else {
-						layoffPlayer = "Player 2";
+						layoffPlayer = this.playerNames[1];
 					}
 					
 					if(layoffCards.size() > 0){
@@ -790,6 +787,8 @@ public class GRLocalGame extends LocalGame implements GRGame {
 						}
 					}
 					
+					//Reset layoff cards for next round
+					layoffCards.clear();
 					sendAllUpdatedState();
 				}
 				else{

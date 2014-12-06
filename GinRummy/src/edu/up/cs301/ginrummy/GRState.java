@@ -513,17 +513,6 @@ public class GRState extends GameState
     }
     
     /**
-     * Gives the given deck.
-     * 
-     * @return  the deck for the given player, or the middle deck if the
-     *   index is 2
-     */
-//    public Deck getDeck(int num) {
-//        if (num < 0 || num > 2) return null;
-//        return piles[num];
-//    }
-    
-    /**
      * Tells which player's turn it is.
      * 
      * @return the index (0 or 1) of the player whose turn it is.
@@ -581,6 +570,7 @@ public class GRState extends GameState
     	}
     	return null;
     }
+    
     public ArrayList<Card> getDeadwoodForPlayer(int pidx) {    	
     	ArrayList<Card> deadwoodCards = new ArrayList<Card>();
     	for (Card c : playerHands[pidx].cards) {
@@ -588,6 +578,7 @@ public class GRState extends GameState
     	}
     	return deadwoodCards;
     }
+    
     public boolean drawFrom(boolean fromStock, int playeridx){
     	if(fromStock){
     		setLastPicked(stock.peekAtTopCard());
