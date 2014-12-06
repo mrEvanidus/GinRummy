@@ -774,8 +774,8 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					}
 
 					//TODO: Here you go, Jaimiey
-					state.gameMessage = this.playerNames[0] + " score for round: " + state.getp1score() 
-							+ "\n" + this.playerNames[1]+ " score for round: "+ state.getp2score() + "\n";
+					state.gameMessage = this.playerNames[0] + " score for round: " + scoresForRound[0] 
+							+ "\n" + this.playerNames[1]+ " score for round: "+ scoresForRound[1] + "\n";
 
 					String layoffPlayer = "";
 					if(playerWhoLaidOff == 0){
@@ -793,6 +793,8 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					}
 
 					//Reset layoff cards for next round
+					scoresForRound[0] = 0;
+					scoresForRound[1] = 0;
 					layoffCards.clear();
 					sendAllUpdatedState();
 				}
