@@ -139,6 +139,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			// second
 			this.state = (GRState) info;
 			Log.i("human player", "receiving");
+			
+			//find out my id
+			myIdx = state.yourId;
+			otherIdx = (myIdx == 0 ? 1 : 0);
 
 			//score messages
 			int score1 = 
@@ -342,9 +346,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		//make a copy to avoid threading errors
 		GRState stateCopy = new GRState(state);
 
-		//find out my id
-		myIdx = state.yourId;
-		otherIdx = (myIdx == 0 ? 1 : 0);
+		
+		
+		
+		
 
 		//display players' melds if it's the end of a round
 		if (state.isEndOfRound) {
