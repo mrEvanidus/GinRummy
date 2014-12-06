@@ -600,7 +600,9 @@ public class GRLocalGame extends LocalGame implements GRGame {
     			}
     		}
     		
-    		if(c.getRank().value(1) == minrank - 1 || c.getRank().value(1) == maxrank + 1){
+    		if((c.getSuit() == m.getMeldCards().get(0).getSuit()) 
+    				&& (c.getRank().value(1) == minrank - 1 
+    				|| c.getRank().value(1) == maxrank + 1)){
     			c.layoffCard = true;
     			m.cards.add(new Card(c));
     			layoffCards.add(c);

@@ -78,7 +78,7 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     	for(Card c : hand.cards){
     		if(c.priority > highest){
     			highest = c.priority;
-    			theCard = c;
+    			theCard = new Card(c);
     		}
     	}
     	
@@ -315,6 +315,8 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     		}
     	}	
     }
+    
+    
     /**
      * callback method, called when we receive a message, typically from
      * the game
@@ -354,7 +356,7 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
     				canKnock(savedState.getHand(thisPlayer), savedState.getMeldsForPlayer(thisPlayer),thisPlayer);
 
     				Card topOfDiscard = savedState.getDiscard().peekAtTopCard();
-    				GRState copy = savedState;
+    				GRState copy = new GRState(savedState,1);
 
     				copy.getHand(thisPlayer).add(topOfDiscard);
     				assessMelds(copy, thisPlayer);

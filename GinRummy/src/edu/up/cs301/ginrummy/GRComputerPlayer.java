@@ -43,6 +43,8 @@ public class GRComputerPlayer extends GameComputerPlayer {
         randCard = new Random();
         
     }
+    
+    
     /**
      * callback method, called when we receive a message, typically from
      * the game
