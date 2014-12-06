@@ -1,13 +1,3 @@
-BUG LOG:
-Major bug: when touching surface, game will occasionally crash
-	and log a ConcurrentModificationException
-	EDIT: (Maybe) fixed by GRState stateCopy = new GRState(state);
-	at top of tick() method in GRHumanPlayer
-
-Minor bug (1 occurrence):
-	ComputerPlayer(smart) hangs for no apparent reason, well into the game.
-	Theorized that he tried to knock and for some reason that didn't work.
-	
-Minor bug:
-	When discarding, cards will appear momentarily at their
-	in-hand location before new state is received.
+Computer lays off onto non-melds
+some cards not laid off properly
+computer detects 7c 8c 9c 10c | 10d 10c as better than 7c 8c 9c | 10c 10d 10c

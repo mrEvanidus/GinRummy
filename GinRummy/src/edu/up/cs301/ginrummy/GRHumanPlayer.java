@@ -35,10 +35,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	// how much a card on top of another should be offset by
 	private final static float STACKED_CARD_OFFSET = 0.005F;  	
 	private final static float HAND_CARD_OFFSET = 0.06F;	
-	private final static float MELD_OFFSET = 0.05F;
+	private final static float MELD_OFFSET = 0.02F;
 
 	// the width and height of the card images
 	private final static PointF CARD_DIMENSIONS = new PointF(500, 726);
+	
 	// the size a card should be grown or shrunk by
 	// TODO: for better device cross-compatibility,
 	//	make this change based on canvas size
@@ -46,7 +47,11 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 	// colors used
 	public static final int FELT_GREEN = 0xff277714;
-	public static final int LAKE_ERIE = 0xff6183A6;
+	public static final int LAKE_ERIE = 0xcc6183A6;
+	public static final int GRAYISH = 0xccd3d3d3;
+	
+	//frame interval between ticks
+	private static final int INTERVAL = 10;
 
 	// our game state
 	protected GRState state;
@@ -58,7 +63,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	private AnimationSurface surface;
 
 	// the buttons. 
-	//	TODO: figure out a way to implemet "new game"
+	//	TODO: figure out a way to implement "new game"
 	Button exitButton, newGame;
 
 	// the score and message pane text fields
@@ -161,17 +166,17 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					if (state.getPhase() == GRState.DRAW_PHASE) {
 						messagePane.setText("It's Your Turn:\nDraw a card.");
 
-						if (playerHandPos.get(otherIdx).size() == 0) return;
-
-						//animate opponent's discard
-						//from hand to discard pile
-						PointF dst = discardPos;
-						PointF org = playerHandPos.get(otherIdx).get(0);
-
-						// start moving the card
-						CardPath newPath = new CardPath(new backCard(), org, dst);
-						newPath.setAnimationSpeed(5);
-						opponentPath = newPath;
+//						if (playerHandPos.get(otherIdx).size() == 0) return;
+//
+//						//animate opponent's discard
+//						//from hand to discard pile
+//						PointF dst = discardPos;
+//						PointF org = playerHandPos.get(otherIdx).get(0);
+//
+//						// start moving the card
+//						CardPath newPath = new CardPath(new backCard(), org, dst);
+//						newPath.setAnimationSpeed(5);
+//						opponentPath = newPath;
 					}
 					else if (state.getPhase() == GRState.DISCARD_PHASE) {
 						messagePane.setText("It's Your Turn:\nDiscard a Card.");
@@ -185,21 +190,21 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					//					PointF org = null;
 					//					PointF dst = null;
 
-					if (playerHandPos.get(otherIdx).size() == 0) return;
+//					if (playerHandPos.get(otherIdx).size() == 0) return;
 
 					// animate opponent's moves as they happen
-					if (state.getPhase() == GRState.DRAW_PHASE) {
-						//from stockpile to hand
-						//TODO change this to discard pile when the opponent
-						//								draws from discard
-						PointF org = stockPos;
-						PointF dst = playerHandPos.get(otherIdx).get(0);
-
-						// start moving the card
-						CardPath newPath = new CardPath(new backCard(), org, dst);
-						newPath.setAnimationSpeed(5);
-						opponentPath = newPath;
-					}
+//					if (state.getPhase() == GRState.DRAW_PHASE) {
+//						//from stockpile to hand
+//						//TODO change this to discard pile when the opponent
+//						//								draws from discard
+//						PointF org = stockPos;
+//						PointF dst = playerHandPos.get(otherIdx).get(0);
+//
+//						// start moving the card
+//						CardPath newPath = new CardPath(new backCard(), org, dst);
+//						newPath.setAnimationSpeed(5);
+//						opponentPath = newPath;
+//					}
 				}
 			}
 		}
@@ -295,7 +300,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 */
 	public int interval() {
 		// 1/1000 of a second
-		return 10;
+		return INTERVAL;
 	}
 
 	/**
@@ -342,8 +347,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		//display players' melds if it's the end of a round
 		if (state.isEndOfRound) {
-			displayMelds(0,canvas);
-			displayMelds(1,canvas);
+			displayMelds(myIdx,canvas);
+			displayMelds(otherIdx,canvas);
 			return;
 		}
 
@@ -432,26 +437,47 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * Draw the knocking box onto the canvas
 	 * @param canvas
 	 * 			the Canvas to paint on
-	 * @param col
-	 * 			the integer color the box should be
+	 * @param text
+	 * 			the text to show in the center
+	 * @param where
+	 * 			the pointF where we want the box to be drawn
+	 * @param p
+	 * 			the paint object we want to use 
 	 */
-	private void drawBoundBox(Canvas canvas, String name, PointF where, Paint p) {
-
-		canvas.drawText(name, where.x * surface.getWidth()
-				+ getCardDimensions().x / 6, where.y * surface.getHeight()
-				+ getCardDimensions().y / 2, p);
-
-		canvas.drawRoundRect(adjustDimens(where), 10F, 10F, p);		
+	private void drawBoundBox(Canvas canvas, String text, PointF where, Paint p) {
+		
+		//get the size of the text
+		Rect bounds = new Rect();
+		p.getTextBounds(text, 0, text.length(), bounds);
+		
+		//draw a rounded rectangle over the text
+		canvas.drawRoundRect(adjustDimens(where), 10F, 10F, p);	
+		
+		//draw the text into the center of the box
+				canvas.drawText(text, where.x * surface.getWidth()
+						+ (getCardDimensions().x - bounds.right)/2,
+						where.y * surface.getHeight()
+						+ (getCardDimensions().y - bounds.top)/2 , p);
 	}
 
-	private void drawBoundBox(Canvas canvas, String name, PointF where) {
+	/**
+	 * draw a knock box with the default paint
+	 * @param canvas
+	 * 			the canvas to paint on
+	 * @param text
+	 * 			the text to put in the middle (use "" for no text)
+	 * @param where
+	 * 			a pointF where the box should be placed.
+	 */
+	private void drawBoundBox(Canvas canvas, String text, PointF where) {
 		//set up a default paint
 		Paint p = new Paint();
 		p.setStyle(Paint.Style.STROKE);
 		p.setColor(Color.GREEN);
-		p.setTextSize(24);
+		p.setTextSize(32);
 
-		drawBoundBox(canvas, name, where, p);
+		//draw the box normally
+		drawBoundBox(canvas, text, where, p);
 	}
 
 	/**
@@ -512,6 +538,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}
 
 	/**
+	 * TODO
 	 * Display the melds after a knock
 	 * 
 	 * @param playerIndex
@@ -522,18 +549,18 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		ArrayList<PointF> playerHandPos = new ArrayList<PointF>();
 		float cardsY;
 		float cardSpacer = 0;
-		float yPosOfCard;
+//		float yPosOfCard;
 		float startOfDeadwoodX;
 
 		//decide which player hand position we need
-		if (playerIndex == 0) cardsY = 0.55f;		
-		else if (playerIndex == 1) cardsY = 0f;
+		if (playerIndex == myIdx) cardsY = 0.7f;		
+		else if (playerIndex == otherIdx) cardsY = -.2f;
 		else {
 			Log.v("Error", "Invalid Player Specified for displayMelds()");
 			return;
 		}
 
-		yPosOfCard = cardsY;
+//		yPosOfCard = cardsY;
 		playerHandPos.clear();		
 		//Iterate through each group of melds. 
 		int indexOfMeld = 0;
@@ -544,8 +571,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 			for (Card meldCard : meld.getMeldCards()) {			
 				//if((meld.isSet && meldCard.setID != 0) || (!meld.isSet && meldCard.runID != 0)){
-					playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer 
-							,cardsY + MELD_OFFSET*indexOfMeld));
+					playerHandPos.add(new PointF(0.02f + HAND_CARD_OFFSET*cardSpacer,
+							cardsY+ MELD_OFFSET*indexOfMeld));
 
 					//the last index of playerHandPos is the current meldCard
 					int lastIndex = playerHandPos.size() - 1;
@@ -556,10 +583,10 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			indexOfMeld++;
 		}	
 
-
+		//show the deadwood cards
 		startOfDeadwoodX = 0.02f + HAND_CARD_OFFSET*cardSpacer;		
-		displayDeadwood(playerIndex, startOfDeadwoodX, yPosOfCard + MELD_OFFSET, canvas);
-
+		displayDeadwood(playerIndex, startOfDeadwoodX,
+				cardsY + MELD_OFFSET*indexOfMeld, canvas);
 	}
 
 	/**
@@ -582,7 +609,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		
 		//set up the paint with which we will cover the deadwood cards 
 		Paint grayShade = new Paint();
-		grayShade.setColor(0xccd3d3d3);
+		grayShade.setColor(GRAYISH);
+		grayShade.setTextSize(getCardDimensions().y);
 
 		//TODO: streamline this. playerHandPos is also used on the top GRHuman level
 		playerHandPos.clear();
@@ -595,9 +623,8 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			int lastIndex = playerHandPos.size() - 1;
 			PointF cardPos = playerHandPos.get(lastIndex);
 			c.drawOn(canvas, adjustDimens(cardPos));
-
-			drawBoundBox(canvas, "", cardPos, grayShade);
-			//			canvas.drawRoundRect(adjustDimens(cardPos), 10, 10, grayShade);
+			
+			drawBoundBox(canvas, "X", cardPos, grayShade);
 		}	
 	}
 
@@ -635,6 +662,16 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 
 		// on finger-lift events
 		else if (event.getAction() == MotionEvent.ACTION_UP) {
+			//if we've drawn, wait a bit for a new card
+			int loopCount = 0;
+			while (justDrew && touchedCard == null){
+				//sleep
+				loopCount++;
+				// extra safeguard against infinite loops
+				if (loopCount > 10000) break;
+			}
+			
+			//drop the card at the location of the action
 			if (touchedCard != null) drop(touchedCard, touchX, touchY);
 		} // ACTION_UP
 
@@ -662,7 +699,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	synchronized private void drop(Card card, int x, int y) {
 		//null check
 		if (card == null) return;
-
+		
 		//dropped on discard pile
 		if (adjustDimens(discardPos).contains(x, y) && (!justDrew || drewFromStock)) {
 			//discard the card
@@ -804,16 +841,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}
 
 	/**
-	 * gets the size (in pixels) of our cards
-	 * 
-	 * @return a PointF containing the scaled size of the cards.
-	 */
-	public static PointF getCardDimensions() {
-		return new PointF(CARD_DIMENSIONS.x * CARD_DIMENSION_MODIFIER,
-				CARD_DIMENSIONS.y * CARD_DIMENSION_MODIFIER);
-	}
-
-	/**
 	 * 
 	 * @param location
 	 *            a PointF which describes the location(in screen percent) where
@@ -849,5 +876,15 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	private void newGame() {
 		//TODO: implement NEW GAME action
 		game.sendAction(new GRNewGameAction(this));
+	}
+
+	/**
+	 * gets the size (in pixels) of our cards
+	 * 
+	 * @return a PointF containing the scaled size of the cards.
+	 */
+	public static PointF getCardDimensions() {
+		return new PointF(CARD_DIMENSIONS.x * CARD_DIMENSION_MODIFIER,
+				CARD_DIMENSIONS.y * CARD_DIMENSION_MODIFIER);
 	}
 }
