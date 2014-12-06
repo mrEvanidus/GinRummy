@@ -114,77 +114,77 @@ public class GRState extends GameState
     	}
     	
     	//TEST HAND
-//    	for(int i = 0; i < 10; i++){
-//    		switch (i){
-//    			case 0:
-//    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
-//    				break;
-//    			case 1:
-//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
-//    				break;
-//    			case 2:
-//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Heart));
-//    				break;
-//    			case 3:
-//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Spade));
-//    				break;
-//    			case 4:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
-//    				break;
-//    			case 5:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
-//    				break;
-//    			case 6:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Diamond));
-//    				break;
-//    			case 7:
-//    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Spade));
-//    				break;
-//    			case 8:
-//    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Club));
-//    				break;
-//    			case 9:
-//    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
-//    				break;
-//    			
-//    		}
-//    	}
-//    	
-//    	for(int i = 0; i < 10; i++){
-//    		switch (i){
-//    			case 0:
-//    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Spade));
-//    				break;
-//    			case 1:
-//    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
-//    				break;
-//    			case 2:
-//    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Diamond));
-//    				break;
-//    			case 3:
-//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Heart));
-//    				break;
-//    			case 4:
-//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Spade));
-//    				break;
-//    			case 5:
-//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Club));
-//    				break;
-//    			case 6:
-//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Spade));
-//    				break;
-//    			case 7:
-//    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
-//    				break;
-//    			case 8:
-//    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
-//    				break;
-//    			case 9:
-//    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Diamond));
-//    				break;
-//    			
-//    		}
-//    	}
+    	for(int i = 0; i < 10; i++){
+    		switch (i){
+    			case 0:
+    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
+    				break;
+    			case 1:
+    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
+    				break;
+    			case 2:
+    				playerHands[0].cards.set(i, new Card(Rank.KING, Suit.Heart));
+    				break;
+    			case 3:
+    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Spade));
+    				break;
+    			case 4:
+    				playerHands[0].cards.set(i, new Card(Rank.QUEEN, Suit.Heart));
+    				break;
+    			case 5:
+    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
+    				break;
+    			case 6:
+    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Diamond));
+    				break;
+    			case 7:
+    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Spade));
+    				break;
+    			case 8:
+    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Club));
+    				break;
+    			case 9:
+    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
+    				break;
+    			
+    		}
+    	}
+    	
+    	for(int i = 0; i < 10; i++){
+    		switch (i){
+    			case 0:
+    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Spade));
+    				break;
+    			case 1:
+    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Spade));
+    				break;
+    			case 2:
+    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Spade));
+    				break;
+    			case 3:
+    				playerHands[1].cards.set(i, new Card(Rank.TEN, Suit.Spade));
+    				break;
+    			case 4:
+    				playerHands[1].cards.set(i, new Card(Rank.TEN, Suit.Diamond));
+    				break;
+    			case 5:
+    				playerHands[1].cards.set(i, new Card(Rank.TEN, Suit.Club));
+    				break;
+    			case 6:
+    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
+    				break;
+    			case 7:
+    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
+    				break;
+    			case 8:
+    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
+    				break;
+    			case 9:
+    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Diamond));
+    				break;
+    			
+    		}
+    	}
     	
     	stock.moveTopCardTo(discard);
     	//discard.add(new Card(Rank.KING,Suit.Heart));
@@ -431,12 +431,10 @@ public class GRState extends GameState
     }
 
 	public Deck getStock() {
-		// TODO Auto-generated method stub
 		return stock;
 	}
 
 	public Deck getDiscard() {
-		// TODO Auto-generated method stub
 		return discard;
 	}
 

@@ -269,7 +269,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
     			return -1;
     		}
     		if(c.runID != 0 || c.setID != 0){
-    			
+    			//TODO Comment
     		}else{
     			if(c.getRank().value(1) <= 10){
     				dc += c.getRank().value(1);
@@ -374,7 +374,8 @@ public class GRLocalGame extends LocalGame implements GRGame {
     						runCount += c2.getRank().value(1);
         					c2.runID = opState.ID;
         				}
-    					(opState.getMeldsForPlayer(pidx)).put(state.ID, new Meld(temp, false, runCount, opState.ID));
+    					(opState.getMeldsForPlayer(pidx)).put(
+    							state.ID, new Meld(temp, false, runCount, opState.ID));
 	    				opState.ID++;
 	    				opState.meldCount++;
 	    				runCount = 0;
@@ -397,6 +398,11 @@ public class GRLocalGame extends LocalGame implements GRGame {
 		removeDuplicates(state, state.getHand(1),1);
     }
     
+    /**
+     * TODO Comment
+     * @param knocker
+     * @param defender
+     */
     public void layoff(int knocker, int defender){
     	playerWhoLaidOff = defender;
     	
@@ -495,7 +501,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 
 				GRDrawAction da = (GRDrawAction) action;
 				state.drawFrom(da.fromStock(), thisPlayerIdx);
-				state.setPhase(state.DISCARD_PHASE);
+				state.setPhase(GRState.DISCARD_PHASE);
 			}
 			//DISCARD PHASE
 			else if (grma.isDiscard() && state.getPhase() == GRState.DISCARD_PHASE) {
@@ -526,7 +532,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			//KNOCK PHASE 
 			else if (grma.isKnock() && state.getPhase() == GRState.DISCARD_PHASE){
 
-				GRState copy = new GRState(state);
+				GRState copy = new GRState(state, 1);
 				//(GRKnockAction)grma.knockCard();
 				GRKnockAction copy_grma = (GRKnockAction)grma;
 				Card theCard = copy_grma.knockCard();
@@ -537,7 +543,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 
 					state.toGoFirst = thisPlayerIdx;
 					state.isEndOfRound = true;
-					state.setPhase(state.DRAW_PHASE);
+					state.setPhase(GRState.DRAW_PHASE);
 					
 					//TODO: Comment this
 					if(grma.getPlayer() instanceof GRHumanPlayer && thisPlayerIdx == 0){
