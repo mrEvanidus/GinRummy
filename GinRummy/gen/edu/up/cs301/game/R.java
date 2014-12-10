@@ -94,6 +94,7 @@ public final class R {
         public static final int suit_h=0x7f02003e;
         public static final int suit_s=0x7f02003f;
         public static final int vegdahlback=0x7f020040;
+        public static final int vegdahlback2=0x7f020041;
     }
     public static final class id {
         public static final int addPlayerButton=0x7f090017;

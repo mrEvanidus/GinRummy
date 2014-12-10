@@ -187,28 +187,9 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					}
 				}
 
-				//opponent turn messages
+				//opponent turn message
 				else{
 					messagePane.setText("Your opponent is taking their turn.");
-
-					//					PointF org = null;
-					//					PointF dst = null;
-
-					//					if (playerHandPos.get(otherIdx).size() == 0) return;
-
-					// animate opponent's moves as they happen
-					//					if (state.getPhase() == GRState.DRAW_PHASE) {
-					//						//from stockpile to hand
-					//						//TODO change this to discard pile when the opponent
-					//						//								draws from discard
-					//						PointF org = stockPos;
-					//						PointF dst = playerHandPos.get(otherIdx).get(0);
-					//
-					//						// start moving the card
-					//						CardPath newPath = new CardPath(new backCard(), org, dst);
-					//						newPath.setAnimationSpeed(5);
-					//						opponentPath = newPath;
-					//					}
 				}
 			}
 		}
@@ -265,12 +246,13 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			}
 		});
 
-		//set up new game button listener
-		newGame.setOnClickListener(new OnClickListener(){
-			public void onClick(View v) {
-				newGame(); 
-			}
-		});
+		//TODO Delete if not implemented
+//		//set up new game button listener
+//		newGame.setOnClickListener(new OnClickListener(){
+//			public void onClick(View v) {
+//				newGame(); 
+//			}
+//		});
 
 		// read in the card images
 		backCard.initImages(activity);
@@ -441,33 +423,16 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			// advance the card along the path
 			PointF newPos = path.advance();
 
-			// draw the moving cards
-			if (newPos != null){
-				path.getCard().drawOn(canvas, adjustDimens(newPos));
-			}
+			// draw the moving card
+			if (newPos != null)
+				path.getCard().drawOn(canvas, adjustDimens(newPos), false);
 
 			// if the animation is done, remove the animation
 			if (path != null && path.isComplete()) path = null;
 		}
 
-		//we'll need this if we re-introduce animation of opponent moves 
-		//		if (opponentPath != null) {
-		//			// advance the card along the path
-		//			PointF newPos = opponentPath.advance();
-		//
-		//			// draw the moving cards
-		//			if (newPos != null){
-		//				//			PointF newPos = opponentPath.getPosition();
-		//				opponentPath.getCard().drawOn(canvas, adjustDimens(newPos));
-		//			}
-		//
-		//			// if the animation is done, remove the animation
-		//			if (opponentPath != null && opponentPath.isComplete()) opponentPath = null;
-		//		}
-
-		// draw the card being dragged
 		if (touchedCard != null && touchedPos != null) {
-			touchedCard.drawOn(canvas, adjustDimens(touchedPos));
+			touchedCard.drawOn(canvas, adjustDimens(touchedPos),false);
 		}
 
 	}//tick
@@ -529,7 +494,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	 * 			a PointF of the location to draw the deck
 	 */
 	synchronized private void drawDeck(Canvas canvas, Deck deck, PointF pos) {
-
 		// draw the stack of cards
 		for (Card card : deck.cards) {
 			int n = deck.cards.indexOf(card);
@@ -544,7 +508,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 					* position.height() * n));
 
 			// draw the card
-			card.drawOn(canvas, position);
+			card.drawOn(canvas, position, true);
 		}
 
 	}
@@ -575,7 +539,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				// don't draw the card
 			} else {
 				// draw the card
-				card.drawOn(canvas, adjustDimens(p));
+				card.drawOn(canvas, adjustDimens(p), false);
 			}
 		}
 	}
@@ -612,7 +576,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 				positions.get(cardIndex).offset(0, indexOfMeld*MELD_OFFSET);
 
 				//draw the card
-				meldCard.drawOn(canvas, adjustDimens(positions.get(cardIndex)));
+				meldCard.drawOn(canvas, adjustDimens(positions.get(cardIndex)), true);
 
 				//show a blue overlay if the card is a layoff card
 				if (meldCard.layoffCard) drawBoundBox(canvas, "", positions.get(cardIndex), p);
@@ -655,7 +619,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			PointF cardPos = positions.get(index);
 
 			//draw the card
-			c.drawOn(canvas, adjustDimens(cardPos));
+			c.drawOn(canvas, adjustDimens(cardPos), true);
 
 			//gray out deadwood
 			drawBoundBox(canvas, "X", cardPos, grayShade);
@@ -694,8 +658,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 			if (event.getAction() != MotionEvent.ACTION_DOWN) return;
 
 			//pop up the message
-			//TODO only the local human player should
-			//be able to advance the round
 			showEndRoundChoice(state.gameMessage);
 
 			//don't allow other interaction with the game
@@ -861,18 +823,6 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 	}
 
 	/**
-	 * Shows a pop-up message letting the player know that the round is over. 
-	 * @param msg
-	 * 			the message to display in the pop-up window
-	 */
-	private void showEndRoundMessage(String msg) {
-		//message box to show at the end of the round
-		MessageBox.popUpMessage(msg 
-				+ "\n, Waiting for host to begin next round", 
-				myActivity); //pop-up choice
-	}
-
-	/**
 	 * Checks if a hand contains the given point
 	 * @param posList
 	 * 			the list of positions to check inside
@@ -920,14 +870,14 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		game.sendAction(new GRNextRoundAction(this));
 	}
 
-	/**
-	 * requests to start a new game
-	 * so that we can send the action from inside an onclick method
-	 */
-	private void newGame() {
-		//TODO: implement NEW GAME action
-		game.sendAction(new GRNewGameAction(this));
-	}
+//	/**
+//	 * requests to start a new game
+//	 * so that we can send the action from inside an onclick method
+//	 */
+//	private void newGame() {
+//		//TODO: implement NEW GAME action
+//		game.sendAction(new GRNewGameAction(this));
+//	}
 
 	/**
 	 * gets the size (in pixels) of our cards
