@@ -500,10 +500,6 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
 			return;
 		}
 
-		//    	if(savedState != null && savedState.isEndOfRound){
-		//    		return;
-		//    	}
-
 		// update our state variable
 		savedState = (GRState)info;
 
@@ -519,7 +515,6 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				synchronized(this){
@@ -551,9 +546,9 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 				synchronized(this){
 					GRState s = new GRState(savedState,1);
 					Card c = cardToDiscard(s.getHand(thisPlayer));
