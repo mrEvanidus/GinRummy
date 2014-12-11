@@ -61,7 +61,6 @@ public class backCard extends Card{
 		
 		// draw the bitmap into the target rectangle
 		g.drawBitmap(imageToDraw, r, where, p);
-		
 	}
 	
 	private static Bitmap cardImage1 = null;
@@ -74,7 +73,6 @@ public class backCard extends Card{
 	public static void initImages(Activity activity) {
 
 		// if it's already initialized, then ignore
-
     	if (cardImage1 != null) return;
 		
 		int stockBackImage = R.drawable.vegdahlback;

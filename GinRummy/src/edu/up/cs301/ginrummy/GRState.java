@@ -62,8 +62,6 @@ public class GRState extends GameState
 	//if a card may be laid off
 	public int meldCount; 
 	
-	
-	
 	/**
 	 * Constructor for objects of class SJState. Initializes for the beginning of the
 	 * game, with a random player as the first to turn card

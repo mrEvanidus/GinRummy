@@ -1,13 +1,9 @@
 package edu.up.cs301.ginrummy;
 
 import java.util.Random;
-
-import android.util.Log;
 import edu.up.cs301.card.Card;
-import edu.up.cs301.card.Rank;
 import edu.up.cs301.game.GameComputerPlayer;
 import edu.up.cs301.game.infoMsg.GameInfo;
-import edu.up.cs301.game.infoMsg.TimerInfo;
 
 /**
  * This is a computer player that slaps at an average rate given
@@ -70,7 +66,7 @@ public class GRComputerPlayer extends GameComputerPlayer {
     	//Check if it's this players turn
     	if(savedState.whoseTurn() == thisPlayer){
     		//DRAW PHASE
-    		if(savedState.getPhase() == savedState.DRAW_PHASE){
+    		if(savedState.getPhase() == GRState.DRAW_PHASE){
     			
     			if (randDeck == null) return;
     			// Draw a card from a random pile
@@ -85,7 +81,7 @@ public class GRComputerPlayer extends GameComputerPlayer {
     			game.sendAction(new GRDrawAction(this,rd));
     		} 
     		//DISCARD PHASE
-    		else if (savedState.getPhase() == savedState.DISCARD_PHASE){
+    		else if (savedState.getPhase() == GRState.DISCARD_PHASE){
     			// Discard a random card
     			int rc = randCard.nextInt(10);
     			Card randomCard = savedState.getHand(thisPlayer).cards.get(rc);
