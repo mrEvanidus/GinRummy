@@ -23,7 +23,7 @@
                 android:text="@string/player_name" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/gameRules"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Player Type"

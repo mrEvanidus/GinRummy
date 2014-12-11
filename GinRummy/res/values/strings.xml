@@ -25,4 +25,29 @@
     <string name="oppScore">Opponent Score</string>
     <string name="messagePane">Message Pane</string>
     <string name="knockstring">KNOCK</string>
+    <string name="gameRules01">The Game\n\n
+Gin Rummy is a two player game.\n\n
+The game utilizes one deck of 52 cards. Each player keeps a hand of 10 cards. The remainder of the deck, called the “stockpile”, is placed at the center of the table. \n\n
+All discarded cards are placed in a separate “discard” pile.\n\n 
+The object of the game is to finish a round possessing all or mostly “melds”, which are either sets or runs. A set is a group of three or more cards that are of identical rank but different suits (EX: 3♥ 3 ♦ 3 ♣). A run is a group of three or more cards that are identical in suit and consecutive in rank (EX: 3♠ 4♠ 5♠ 6♠). Note that Q♦ K♦ A♦ does not equate to a run because a King and Ace are not considered consecutive in rank. A group consisting of A♦ 2♦ 3♦, however, is a run. Cards in a player’s possession that do not constitute a meld are called “deadwood” cards.\n\n
+</string>
+<string name = "gameRules02">
+Dealing\n\n
+At the beginning of the hand, ten (10) cards are dealt to each player. The top card from the stockpile is then turned face up onto the table to begin the discard pile. The player who won the previous hand plays first in the current hand. If the current hand is the first hand in the game, play begins with a randomly picked player.\n\n
+</string>
+<string name = "gameRules03">
+The Play\n\n
+Each turn, a player must draw a card from either the stockpile or discard pile. At the end of their turn, they must discard a card from their hand face-up onto the discard pile. The player may not discard a card which they have drawn from the discard pile in that same turn.\n\n
+When there are two cards left in the stockpile, the round is ended and no points are allotted. A new round begins, and whoever’s turn was first in the previous round now draws second. \n\n
+If a player can knock on their turn, they are not required to do so. If they do choose to knock by dragging a card into the “Knock” area next to the stockpile, the computer will arrange the cards in both players’ hands into their respective melds.\n\n 
+The computer will then attempt to layoff cards from the hand of the player who did not knock, by laying off any cards which can be added to the knocking player’s melds to legally extend them. The hand is then scored, and a new hand begins if the game is not complete.\n\n
+</string>
+<string name = "gameRules04">
+Scoring\n\n
+The amount of points each player receives each round is determined by the amount of deadwood in both his and his opponent’s hands. Each card in the deck has a specified point value which will be added to the deadwood count. Jacks, Queens, and Kings are each worth 10 points, Aces are worth 1 point, and numbered cards are worth their respective number.\n\n
+If a player goes Gin (knocks with no deadwood in his or her hand), he or she receives 20 points and the total points value of all the deadwood cards in the opponent’s hand. \n\n
+If the knocking player does not go Gin and he or she has the lower deadwood value, the player’s score is the difference of the two deadwood values. \n\n
+If the player knocks and his/her opponent has a lower deadwood value, the opponent “undercuts” the player and receives 10 points and the difference in their deadwood values.\n\n 
+The game ends when one of the players reaches 100 points. The first player to reach 100 points receives 100 bonus points.
+</string>
 </resources>

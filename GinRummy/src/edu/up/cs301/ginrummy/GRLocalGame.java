@@ -6,11 +6,9 @@ import java.util.Hashtable;
 import android.util.Log;
 import edu.up.cs301.card.Card;
 import edu.up.cs301.card.Deck;
-import edu.up.cs301.card.Rank;
 import edu.up.cs301.game.GamePlayer;
 import edu.up.cs301.game.LocalGame;
 import edu.up.cs301.game.actionMsg.GameAction;
-import edu.up.cs301.game.config.GameConfig;
 
 /**
  * The LocalGame class for a slapjack game.  Defines and enforces
@@ -663,7 +661,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					state.discard(da.discardCard(), thisPlayerIdx);
 
 					//Set the turn to the other player and set phase to draw phase
-					state.setPhase(state.DRAW_PHASE);
+					state.setPhase(GRState.DRAW_PHASE);
 					if(state.whoseTurn() == PLAYER_1){
 						state.setWhoseTurn(PLAYER_2);
 					}

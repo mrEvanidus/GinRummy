@@ -8,4 +8,5 @@
     <color name="forest_green">#0D370D</color>
     <color name="lake_erie">#6183A6</color>
     <color name="invisible">#0000</color>
+    <color name="white_alpha">#efff</color>
 </resources>

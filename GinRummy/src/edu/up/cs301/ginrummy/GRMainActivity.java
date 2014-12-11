@@ -2,13 +2,11 @@ package edu.up.cs301.ginrummy;
 
 import java.util.ArrayList;
 
-import edu.up.cs301.card.Card;
 import edu.up.cs301.game.GameMainActivity;
 import edu.up.cs301.game.GamePlayer;
 import edu.up.cs301.game.LocalGame;
 import edu.up.cs301.game.config.GameConfig;
 import edu.up.cs301.game.config.GamePlayerType;
-import android.graphics.Color;
 
 /**
  * this is the primary activity for Gin Rummy

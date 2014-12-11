@@ -2,16 +2,10 @@ package edu.up.cs301.ginrummy;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Random;
-
-import android.util.Log;
 import edu.up.cs301.card.Card;
 import edu.up.cs301.card.Deck;
-import edu.up.cs301.card.Rank;
-import edu.up.cs301.card.Suit;
 import edu.up.cs301.game.GameComputerPlayer;
 import edu.up.cs301.game.infoMsg.GameInfo;
-import edu.up.cs301.game.infoMsg.TimerInfo;
 
 /**
  * This is a computer player that slaps at an average rate given
@@ -34,8 +28,6 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
 
 	// the most recent state of the game
 	private GRState savedState;
-	private Random randDeck;
-	private Random randCard;
 
 	private int thisPlayer;
 
@@ -54,9 +46,6 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
 	public GRComputerPlayerSmart(String name) {
 		// invoke superclass constructor
 		super(name);
-		randDeck = new Random();
-		randCard = new Random();
-
 	}
 
 	public Card cardToDiscard(Deck hand){
@@ -514,7 +503,7 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
 
 
 			//DRAW PHASE
-			if(savedState.getPhase() == savedState.DRAW_PHASE){
+			if(savedState.getPhase() == GRState.DRAW_PHASE){
 				//delay
 				try {
 					Thread.sleep(500);
@@ -546,7 +535,7 @@ public class GRComputerPlayerSmart extends GameComputerPlayer {
 				}
 			} 
 			//DISCARD PHASE
-			else if (savedState.getPhase() == savedState.DISCARD_PHASE && !savedState.isEndOfRound){
+			else if (savedState.getPhase() == GRState.DISCARD_PHASE && !savedState.isEndOfRound){
 				//delay
 				try {
 					Thread.sleep(500);
