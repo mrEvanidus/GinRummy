@@ -48,6 +48,6 @@ The amount of points each player receives each round is determined by the amount
 If a player goes Gin (knocks with no deadwood in his or her hand), he or she receives 20 points and the total points value of all the deadwood cards in the opponent’s hand. \n\n
 If the knocking player does not go Gin and he or she has the lower deadwood value, the player’s score is the difference of the two deadwood values. \n\n
 If the player knocks and his/her opponent has a lower deadwood value, the opponent “undercuts” the player and receives 10 points and the difference in their deadwood values.\n\n 
-The game ends when one of the players reaches 100 points. The first player to reach 100 points receives 100 bonus points.
+The game ends when one of the players reaches 100 points.
 </string>
 </resources>
