@@ -619,7 +619,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 	 * 		true if the move was legal; false otherwise
 	 */
 	@Override
-	protected boolean makeMove(GameAction action) {
+	protected synchronized boolean makeMove(GameAction action) {
 
 		// check that we have gin rummy action; if so cast it
 		if (!(action instanceof GRMoveAction)) {
@@ -646,7 +646,25 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			if (grma.isDraw() && state.getPhase() == GRState.DRAW_PHASE) {
 				//If there are 2 two cards in the stockpile, begin a new round
 				if(state.getStock().size() <= 3){
-					state.initNewRound();
+					//Player who knocked gets to go first
+					state.toGoFirst = thisPlayerIdx;
+
+					state.isEndOfRound = true;
+					state.setPhase(GRState.DRAW_PHASE);
+
+					//At the end of, round we must set to human player's turn or else computer player
+					//will continually make moves
+					if(grma.getPlayer() instanceof GRHumanPlayer && thisPlayerIdx == 0){
+						state.setWhoseTurn(0);
+					}else if(grma.getPlayer() instanceof GRHumanPlayer && thisPlayerIdx == 1){
+						state.setWhoseTurn(1);
+					}else if(!(grma.getPlayer() instanceof GRHumanPlayer) && thisPlayerIdx == 0){
+						state.setWhoseTurn(1);
+					}else if(!(grma.getPlayer() instanceof GRHumanPlayer) && thisPlayerIdx == 1){
+						state.setWhoseTurn(0);
+					}
+					
+					state.gameMessage = "Reached end of Deck! Start a new round!";
 				}
 
 				GRDrawAction da = (GRDrawAction) action;
