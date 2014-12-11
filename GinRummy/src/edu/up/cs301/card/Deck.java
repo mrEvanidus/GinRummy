@@ -19,7 +19,6 @@ public class Deck implements Serializable {
 	
 	// the cards in our deck; the last card in the ArrayList is the top card
 	// in the deck
-	// TODO find a better solution (maybe)
 	public ArrayList<Card> cards;
 	
 	/**
@@ -102,9 +101,12 @@ public class Deck implements Serializable {
 		return this;
 	}
 
-	//TODO document this
+	/**
+	 * Our own custom remove function for a Deck.
+	 * 
+	 * @param c the card to be removed
+	 */
 	public synchronized void remove(Card c){
-		//cards.remove(c);
 		for(Card card : cards){
 			if(card != null && card.getRank() == c.getRank() && card.getSuit() == c.getSuit()){
 				cards.remove(card);

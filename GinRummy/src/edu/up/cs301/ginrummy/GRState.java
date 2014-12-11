@@ -32,19 +32,12 @@ public class GRState extends GameState
 	// ************** instance variables ************
 	///////////////////////////////////////////////////
 
-	// the three piles of cards:
-	//  - 0: pile for player 0
-	//  - 1: pile for player 1
-	//  - 2: the "up" pile, where the top card
-	// Note that when players receive the state, all but the top card in all piles
-	// are passed as null.
-	//private Deck[] piles;
-	private Deck stock;
-	private Deck discard;
+	private Deck stock;   //The stockpile
+	private Deck discard; //The discard pile
 
-	private Deck[] playerHands = new Deck[2];
-	private int[] playerScores = new int[2];
-	private ArrayList<Hashtable<Integer, Meld>> playerMelds;
+	private Deck[] playerHands = new Deck[2]; //The players' hands
+	private int[] playerScores = new int[2];  //The players' score
+	private ArrayList<Hashtable<Integer, Meld>> playerMelds; //The players' melds
 
 	// whose turn is it to turn a card?
 	private int whoseTurn;
@@ -53,29 +46,24 @@ public class GRState extends GameState
 	// 0 = draw
 	// 1 = discard
 	private int turnPhase;
+	private int rounds; //The number of round that have passed
 
-	//The number of round that have passed
-	private int rounds;
+	public boolean isEndOfRound; //Is it the end of the round?
+	public int ID; //The current ID that the state will assign to a Meld
+	public String gameMessage; //A message to be sent to a player
+	private boolean fromDiscard; //Was the last card drawn from the discard pile
+	private Card lastPicked; //What was the last card that was drawn
 
-	// TODO make private and make getter/setters
-	public boolean isEndOfRound;
-	public int ID;
+	public int toGoFirst; //Who is the next person to go first
+	public int yourId;    //Let's the GUI know which indexs a player is at
 
-	public String gameMessage;
-	public String hello;
-
-	//mystery variable!!
-	private boolean fromDiscard;
-
-	private Card lastPicked;
-
-	private boolean lastMoveWasDraw;
-
-	public int toGoFirst;
-	public int yourId;
-
-	public boolean lockGUI;
-	public int meldCount;
+	//Keeps track of the number of melds currently in both players hands
+	//This seems like a weird thing to keep, but it's helpful in determining
+	//if a card may be laid off
+	public int meldCount; 
+	
+	
+	
 	/**
 	 * Constructor for objects of class SJState. Initializes for the beginning of the
 	 * game, with a random player as the first to turn card
@@ -92,9 +80,8 @@ public class GRState extends GameState
 
 		// randomly pick the player who starts
 		whoseTurn = (int)(2*Math.random());
-		//whoseTurn = 1;
+		
 		turnPhase = DRAW_PHASE;
-
 
 		playerHands[0] = new Deck();
 		playerHands[1] = new Deck();
@@ -118,376 +105,8 @@ public class GRState extends GameState
 			drawFrom(true,0);
 			drawFrom(true,1);
 		}
-
-		//TEST HAND
-//    	for(int i = 0; i < 10; i++){
-//    		switch (i){
-//    			case 0:
-//    				playerHands[0].cards.set(i, new Card(Rank.TEN, Suit.Club));
-//    				break;
-//    			case 1:
-//    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Heart));
-//    				break;
-//    			case 2:
-//    				playerHands[0].cards.set(i, new Card(Rank.KING, Suit.Heart));
-//    				break;
-//    			case 3:
-//    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Spade));
-//    				break;
-//    			case 4:
-//    				playerHands[0].cards.set(i, new Card(Rank.THREE, Suit.Diamond));
-//    				break;
-//    			case 5:
-//    				playerHands[0].cards.set(i, new Card(Rank.THREE, Suit.Club));
-//    				break;
-//    			case 6:
-//    				playerHands[0].cards.set(i, new Card(Rank.JACK, Suit.Diamond));
-//    				break;
-//    			case 7:
-//    				playerHands[0].cards.set(i, new Card(Rank.QUEEN, Suit.Diamond));
-//    				break;
-//    			case 8:
-//    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
-//    				break;
-//    			case 9:
-//    				playerHands[0].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
-//    				break;
-//    			
-//    			
-//    		}
-//    	}
-//    	
-//    	for(int i = 0; i < 10; i++){
-//		switch (i){
-//			case 0:
-//				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Spade));
-//				break;
-//			case 1:
-//				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
-//				break;
-//			case 2:
-//				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
-//				break;
-//			case 3:
-//				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
-//				break;
-//			case 4:
-//				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Diamond));
-//				break;
-//			case 5:
-//				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Spade));
-//				break;
-//			case 6:
-//				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Club));
-//				break;
-//			case 7:
-//				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
-//				break;
-//			case 8:
-//				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Spade));
-//				break;
-//		case 9:
-//			playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Club));
-//				break;
-//		}
-//    	}
-		//    	//TEST HAND
-//		    	for(int i = 0; i < 10; i++){
-//		    		switch (i){
-//		    			case 0:
-//		    				playerHands[0].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
-//		    				break;
-//		    			case 1:
-//		    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Diamond));
-//		    				break;
-//		    			case 2:
-//		    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Heart));
-//		    				break;
-//		    			case 3:
-//		    				playerHands[0].cards.set(i, new Card(Rank.ACE, Suit.Spade));
-//		    				break;
-//		    			case 4:
-//		    				playerHands[0].cards.set(i, new Card(Rank.SIX, Suit.Diamond));
-//		    				break;
-//		    			case 5:
-//		    				playerHands[0].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
-//		    				break;
-//		    			case 6:
-//		    				playerHands[0].cards.set(i, new Card(Rank.NINE, Suit.Club));
-//		    				break;
-//		    			case 7:
-//		    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Spade));
-//		    				break;
-//		    			case 8:
-//		    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Club));
-//		    				break;
-//		    			case 9:
-//		    				playerHands[0].cards.set(i, new Card(Rank.TWO, Suit.Diamond));
-//		    				break;
-//		    			
-//		    		}
-//		    	}
-
-		//    	for(int i = 0; i < 10; i++){
-		//		switch (i){
-		//			case 0:
-		//				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Club));
-		//				break;
-		//			case 1:
-		//				playerHands[1].cards.set(i, new Card(Rank.TEN, Suit.Club));
-		//				break;
-		//			case 2:
-		//				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Diamond));
-		//				break;
-		//			case 3:
-		//				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Diamond));
-		//				break;
-		//			case 4:
-		//				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Spade));
-		//				break;
-		//			case 5:
-		//				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Spade));
-		//				break;
-		//			case 6:
-		//				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Club));
-		//				break;
-		//			case 7:
-		//				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Heart));
-		//				break;
-		//			case 8:
-		//				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Heart));
-		//				break;
-		//			case 9:
-		//				playerHands[1].cards.set(i, new Card(Rank.JACK, Suit.Club));
-		//				break;
-		//			
-		//		}
-		//	}
-
-		//PENULTIMATE CASE
-		//    	for(int i = 0; i < 10; i++){
-		//    		switch (i){
-		//    			case 0:
-		//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Heart));
-		//    				break;
-		//    			case 1:
-		//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Diamond));
-		//    				break;
-		//    			case 2:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Diamond));
-		//    				break;
-		//    			case 3:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Diamond));
-		//    				break;
-		//    			case 4:
-		//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Spade));
-		//    				break;
-		//    			case 5:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Spade));
-		//    				break;
-		//    			case 6:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Spade));
-		//    				break;
-		//    			case 7:
-		//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Heart));
-		//    				break;
-		//    			case 8:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Heart));
-		//    				break;
-		//    			case 9:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
-		//    				break;
-		//    			
-		//    		}
-		//    	}
-
-		//ULTIMATE CASE
-		//    	for(int i = 0; i < 10; i++){
-		//    		switch (i){
-		//    			case 0:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Heart));
-		//    				break;
-		//    			case 1:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Diamond));
-		//    				break;
-		//    			case 2:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Spade));
-		//    				break;
-		//    			case 3:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Club));
-		//    				break;
-		//    			case 4:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Spade));
-		//    				break;
-		//    			case 5:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Club));
-		//    				break;
-		//    			case 6:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Diamond));
-		//    				break;
-		//    			case 7:
-		//    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Spade));
-		//    				break;
-		//    			case 8:
-		//    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Club));
-		//    				break;
-		//    			case 9:
-		//    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Diamond));
-		//    				break;
-		//    			
-		//    		}
-		//    	}
-
-		//    	//5 OVERLAPPING CASE
-		//    	for(int i = 0; i < 10; i++){
-		//    		switch (i){
-		//    			case 0:
-		//    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Heart));
-		//    				break;
-		//    			case 1:
-		//    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Diamond));
-		//    				break;
-		//    			case 2:
-		//    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Spade));
-		//    				break;
-		//    			case 3:
-		//    				playerHands[1].cards.set(i, new Card(Rank.JACK, Suit.Heart));
-		//    				break;
-		//    			case 4:
-		//    				playerHands[1].cards.set(i, new Card(Rank.JACK, Suit.Diamond));
-		//    				break;
-		//    			case 5:
-		//    				playerHands[1].cards.set(i, new Card(Rank.JACK, Suit.Spade));
-		//    				break;
-		//    			case 6:
-		//    				playerHands[1].cards.set(i, new Card(Rank.TEN, Suit.Heart));
-		//    				break;
-		//    			case 7:
-		//    				playerHands[1].cards.set(i, new Card(Rank.TEN, Suit.Spade));
-		//    				break;
-		//    			case 8:
-		//    				playerHands[1].cards.set(i, new Card(Rank.QUEEN, Suit.Diamond));
-		//    				break;
-		//    			case 9:
-		//    				playerHands[1].cards.set(i, new Card(Rank.KING, Suit.Diamond));
-		//    				break;
-		//    			
-		//    		}
-		//    	}
-
-		//SIX OVERLAPPING CARDS
-		//    	for(int i = 0; i < 10; i++){
-		//		switch (i){
-		//			case 0:
-		//				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Heart));
-		//				break;
-		//			case 1:
-		//				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Heart));
-		//				break;
-		//			case 2:
-		//				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
-		//				break;
-		//			case 3:
-		//				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Diamond));
-		//				break;
-		//			case 4:
-		//				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Diamond));
-		//				break;
-		//			case 5:
-		//				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Diamond));
-		//				break;
-		//			case 6:
-		//				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Spade));
-		//				break;
-		//			case 7:
-		//				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Spade));
-		//				break;
-		//			case 8:
-		//				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Spade));
-		//				break;
-		//			case 9:
-		//				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Club));
-		//				break;
-		//			
-		//		}
-		//	}
-
-		//OTHER RANDOM CASE
-//		    	for(int i = 0; i < 10; i++){
-//		    		switch (i){
-//		    			case 0:
-//		    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
-//		    				break;
-//		    			case 1:
-//		    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Diamond));
-//		    				break;
-//		    			case 2:
-//		    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Club));
-//		    				break;
-//		    			case 3:
-//		    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Spade));
-//		    				break;
-//		    			case 4:
-//		    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
-//		    				break;
-//		    			case 5:
-//		    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Diamond));
-//		    				break;
-//		    			case 6:
-//		    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Spade));
-//		    				break;
-//		    			case 7:
-//		    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Club));
-//		    				break;
-//		    			case 8:
-//		    				playerHands[1].cards.set(i, new Card(Rank.NINE, Suit.Spade));
-//		    				break;
-//		    			case 9:
-//		    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Club));
-//		    				break;
-//		    			
-//		    		}
-//		    	}
-
-
-		//    	//SPLIT
-		//    	for(int i = 0; i < 10; i++){
-		//    		switch (i){
-		//    			case 0:
-		//    				playerHands[1].cards.set(i, new Card(Rank.ACE, Suit.Heart));
-		//    				break;
-		//    			case 1:
-		//    				playerHands[1].cards.set(i, new Card(Rank.TWO, Suit.Heart));
-		//    				break;
-		//    			case 2:
-		//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Heart));
-		//    				break;
-		//    			case 3:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FOUR, Suit.Heart));
-		//    				break;
-		//    			case 4:
-		//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Spade));
-		//    				break;
-		//    			case 5:
-		//    				playerHands[1].cards.set(i, new Card(Rank.THREE, Suit.Diamond));
-		//    				break;
-		//    			case 6:
-		//    				playerHands[1].cards.set(i, new Card(Rank.FIVE, Suit.Heart));
-		//    				break;
-		//    			case 7:
-		//    				playerHands[1].cards.set(i, new Card(Rank.SIX, Suit.Heart));
-		//    				break;
-		//    			case 8:
-		//    				playerHands[1].cards.set(i, new Card(Rank.SEVEN, Suit.Heart));
-		//    				break;
-		//    			case 9:
-		//    				playerHands[1].cards.set(i, new Card(Rank.EIGHT, Suit.Heart));
-		//    				break;
-		//    			
-		//    		}
-		//    	}
+		
 		stock.moveTopCardTo(discard);
-		//discard.add(new Card(Rank.KING,Suit.Heart));
 	}
 
 	/**
@@ -522,24 +141,28 @@ public class GRState extends GameState
 		playerScores[1] = orig.playerScores[1];
 		ID = orig.ID;
 		isEndOfRound = orig.isEndOfRound;
-		//TODO add new stuff to copy constructor
 	}
 
 	/**
 	 * Copy constructor for objects of class SJState. Makes a copy of the given state
 	 *  
 	 * @param orig  the state to be copied
+	 * @param noReferences Um, so we need a copy constructor that makes NEW cards rather 
+	 * 					   than modifying references to the original card. Having an int
+	 * 				       in the copy ctor lets us use this version of the copy ctor
 	 */
-	public GRState(GRState orig, int blah) {
+	public GRState(GRState orig, int noReferences) {
 		// set index of player whose turn it is
 		whoseTurn = orig.whoseTurn;
+		//Copy hands
 		playerHands[0] = new Deck(orig.playerHands[0],1);
 		playerHands[1] = new Deck(orig.playerHands[1],1);
 		playerMelds = new ArrayList<Hashtable<Integer, Meld>>();
+		
+		//Copy melds
+		playerMelds.add(new Hashtable<Integer, Meld>());
+		playerMelds.add(new Hashtable<Integer, Meld>());
 
-		playerMelds.add(new Hashtable<Integer, Meld>());
-		playerMelds.add(new Hashtable<Integer, Meld>());
-		//PROBLEM LIES HERE
 		for (Meld m : orig.playerMelds.get(0).values()){
 			playerMelds.get(0).put(m.id, new Meld(m));
 		}
@@ -547,6 +170,7 @@ public class GRState extends GameState
 			playerMelds.get(1).put(m.id, new Meld(m));
 		}
 
+		//Copy other various things
 		gameMessage = orig.gameMessage;
 		stock = new Deck(orig.stock);
 		discard = new Deck(orig.discard);
@@ -556,7 +180,6 @@ public class GRState extends GameState
 		playerScores[1] = orig.playerScores[1];
 		ID = orig.ID;
 		isEndOfRound = orig.isEndOfRound;
-		//TODO add new stuff to copy constructor
 	}
 
 	/**
@@ -569,8 +192,7 @@ public class GRState extends GameState
 		playerHands[1].moveAllCardsTo(d);
 		stock.moveAllCardsTo(d);
 		discard.moveAllCardsTo(d);
-
-		lockGUI = false;
+		
 		//reset end of round
 		isEndOfRound = false;
 
@@ -592,10 +214,95 @@ public class GRState extends GameState
 	}
 
 	/**
-	 * Tells which player's turn it is.
+	 * Nullifies appropriate cards when sending a copy of the state to a player
 	 * 
-	 * @return the index (0 or 1) of the player whose turn it is.
+	 * @param playeridx the player we are sending the state to
 	 */
+	public void nullCardsFor(int playeridx){
+		yourId = playeridx;
+		if(playeridx == 0){
+			if(!isEndOfRound){
+				playerHands[1].nullifyDeck();
+			}
+			stock.nullifyDeck();
+		}else if(playeridx == 1){
+			if(!isEndOfRound){
+				playerHands[0].nullifyDeck();
+			}
+			stock.nullifyDeck();
+		}
+
+	}
+	
+	/**
+	 * Gets the deadwood count for a specified player
+	 * 
+	 * @param pidx the player's index
+	 * @return the player's deadwood count
+	 */
+	public ArrayList<Card> getDeadwoodForPlayer(int pidx) {    	
+		ArrayList<Card> deadwoodCards = new ArrayList<Card>();
+		for (Card c : playerHands[pidx].cards) {
+			if (c.getRL() < 3 && c.getSL() < 3) deadwoodCards.add(c);
+		}
+		return deadwoodCards;
+	}
+
+	/**
+	 * Handles a draw
+	 * 
+	 * @param fromStock Was the card drawn from the stockpile
+	 * @param playeridx The player making the draw
+	 * 
+	 * @return true if the draw is possible, false otherwise
+	 */
+	public boolean drawFrom(boolean fromStock, int playeridx){
+		if(fromStock){
+			setLastPicked(stock.peekAtTopCard());
+			stock.moveTopCardTo(playerHands[playeridx]);
+			setFromDiscard(false);
+		} else {
+			setLastPicked(discard.peekAtTopCard());
+			discard.moveTopCardTo(playerHands[playeridx]);
+			setFromDiscard(true);
+		}
+
+		//If all cards in the pile are drawn...
+		if(stock.size() == 0){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Handles a discard
+	 * 
+	 * @param disCard the card to be discarded
+	 * @param playeridx the player discarding
+	 * @return true if the discard was successful
+	 */
+	public boolean discard(Card disCard, int playeridx){
+		discard.add(disCard);
+		playerHands[playeridx].remove(disCard);
+		return true;
+	}
+
+	/**
+	 * New method that sends a card to the discard pile. This can be called when the player
+	 * has been dragging a card to discard and hovers it over the discard pile. 
+	 * 
+	 * @param disCard The card to be discarded
+	 * @param playeridx The player who is discarding
+	 * 
+	 * @return true if the discard was successful
+	 */
+	public boolean takeFromPlayer(Card disCard, int playeridx){
+		playerHands[playeridx].remove(disCard);
+		return true;
+	}
+	
+	
+	/////////////////////////GETTER/SETTER METHODS////////////////////////////////////////////////
 	public int whoseTurn() {
 		return whoseTurn;
 	}
@@ -604,12 +311,6 @@ public class GRState extends GameState
 		return turnPhase;
 	}
 
-	/**
-	 * change whose move it is
-	 * 
-	 * @param idx
-	 * 		the index of the player whose move it now is
-	 */
 	public void setWhoseTurn(int idx) {
 		whoseTurn = idx;
 	}
@@ -650,75 +351,8 @@ public class GRState extends GameState
 		return null;
 	}
 
-	public ArrayList<Card> getDeadwoodForPlayer(int pidx) {    	
-		ArrayList<Card> deadwoodCards = new ArrayList<Card>();
-		for (Card c : playerHands[pidx].cards) {
-			if (c.getRL() < 3 && c.getSL() < 3) deadwoodCards.add(c);
-		}
-		return deadwoodCards;
-	}
-
-	public boolean drawFrom(boolean fromStock, int playeridx){
-		if(fromStock){
-			setLastPicked(stock.peekAtTopCard());
-			stock.moveTopCardTo(playerHands[playeridx]);
-			setFromDiscard(false);
-		} else {
-			setLastPicked(discard.peekAtTopCard());
-			discard.moveTopCardTo(playerHands[playeridx]);
-			setFromDiscard(true);
-		}
-
-		//TODO discuss case where all cards are drawn
-		if(stock.size() == 0){
-			return false;
-		}
-		return true;
-	}
-
-	/*
-	 * ERIC: Discard no longer automatically discards. It just removes a card from playerHands
-	 * Then, the player is free to drag around the removed card to the discard pile.    
-	 */
-	public boolean discard(Card disCard, int playeridx){
-
-		//ERIC: don't add discard automatically to discard. We want to drag the card. 
-		discard.add(disCard);
-		playerHands[playeridx].remove(disCard);
-		return true;
-	}
-
-	/*
-	 * ERIC: New method that sends a card to the discard pile. This can be called when the player
-	 * has been dragging a card to discard and hovers it over the discard pile. 
-	 */
-	public boolean takeFromPlayer(Card disCard, int playeridx){
-
-		//discard.add(disCard);
-		playerHands[playeridx].remove(disCard);
-		return true;
-	}
-
-
 	public Card getTopDiscard(){
 		return discard.peekAtTopCard();
-	}
-
-	public void nullCardsFor(int playeridx){
-		yourId = playeridx;
-		if(playeridx == 0){
-			if(!isEndOfRound){
-				playerHands[1].nullifyDeck();
-			}
-			stock.nullifyDeck();
-			// TODO nullify all but top of discard
-		}else if(playeridx == 1){
-			if(!isEndOfRound){
-				playerHands[0].nullifyDeck();
-			}
-			stock.nullifyDeck();
-		}
-
 	}
 
 	public Deck getStock() {

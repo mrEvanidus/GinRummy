@@ -58,7 +58,6 @@ public class GRLocalGame extends LocalGame implements GRGame {
 	@Override
 	protected String checkIfGameOver() {
 		if( state.getp1score() >= 100){
-			// TODO If display wrong player name, your bug is here
 			return this.playerNames[0] + " is the winner";
 		}
 
@@ -379,7 +378,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 	}
 
 	/**
-	 * countDeadwood
+	 * Counts the deadwood in a player's hand
 	 * 
 	 */
 	public int countDeadwood(Deck hand){
@@ -520,9 +519,11 @@ public class GRLocalGame extends LocalGame implements GRGame {
 	}
 
 	/**
-	 * TODO Comment
-	 * @param knocker
-	 * @param defender
+	 * Handles laying off of cards from the knocker's hand to the 
+	 * defender's hand
+	 * 
+	 * @param knocker The player who knocked
+	 * @param defender The other players
 	 */
 	public void layoff(int knocker, int defender){
 		playerWhoLaidOff = defender;
@@ -773,7 +774,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 						layoff(PLAYER_2,PLAYER_1);
 					}
 
-					//TODO: Here you go, Jaimiey
+					//Set a helpful game message for the end of the round
 					state.gameMessage = this.playerNames[0] + " score for round: " + scoresForRound[0] 
 							+ "\n" + this.playerNames[1]+ " score for round: "+ scoresForRound[1] + "\n";
 
@@ -792,7 +793,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 						}
 					}
 
-					//Reset layoff cards for next round
+					//Reset end of round stats for next round
 					scoresForRound[0] = 0;
 					scoresForRound[1] = 0;
 					layoffCards.clear();
