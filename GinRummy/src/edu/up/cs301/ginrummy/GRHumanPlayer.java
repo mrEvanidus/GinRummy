@@ -219,7 +219,7 @@ public class GRHumanPlayer extends GameHumanPlayer implements Animator {
 		exitButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				MessageBox.popUpChoice("Are you sure?", 
-						"Yes, I admit that I am a poor sport and still want to exit.", 
+						"Yes, this game is terrible.", 
 						"No, keep playing the awesome game!",
 
 						//listener for "yes"

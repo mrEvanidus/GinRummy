@@ -75,8 +75,8 @@ public class backCard extends Card{
 		// if it's already initialized, then ignore
     	if (cardImage1 != null) return;
 		
-		int stockBackImage = R.drawable.vegdahlback;
-		int player2BackImage = R.drawable.vegdahlback2;
+		int stockBackImage = R.drawable.cardback;
+		int player2BackImage = R.drawable.cardback;
 		
 		cardImage1 = BitmapFactory.decodeResource(activity.getResources(),stockBackImage);
 		cardImage2 = BitmapFactory.decodeResource(activity.getResources(),player2BackImage);

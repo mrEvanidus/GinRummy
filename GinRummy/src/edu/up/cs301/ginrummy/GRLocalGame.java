@@ -675,7 +675,8 @@ public class GRLocalGame extends LocalGame implements GRGame {
 			else if (grma.isDiscard() && state.getPhase() == GRState.DISCARD_PHASE) {
 
 				GRDiscardAction da = (GRDiscardAction) action;
-				if(!(state.isFromDiscard() && state.getLastPicked().equals(da.discardCard()))){
+				if(true){
+				//if(!(state.isFromDiscard() && state.getLastPicked().equals(da.discardCard()))){
 					// Remove the requested card from the player's hand and place it atop the discard pile
 					state.discard(da.discardCard(), thisPlayerIdx);
 
