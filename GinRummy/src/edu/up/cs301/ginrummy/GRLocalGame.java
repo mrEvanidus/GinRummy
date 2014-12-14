@@ -732,10 +732,20 @@ public class GRLocalGame extends LocalGame implements GRGame {
 					//Get the hands in a state with optimal melds and duplicates removed
 					normalizeHands();
 
+
+					//layoff cards
+					if(thisPlayerIdx == PLAYER_1){
+						playerWhoLaidOff = PLAYER_1;
+						layoff(PLAYER_1,PLAYER_2);
+					}else{
+						playerWhoLaidOff = PLAYER_2;
+						layoff(PLAYER_2,PLAYER_1);
+					}
+					
 					//Get the deadwood
 					int p0dw = countDeadwood(state.getHand(0));
 					int p1dw = countDeadwood(state.getHand(1));
-
+					
 					//Scoring
 					if(p0dw < p1dw){
 						if(p0dw == 0){
@@ -782,13 +792,7 @@ public class GRLocalGame extends LocalGame implements GRGame {
 						}
 					}
 
-					if(thisPlayerIdx == PLAYER_1){
-						playerWhoLaidOff = PLAYER_1;
-						layoff(PLAYER_1,PLAYER_2);
-					}else{
-						playerWhoLaidOff = PLAYER_2;
-						layoff(PLAYER_2,PLAYER_1);
-					}
+				
 
 					//Set a helpful game message for the end of the round
 					state.gameMessage = this.playerNames[0] + " score for round: " + scoresForRound[0] 
